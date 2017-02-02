@@ -73,7 +73,7 @@ import javax.annotation.Nullable;
  * @param <T> The component type
  */
 @FunctionalInterface
-public interface Opt<T extends Component> extends Supplier<T> {
+public interface Opt<T> extends Supplier<T> {
 
     @Override
     @Nullable

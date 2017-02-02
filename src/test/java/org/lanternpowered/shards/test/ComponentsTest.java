@@ -22,43 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.test;
 
-import com.google.inject.Inject;
-import org.lanternpowered.shards.Holder;
-import org.lanternpowered.shards.OnAttach;
-import org.lanternpowered.shards.OnDetach;
-import org.lanternpowered.shards.Opt;
-import org.lanternpowered.shards.impl.AbstractComponent;
-import org.lanternpowered.shards.test.FooComponentHolder;
+import org.junit.Test;
+import org.lanternpowered.shards.impl.ComponentType;
+import org.lanternpowered.shards.test.components.TestComponent;
 
-public class TestComponent extends AbstractComponent {
+public class ComponentsTest {
 
-    // Inject the holder of the component,
-    // can be any interface, the annotation should be there
-    @Inject @Holder public FooComponentHolder holder;
-
-    // All the default inject components are required
-    @Inject public ExtendedOtherComponent other;
-
-    // The foo component is optional, the status of this
-    // is dynamically updated.
-    @Inject public Opt<FooComponent> optFooComponent;
-
-    public Opt<AnotherTestComponent> another;
-
-    @OnAttach
-    public void onAttach() {
-        System.out.println("onAttach");
-    }
-
-    @OnDetach
-    public void onDetach() {
-    }
-
-    @Inject
-    private void setOtherComponent(Opt<AnotherTestComponent> another) {
-        System.out.println("Set other test component: " + another);
-        this.another = another;
+    @Test
+    public void test() {
+        ComponentType.get(TestComponent.class);
     }
 }

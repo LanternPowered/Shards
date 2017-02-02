@@ -22,43 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.requirement;
 
-import com.google.inject.Inject;
-import org.lanternpowered.shards.Holder;
-import org.lanternpowered.shards.OnAttach;
-import org.lanternpowered.shards.OnDetach;
-import org.lanternpowered.shards.Opt;
-import org.lanternpowered.shards.impl.AbstractComponent;
-import org.lanternpowered.shards.test.FooComponentHolder;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class TestComponent extends AbstractComponent {
+import org.lanternpowered.shards.Component;
+import org.lanternpowered.shards.ComponentHolder;
 
-    // Inject the holder of the component,
-    // can be any interface, the annotation should be there
-    @Inject @Holder public FooComponentHolder holder;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-    // All the default inject components are required
-    @Inject public ExtendedOtherComponent other;
+/**
+ * Can be applied to a field or parameter that extend {@link Component},
+ * this is to define that the target component should be automatically
+ * attached to the {@link ComponentHolder} when there is an attempt to
+ * attach the current {@link Component} type.
+ * This is the equivalent of {@link Requirement#autoAttach()}.
+ */
+@Target({ FIELD, PARAMETER })
+@Retention(RUNTIME)
+public @interface AutoAttach {
 
-    // The foo component is optional, the status of this
-    // is dynamically updated.
-    @Inject public Opt<FooComponent> optFooComponent;
-
-    public Opt<AnotherTestComponent> another;
-
-    @OnAttach
-    public void onAttach() {
-        System.out.println("onAttach");
-    }
-
-    @OnDetach
-    public void onDetach() {
-    }
-
-    @Inject
-    private void setOtherComponent(Opt<AnotherTestComponent> another) {
-        System.out.println("Set other test component: " + another);
-        this.another = another;
-    }
 }

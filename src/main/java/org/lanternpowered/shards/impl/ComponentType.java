@@ -28,12 +28,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
+import org.lanternpowered.shards.Opt;
+import org.lanternpowered.shards.requirement.AutoAttach;
 import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.Lock;
 import org.lanternpowered.shards.requirement.Requirement;
@@ -42,6 +46,7 @@ import org.lanternpowered.shards.requirement.Requirements;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,9 +58,9 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-final class ComponentType<T extends Component> {
+public final class ComponentType<T extends Component> {
 
-    static <T extends Component> ComponentType<T> get(Class<T> componentType) {
+    public static <T extends Component> ComponentType<T> get(Class<T> componentType) {
         checkNotNull(componentType, "componentType");
         //noinspection unchecked
         return cache.get(componentType);
@@ -65,7 +70,6 @@ final class ComponentType<T extends Component> {
             Caffeine.newBuilder().build(ComponentType::load);
 
     private static ComponentType load(Class<? extends Component> type) {
-        /*
         // STEP 1:
         // - Collect all the required dependencies of the current component.
         // - Collect all the object types that will be dynamically registered
@@ -90,12 +94,14 @@ final class ComponentType<T extends Component> {
             final Class<?> fieldType = field.getType();
             typeMappings.add(new ObjectMapping(fieldType, field));
             if (Component.class.isAssignableFrom(fieldType)) {
-                final Require require = field.getAnnotation(Require.class);
-                if (require != null) {
-                    //noinspection unchecked
-                    final Class<? extends Component> fieldType1 = (Class<? extends Component>) fieldType;
-                    requirements.put(fieldType1, new RequirementWrapper(fieldType1, require.autoAttach()));
-                }
+                //noinspection unchecked
+                final Class<? extends Component> fieldType1 = (Class<? extends Component>) fieldType;
+                final AutoAttach autoAttach = field.getAnnotation(AutoAttach.class);
+                requirements.put(fieldType1, new RequirementWrapper(fieldType1, autoAttach != null));
+            } else if (Opt.class.isAssignableFrom(fieldType)) {
+                final TypeToken typeToken = TypeToken.of(field.getGenericType());
+                final Class<?> element = typeToken.resolveType(Opt.class.getTypeParameters()[0]).getRawType();
+                System.out.println(typeToken + " -> " + element.getName());
             }
         }
         // Scan all the methods and constructors for required components and mappings that should be registered
@@ -106,30 +112,37 @@ final class ComponentType<T extends Component> {
                 continue;
             }
             final Class<?>[] parameterTypes = executable.getParameterTypes();
+            final Type[] genericParameterTypes = executable.getGenericParameterTypes();
             final AnnotatedType[] parameterAnnotations = executable.getAnnotatedParameterTypes();
             for (int i = 0; i < parameterTypes.length; i++) {
                 typeMappings.add(new ObjectMapping(parameterTypes[i], parameterAnnotations[i]));
                 if (Component.class.isAssignableFrom(parameterTypes[i])) {
-                    final Require require = parameterTypes[i].getAnnotation(Require.class);
-                    if (require != null) {
-                        //noinspection unchecked
-                        final Class<? extends Component> fieldType1 = (Class<? extends Component>) parameterTypes[i];
-                        requirements.put(fieldType1, new RequirementWrapper(fieldType1, require.autoAttach()));
-                    }
+                    final AutoAttach autoAttach = parameterAnnotations[i].getAnnotation(AutoAttach.class);
+                    //noinspection unchecked
+                    final Class<? extends Component> fieldType1 = (Class<? extends Component>) parameterTypes[i];
+                    requirements.put(fieldType1, new RequirementWrapper(fieldType1, autoAttach != null));
+                } else if (Opt.class.isAssignableFrom(parameterTypes[i])) {
+                    final TypeToken typeToken = TypeToken.of(genericParameterTypes[i]);
+                    final Class<?> element = typeToken.resolveType(Opt.class.getTypeParameters()[0]).getRawType();
+                    System.out.println(typeToken + " -> " + element.getName());
                 }
             }
         }
         // Scan the superclasses and interfaces
         final Class<?> superClass = type.getSuperclass();
         if (superClass != null && Component.class.isAssignableFrom(superClass)) {
+            // We CANNOT use the cache here, that blocks the thread for some reason, so don't do it
             //noinspection unchecked
-            get((Class<? extends Component>) superClass).requirements.entrySet().forEach(e -> requirements.put(e.getKey(), e.getValue()));
+            final ComponentType<?> type1 = load((Class<? extends Component>) superClass);
+            type1.requirements.entrySet().forEach(e -> requirements.put(e.getKey(), e.getValue()));
         }
         final Class<?>[] interfaces = type.getInterfaces();
         for (Class<?> interf : interfaces) {
             if (Component.class.isAssignableFrom(interf)) {
+                // We CANNOT use the cache here, that blocks the thread for some reason, so don't do it
                 //noinspection unchecked
-                get((Class<? extends Component>) interf).requirements.entrySet().forEach(e -> requirements.put(e.getKey(), e.getValue()));
+                final ComponentType<?> type1 = load((Class<? extends Component>) interf);
+                type1.requirements.entrySet().forEach(e -> requirements.put(e.getKey(), e.getValue()));
             }
         }
         // Merge the DependencyWrappers for every component type
@@ -157,9 +170,6 @@ final class ComponentType<T extends Component> {
         }
         //noinspection unchecked
         return new ComponentType(type, ImmutableMap.copyOf(mergedWrappers), null);
-        */
-        //noinspection unchecked
-        return new ComponentType(type, ImmutableMap.of(), null);
     }
 
     private static void scanSubClasses(Class<? extends Component> target, List<Class<? extends Component>> subClasses) {
