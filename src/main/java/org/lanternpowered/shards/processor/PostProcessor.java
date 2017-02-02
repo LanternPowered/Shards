@@ -22,50 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.processor;
 
-import com.google.common.base.MoreObjects;
-import org.lanternpowered.shards.Component;
+import org.lanternpowered.shards.inject.Binder;
 
-import java.util.Objects;
+@FunctionalInterface
+public interface PostProcessor extends Processor {
 
-final class RequirementWrapper {
-
-    private final Class<? extends Component> type;
-    private final boolean autoAttach;
-
-    RequirementWrapper(Class<? extends Component> type, boolean autoAttach) {
-        this.autoAttach = autoAttach;
-        this.type = type;
-    }
-
-    public Class<? extends Component> getType() {
-        return this.type;
-    }
-
-    public boolean getAutoAttach() {
-        return this.autoAttach;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("type", this.type.getName())
-                .add("autoAttach", this.autoAttach)
-                .toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof RequirementWrapper)) {
-            return false;
-        }
-        final RequirementWrapper other = (RequirementWrapper) o;
-        return this.type == other.type && this.autoAttach == other.autoAttach;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.type, this.autoAttach);
-    }
+    /**
+     * Post processes the content of the {@link ProcessorContext}.
+     *
+     * @param context The processor context
+     * @param binder The binder
+     */
+    void process(ProcessorContext context, Binder binder) throws ProcessorException;
 }

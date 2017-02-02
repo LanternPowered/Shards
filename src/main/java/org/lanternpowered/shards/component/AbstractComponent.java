@@ -22,10 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.component;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import static com.google.common.base.Preconditions.checkState;
 
-public class FooComponent extends AbstractComponent {
+import org.lanternpowered.shards.Component;
+import org.lanternpowered.shards.ComponentHolder;
 
+import javax.annotation.Nullable;
+
+public abstract class AbstractComponent implements Component {
+
+    final ComponentType<?> componentType = ComponentType.get(getClass());
+
+    /**
+     * The lock of this {@link Component}.
+     */
+    final Object lock = new Object();
+
+    /**
+     * The {@link ComponentHolder} of this {@link Component}.
+     */
+    @Nullable ComponentHolder holder;
+
+    @Override
+    public final ComponentHolder getHolder() {
+        synchronized (this.lock) {
+            checkState(this.holder != null, "This Component isn't attached to a ComponentHolder.");
+            return this.holder;
+        }
+    }
 }

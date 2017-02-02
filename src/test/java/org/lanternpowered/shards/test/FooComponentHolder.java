@@ -24,7 +24,7 @@
  */
 package org.lanternpowered.shards.test;
 
-import org.lanternpowered.shards.impl.AbstractComponentHolder;
+import org.lanternpowered.shards.component.AbstractComponentHolder;
 
 public class FooComponentHolder extends AbstractComponentHolder {
 

@@ -22,34 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.component.processor;
 
-import static com.google.common.base.Preconditions.checkState;
-
+import com.google.common.reflect.TypeToken;
+import com.google.inject.ImplementedBy;
+import com.google.inject.ProvidedBy;
 import org.lanternpowered.shards.Component;
-import org.lanternpowered.shards.ComponentHolder;
+import org.lanternpowered.shards.inject.Binder;
+import org.lanternpowered.shards.processor.ProcessorContext;
+import org.lanternpowered.shards.processor.ProcessorException;
+import org.lanternpowered.shards.processor.TypeProcessor;
+import org.lanternpowered.shards.util.logger.Logger;
 
-import javax.annotation.Nullable;
+public class WarnComponentTypeProcessor implements TypeProcessor {
 
-public abstract class AbstractComponent implements Component {
-
-    final ComponentType<?> componentType = ComponentType.get(getClass());
-
-    /**
-     * The lock of this {@link Component}.
-     */
-    final Object lock = new Object();
-
-    /**
-     * The {@link ComponentHolder} of this {@link Component}.
-     */
-    @Nullable ComponentHolder holder;
+    static final Logger LOGGER = Logger.get("ComponentProcessor");
 
     @Override
-    public final ComponentHolder getHolder() {
-        synchronized (this.lock) {
-            checkState(this.holder != null, "This Component isn't attached to a ComponentHolder.");
-            return this.holder;
+    public void process(ProcessorContext context, TypeToken<?> type, Binder binder) throws ProcessorException {
+        final Class<?> raw = type.getRawType();
+        // Only run this processor for components
+        if (!Component.class.isAssignableFrom(raw)) {
+            return;
+        }
+        if (raw.isAnnotationPresent(ImplementedBy.class) ||
+                raw.isAnnotationPresent(ProvidedBy.class)) {
+            LOGGER.warn("A Component implementation should not be manually provided through ImplementedBy or ProvidedBy.");
         }
     }
 }

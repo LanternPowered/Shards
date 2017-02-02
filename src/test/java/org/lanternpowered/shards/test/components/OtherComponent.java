@@ -25,7 +25,7 @@
 package org.lanternpowered.shards.test.components;
 
 import org.lanternpowered.shards.OnAttach;
-import org.lanternpowered.shards.impl.AbstractComponent;
+import org.lanternpowered.shards.component.AbstractComponent;
 
 public class OtherComponent extends AbstractComponent {
 

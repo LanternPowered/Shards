@@ -22,10 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.processor;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import com.google.common.reflect.TypeToken;
+import org.lanternpowered.shards.inject.Binder;
 
-public class FooComponent extends AbstractComponent {
+@FunctionalInterface
+public interface TypeProcessor extends Processor {
 
+    /**
+     * Processes a class with the specified {@code type}.
+     *
+     * @param context The processor context
+     * @param type The type of the parameter
+     * @param binder The binder
+     */
+    void process(ProcessorContext context, TypeToken<?> type, Binder binder) throws ProcessorException;
 }

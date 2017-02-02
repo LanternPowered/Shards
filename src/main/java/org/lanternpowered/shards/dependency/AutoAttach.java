@@ -22,17 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.dependency;
 
-public class ComponentModule extends com.google.inject.AbstractModule {
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    private final ComponentType componentType;
+import org.lanternpowered.shards.Component;
+import org.lanternpowered.shards.ComponentHolder;
 
-    public ComponentModule(ComponentType componentType) {
-        this.componentType = componentType;
-    }
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-    @Override
-    protected void configure() {
-    }
+/**
+ * Can be applied to a field or parameter that extend {@link Component},
+ * this is to define that the target component should be automatically
+ * attached to the {@link ComponentHolder} when there is an attempt to
+ * attach the current {@link Component} type.
+ * This is the equivalent of {@link Dependency#autoAttach()}.
+ */
+@Target({ FIELD, PARAMETER })
+@Retention(RUNTIME)
+public @interface AutoAttach {
+
 }

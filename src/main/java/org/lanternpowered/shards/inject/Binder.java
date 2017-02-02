@@ -22,10 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.inject;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import static org.lanternpowered.shards.util.TypeTokenHelper.toTypeLiteral;
 
-public class FooComponent extends AbstractComponent {
+import com.google.common.reflect.TypeToken;
+import com.google.inject.MembersInjector;
+import com.google.inject.TypeLiteral;
+import com.google.inject.binder.AnnotatedBindingBuilder;
 
+public interface Binder extends com.google.inject.Binder {
+
+    /**
+     * @see #bind(TypeLiteral)
+     */
+    default <T> AnnotatedBindingBuilder<T> bind(TypeToken<T> typeToken) {
+        return bind(toTypeLiteral(typeToken));
+    }
+
+    /**
+     * @see #getMembersInjector(TypeLiteral)
+     */
+    default <T> MembersInjector<T> getMembersInjector(TypeToken<T> type) {
+        return getMembersInjector(toTypeLiteral(type));
+    }
 }

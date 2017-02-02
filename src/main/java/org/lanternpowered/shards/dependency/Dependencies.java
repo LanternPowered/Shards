@@ -22,10 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.dependency;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class FooComponent extends AbstractComponent {
+import org.lanternpowered.shards.Component;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+/**
+ * Can be applied to a {@link Component} type to define a list of {@link Component}s
+ * that the current {@link Component} is depending on. The {@link Component}s may
+ * be required or optional, and can be automatically attached by setting
+ * {@link Dependency#autoAttach()} to {@code true}.
+ */
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface Dependencies {
+
+    /**
+     * The list of dependencies.
+     *
+     * @return The dependencies
+     */
+    Dependency[] value();
 }

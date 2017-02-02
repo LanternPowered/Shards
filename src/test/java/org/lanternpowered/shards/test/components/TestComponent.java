@@ -25,13 +25,18 @@
 package org.lanternpowered.shards.test.components;
 
 import com.google.inject.Inject;
+import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.Holder;
 import org.lanternpowered.shards.OnAttach;
 import org.lanternpowered.shards.OnDetach;
 import org.lanternpowered.shards.Opt;
-import org.lanternpowered.shards.impl.AbstractComponent;
+import org.lanternpowered.shards.component.AbstractComponent;
+import org.lanternpowered.shards.dependency.AutoAttach;
+import org.lanternpowered.shards.dependency.Dependencies;
+import org.lanternpowered.shards.dependency.Dependency;
 import org.lanternpowered.shards.test.FooComponentHolder;
 
+//@Dependencies({ @Dependency(value = ExtendedOtherComponent.class, autoAttach = true)})
 public class TestComponent extends AbstractComponent {
 
     // Inject the holder of the component,
@@ -39,12 +44,16 @@ public class TestComponent extends AbstractComponent {
     @Inject @Holder public FooComponentHolder holder;
 
     // All the default inject components are required
-    @Inject public ExtendedOtherComponent other;
+    @Inject @AutoAttach public ExtendedOtherComponent other;
+    @Inject public OtherComponent otherI;
+
+    @Inject public IComponent otherJ;
 
     // The foo component is optional, the status of this
     // is dynamically updated.
     @Inject public Opt<FooComponent> optFooComponent;
 
+    //@Inject public AnotherTestComponent another;
     public Opt<AnotherTestComponent> another;
 
     @OnAttach
@@ -56,8 +65,9 @@ public class TestComponent extends AbstractComponent {
     public void onDetach() {
     }
 
+
     @Inject
-    private void setOtherComponent(Opt<AnotherTestComponent> another) {
+    private void setOtherComponent(@AutoAttach Opt<AnotherTestComponent> another) {
         System.out.println("Set other test component: " + another);
         this.another = another;
     }

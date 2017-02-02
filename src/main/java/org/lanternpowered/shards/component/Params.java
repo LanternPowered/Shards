@@ -22,10 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.component;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import org.lanternpowered.shards.processor.Param;
 
-public class FooComponent extends AbstractComponent {
+import java.util.List;
 
+public final class Params {
+
+    /**
+     * A {@link List} with all the collected {@link DependencySpec}s.
+     * <p>
+     * All the dependencies will be merged in a post processor.
+     */
+    public static final Param<List<DependencySpec>> DEPENDENCIES = Param.of();
+
+    /**
+     * A {@link List} with all the collected {@link HolderSpec}s.
+     * <p>
+     * All the holder types will be merged in a post processor.
+     */
+    public static final Param<List<HolderSpec>> HOLDER_TYPES = Param.of();
+
+    private Params() {
+    }
 }

@@ -22,5 +22,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@org.lanternpowered.shards.util.NonnullByDefault
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.util.logger;
+
+import java.util.function.Function;
+
+final class LoggerFactory {
+
+    final static Function<String, Logger> FACTORY;
+
+    static {
+        boolean slf4j = false;
+        try {
+            Class.forName("org.slf4j.impl.StaticLoggerBinder");
+            slf4j = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+        if (slf4j) {
+            FACTORY = name -> {
+                final org.slf4j.Logger logger;
+                if (name.isEmpty()) {
+                    logger = org.slf4j.LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+                } else {
+                    logger = org.slf4j.LoggerFactory.getLogger(name);
+                }
+                return new Slf4jLogger(logger);
+            };
+        } else {
+            FACTORY = name -> {
+                final java.util.logging.Logger logger;
+                if (name.isEmpty()) {
+                    logger = java.util.logging.Logger.getGlobal();
+                } else {
+                    logger = java.util.logging.Logger.getLogger(name);
+                }
+                return new JavaLogger(logger);
+            };
+        }
+    }
+}

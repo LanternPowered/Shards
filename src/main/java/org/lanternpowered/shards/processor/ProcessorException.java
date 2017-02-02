@@ -22,21 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.processor;
 
-import com.google.inject.Provider;
-import org.lanternpowered.shards.Component;
+public class ProcessorException extends Exception {
 
-public class ComponentProvider<T extends Component> implements Provider<T> {
-
-    private final Class<T> componentType;
-
-    public ComponentProvider(Class<T> componentType) {
-        this.componentType = componentType;
+    public ProcessorException() {
+        super();
     }
 
-    @Override
-    public T get() {
-        return InjectContext.current().get().getComponent(this.componentType).orElse(null);
+    public ProcessorException(String message) {
+        super(message);
+    }
+
+    public ProcessorException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

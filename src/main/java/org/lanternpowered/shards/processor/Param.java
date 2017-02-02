@@ -22,10 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.processor;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class FooComponent extends AbstractComponent {
+public final class Param<T> {
 
+    /**
+     * Creates a new {@link Param} instance.
+     *
+     * @param <T> The value type
+     * @return The param
+     */
+    public static <T> Param<T> of() {
+        return new Param<>(counter.getAndIncrement());
+    }
+
+    private static final AtomicInteger counter = new AtomicInteger();
+
+    final int internalId;
+
+    private Param(int internalId) {
+        this.internalId = internalId;
+    }
 }

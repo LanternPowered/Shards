@@ -22,10 +22,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.processor;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import com.google.common.reflect.TypeToken;
 
-public class FooComponent extends AbstractComponent {
+import java.util.Optional;
+import java.util.function.Supplier;
 
+public interface ProcessorContext {
+
+    /**
+     * Gets the {@link TypeToken} of the target class
+     * that is being processed.
+     *
+     * @return The type token
+     */
+    TypeToken<?> getTarget();
+
+    /**
+     * Adds a piece of data to the context.
+     *
+     * @param param The param
+     * @param value The value
+     */
+    <T> void put(Param<T> param, T value);
+
+    /**
+     * Adds a piece of data to the context.
+     *
+     * @param param The param
+     * @param value The value
+     */
+    <T> T putIfAbsent(Param<T> param, T value);
+
+    /**
+     * Adds a piece of data to the context.
+     *
+     * @param param The param
+     * @param supplier The value supplier
+     */
+    <T> T computeIfAbsent(Param<T> param, Supplier<T> supplier);
+
+    /**
+     * Gets the object for the specified key.
+     *
+     * @param param The param
+     * @return The value if present
+     */
+    <T> Optional<T> get(Param<T> param);
 }

@@ -22,10 +22,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.processor;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
 
-public class FooComponent extends AbstractComponent {
+final class ArrayAnnotatedElement implements AnnotatedElement {
 
+    private final Annotation[] annotations;
+
+    public ArrayAnnotatedElement(Annotation[] annotations) {
+        this.annotations = annotations;
+    }
+
+    @Override
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        return Arrays.stream(this.annotations)
+                .filter(annotationClass::isInstance)
+                .map(annotationClass::cast)
+                .findFirst().orElse(null);
+    }
+
+    @Override
+    public Annotation[] getAnnotations() {
+        return Arrays.copyOf(this.annotations, this.annotations.length);
+    }
+
+    @Override
+    public Annotation[] getDeclaredAnnotations() {
+        return getAnnotations();
+    }
 }

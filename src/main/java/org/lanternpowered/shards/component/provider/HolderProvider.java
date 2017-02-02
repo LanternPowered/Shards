@@ -22,10 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.component.provider;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import com.google.inject.Provider;
+import org.lanternpowered.shards.component.ComponentInjectionContext;
 
-public class FooComponent extends AbstractComponent {
+public class HolderProvider implements Provider<Object> {
 
+    public static final HolderProvider INSTANCE = new HolderProvider();
+
+    @Override
+    public Object get() {
+        return ComponentInjectionContext.current().get();
+    }
 }

@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.component;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -112,8 +112,8 @@ public class AbstractComponentHolder implements ComponentHolder {
         return true;
     }
 
-    private boolean attachRequirements(Collection<RequirementWrapper> requirements) {
-        for (RequirementWrapper requirement : requirements) {
+    private boolean attachRequirements(Collection<DependencySpec> requirements) {
+        for (DependencySpec requirement : requirements) {
             final Optional optComponent = getComponent(requirement.getType());
             if (!optComponent.isPresent()) {
                 // This component holder is missing the dependency and cannot

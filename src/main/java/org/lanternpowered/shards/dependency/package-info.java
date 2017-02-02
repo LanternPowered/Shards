@@ -22,10 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
-
-import org.lanternpowered.shards.component.AbstractComponent;
-
-public class FooComponent extends AbstractComponent {
-
-}
+@org.lanternpowered.shards.util.NonnullByDefault
+package org.lanternpowered.shards.dependency;

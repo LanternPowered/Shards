@@ -22,27 +22,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.requirement;
+package org.lanternpowered.shards.dependency;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.ComponentHolder;
+import org.lanternpowered.shards.ComponentRegistry;
 
 import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 
 /**
- * Can be applied to a field or parameter that extend {@link Component},
- * this is to define that the target component should be automatically
- * attached to the {@link ComponentHolder} when there is an attempt to
- * attach the current {@link Component} type.
- * This is the equivalent of {@link Requirement#autoAttach()}.
+ * Represents the dependency of a specific {@link Component}.
  */
-@Target({ FIELD, PARAMETER })
 @Retention(RUNTIME)
-public @interface AutoAttach {
+public @interface Dependency {
 
+    /**
+     * Gets the {@link Component} type of the dependency.
+     *
+     * @return The component type
+     */
+    Class<? extends Component> value();
+
+    /**
+     * Gets whether the dependency {@link Component} isn't required
+     * for the target {@link Component} to function, is optional.
+     *
+     * @return Is optional
+     */
+    boolean optional() default false;
+
+    /**
+     * Whether the dependency can be automatically attached to
+     * a {@link ComponentHolder}.
+     * <p>
+     * This expects that when this method returns {@code true} and the {@link Component}
+     * is either abstract or an interface, a default implementation is provided through
+     * the {@link ComponentRegistry}.
+     *
+     * @return Auto attach
+     */
+    boolean autoAttach() default false;
 }

@@ -22,38 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.requirement;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.lanternpowered.shards.test.components;
 
 import org.lanternpowered.shards.Component;
-import org.lanternpowered.shards.ComponentHolder;
-import org.lanternpowered.shards.ComponentRegistry;
 
-import java.lang.annotation.Retention;
+public interface IComponent extends Component {
 
-/**
- * Represents the requirement of a specific {@link Component}.
- */
-@Retention(RUNTIME)
-public @interface Requirement {
-
-    /**
-     * Gets the {@link Component} type of the requirement.
-     *
-     * @return The component type
-     */
-    Class<? extends Component> type();
-
-    /**
-     * Whether the requirement can be automatically attached to
-     * a {@link ComponentHolder}.
-     * <p>
-     * This expects that when this method returns {@code true} and the {@link Component}
-     * is either abstract or an interface, a default implementation is provided through
-     * the {@link ComponentRegistry}.
-     *
-     * @return Auto attach
-     */
-    boolean autoAttach() default false;
 }

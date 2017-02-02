@@ -22,39 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
-import org.lanternpowered.shards.Opt;
-import org.lanternpowered.shards.requirement.AutoAttach;
 import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.Lock;
-import org.lanternpowered.shards.requirement.Requirement;
-import org.lanternpowered.shards.requirement.Requirements;
 
-import java.lang.reflect.AnnotatedType;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -70,18 +51,19 @@ public final class ComponentType<T extends Component> {
             Caffeine.newBuilder().build(ComponentType::load);
 
     private static ComponentType load(Class<? extends Component> type) {
+        /*
         // STEP 1:
         // - Collect all the required dependencies of the current component.
         // - Collect all the object types that will be dynamically registered
         //   to the Guice Module.
         final Set<ObjectMapping> typeMappings = new HashSet<>();
-        final Multimap<Class<? extends Component>, RequirementWrapper> requirements = HashMultimap.create();
+        final Multimap<Class<? extends Component>, Dependency> requirements = HashMultimap.create();
         // First check requirements of the type
         final Requirements anno = type.getAnnotation(Requirements.class);
         if (anno != null) {
             final Requirement[] annos1 = anno.value();
             for (Requirement anno1 : annos1) {
-                requirements.put(anno1.type(), new RequirementWrapper(anno1.type(), anno1.autoAttach()));
+                requirements.put(anno1.type(), new Dependency(anno1.type(), anno1.autoAttach()));
             }
         }
         // Scan all the fields for required components and mappings that should be registered
@@ -97,7 +79,7 @@ public final class ComponentType<T extends Component> {
                 //noinspection unchecked
                 final Class<? extends Component> fieldType1 = (Class<? extends Component>) fieldType;
                 final AutoAttach autoAttach = field.getAnnotation(AutoAttach.class);
-                requirements.put(fieldType1, new RequirementWrapper(fieldType1, autoAttach != null));
+                requirements.put(fieldType1, new Dependency(fieldType1, autoAttach != null));
             } else if (Opt.class.isAssignableFrom(fieldType)) {
                 final TypeToken typeToken = TypeToken.of(field.getGenericType());
                 final Class<?> element = typeToken.resolveType(Opt.class.getTypeParameters()[0]).getRawType();
@@ -120,7 +102,7 @@ public final class ComponentType<T extends Component> {
                     final AutoAttach autoAttach = parameterAnnotations[i].getAnnotation(AutoAttach.class);
                     //noinspection unchecked
                     final Class<? extends Component> fieldType1 = (Class<? extends Component>) parameterTypes[i];
-                    requirements.put(fieldType1, new RequirementWrapper(fieldType1, autoAttach != null));
+                    requirements.put(fieldType1, new Dependency(fieldType1, autoAttach != null));
                 } else if (Opt.class.isAssignableFrom(parameterTypes[i])) {
                     final TypeToken typeToken = TypeToken.of(genericParameterTypes[i]);
                     final Class<?> element = typeToken.resolveType(Opt.class.getTypeParameters()[0]).getRawType();
@@ -146,18 +128,18 @@ public final class ComponentType<T extends Component> {
             }
         }
         // Merge the DependencyWrappers for every component type
-        final Map<Class<? extends Component>, RequirementWrapper> mergedWrappers = new HashMap<>();
-        for (Map.Entry<Class<? extends Component>, Collection<RequirementWrapper>> entry : requirements.asMap().entrySet()) {
+        final Map<Class<? extends Component>, Dependency> mergedWrappers = new HashMap<>();
+        for (Map.Entry<Class<? extends Component>, Collection<Dependency>> entry : requirements.asMap().entrySet()) {
             boolean autoAttach = false;
-            for (RequirementWrapper wrapper : entry.getValue()) {
+            for (Dependency wrapper : entry.getValue()) {
                 if (wrapper.getAutoAttach()) {
                     autoAttach = true;
                     break;
                 }
             }
-            mergedWrappers.put(entry.getKey(), new RequirementWrapper(entry.getKey(), autoAttach));
+            mergedWrappers.put(entry.getKey(), new Dependency(entry.getKey(), autoAttach));
         }
-        // Now we have to merge the requirements for the most exact requirement requirements
+        // Now we have to merge the requirements for the most exact dependency requirements
         final Set<Class<? extends Component>> classes = new HashSet<>(mergedWrappers.keySet());
         for (Class<? extends Component> clazz : classes) {
             // Ignore classes that are already removed
@@ -169,9 +151,11 @@ public final class ComponentType<T extends Component> {
             subClasses.forEach(mergedWrappers::remove);
         }
         //noinspection unchecked
-        return new ComponentType(type, ImmutableMap.copyOf(mergedWrappers), null);
+        return new ComponentType(type, ImmutableMap.copyOf(mergedWrappers), null);*/
+        return new ComponentType(type, ImmutableMap.of(), null);
     }
 
+    /*
     private static void scanSubClasses(Class<? extends Component> target, List<Class<? extends Component>> subClasses) {
         final Class<?>[] interfaces = target.getInterfaces();
         for (Class<?> interf : interfaces) {
@@ -195,25 +179,25 @@ public final class ComponentType<T extends Component> {
                 scanSubClasses(superClass1, subClasses);
             }
         }
-    }
+    }*/
 
     private final Class<T> componentType;
-    private final Map<Class<? extends Component>, RequirementWrapper> requirements;
+    private final Map<Class<? extends Component>, DependencySpec> requirements;
     @Nullable private final Lock.Type lockType;
 
-    private ComponentType(Class<T> componentType, Map<Class<? extends Component>, RequirementWrapper> requirements, @Nullable Lock.Type lockType) {
+    private ComponentType(Class<T> componentType, Map<Class<? extends Component>, DependencySpec> requirements, @Nullable Lock.Type lockType) {
         this.componentType = componentType;
         this.requirements = requirements;
         this.lockType = lockType;
     }
 
     /**
-     * Gets a {@link Collection} with all the {@link RequirementWrapper}s
+     * Gets a {@link Collection} with all the {@link DependencySpec}s
      * in this collection.
      *
      * @return The requirements
      */
-    public Collection<RequirementWrapper> getRequirements() {
+    public Collection<DependencySpec> getRequirements() {
         return this.requirements.values();
     }
 

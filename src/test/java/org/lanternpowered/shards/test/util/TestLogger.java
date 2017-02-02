@@ -22,10 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.test.util;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+import org.junit.Test;
+import org.lanternpowered.shards.util.logger.Logger;
 
-public class FooComponent extends AbstractComponent {
+public class TestLogger {
 
+    @Test
+    public void test() {
+        final Logger logger = Logger.get("Test");
+        logger.warn("Test %s -> %s", 123, 456);
+        logger.error("Test %s -> %s", 123, 456, new IllegalArgumentException());
+    }
 }

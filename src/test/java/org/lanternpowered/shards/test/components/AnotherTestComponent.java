@@ -24,8 +24,8 @@
  */
 package org.lanternpowered.shards.test.components;
 
-import org.lanternpowered.shards.impl.AbstractComponent;
+import org.lanternpowered.shards.component.AbstractComponent;
 
-public class AnotherTestComponent extends AbstractComponent {
+public class AnotherTestComponent extends AbstractComponent implements IComponent {
 
 }

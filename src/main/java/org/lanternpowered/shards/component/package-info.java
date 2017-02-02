@@ -22,28 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.requirement;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import org.lanternpowered.shards.Component;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-/**
- * Can be applied to a {@link Component} type to require a list {@link Component}s
- * that are required for the current {@link Component} to function.
- */
-@Retention(RUNTIME)
-@Target(TYPE)
-public @interface Requirements {
-
-    /**
-     * The list of requirements.
-     *
-     * @return The requirements
-     */
-    Requirement[] value();
-}
+@org.lanternpowered.shards.util.NonnullByDefault
+package org.lanternpowered.shards.component;

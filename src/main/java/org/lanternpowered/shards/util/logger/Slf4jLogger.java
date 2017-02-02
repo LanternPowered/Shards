@@ -22,10 +22,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.util.logger;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+final class Slf4jLogger implements Logger {
 
-public class FooComponent extends AbstractComponent {
+    private final org.slf4j.Logger logger;
 
+    Slf4jLogger(org.slf4j.Logger logger) {
+        this.logger = logger;
+    }
+
+    @Override
+    public void error(String message) {
+        this.logger.error(message);
+    }
+
+    @Override
+    public void error(String message, Throwable throwable) {
+        this.logger.error(message, throwable);
+    }
+
+    @Override
+    public void error(String message, Object... args) {
+        this.logger.error(message, args);
+    }
+
+    @Override
+    public void warn(String message) {
+        this.logger.warn(message);
+    }
+
+    @Override
+    public void warn(String message, Object... args) {
+        this.logger.warn(message, args);
+    }
+
+    @Override
+    public void info(String message) {
+        this.logger.info(message);
+    }
+
+    @Override
+    public void info(String message, Object... args) {
+        this.logger.info(message, args);
+    }
 }

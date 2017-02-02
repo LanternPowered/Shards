@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -31,23 +31,23 @@ import org.lanternpowered.shards.ComponentHolder;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public final class InjectContext {
+public final class ComponentInjectionContext {
 
-    private static final ThreadLocal<InjectContext> context = ThreadLocal.withInitial(InjectContext::new);
+    private static final ThreadLocal<ComponentInjectionContext> context = ThreadLocal.withInitial(ComponentInjectionContext::new);
 
     /**
-     * Gets the {@link InjectContext} for the current {@link Thread}.
+     * Gets the {@link ComponentInjectionContext} for the current {@link Thread}.
      *
      * @return The inject context
      */
-    public static InjectContext current() {
+    public static ComponentInjectionContext current() {
         return context.get();
     }
 
     private final Deque<AbstractComponentHolder> deque = new ArrayDeque<>();
 
     /**
-     * Joins the {@link InjectContext} with the specified
+     * Joins the {@link ComponentInjectionContext} with the specified
      * {@link ComponentHolder}.
      *
      * @param componentHolder The component holder
@@ -68,7 +68,7 @@ public final class InjectContext {
 
     /**
      * Gets the current {@link AbstractComponentHolder}
-     * in the {@link InjectContext}.
+     * in the {@link ComponentInjectionContext}.
      *
      * @return The current component holder
      */

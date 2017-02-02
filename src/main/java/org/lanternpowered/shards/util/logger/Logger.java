@@ -22,10 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+package org.lanternpowered.shards.util.logger;
 
-import org.lanternpowered.shards.component.AbstractComponent;
+public interface Logger {
 
-public class FooComponent extends AbstractComponent {
+    static Logger get(String name) {
+        return LoggerFactory.FACTORY.apply(name);
+    }
 
+    void error(String message);
+
+    void error(String message, Throwable throwable);
+
+    void error(String message, Object... args);
+
+    void warn(String message);
+
+    void warn(String message, Object... args);
+
+    void info(String message);
+
+    void info(String message, Object... args);
 }

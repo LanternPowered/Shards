@@ -24,14 +24,50 @@
  */
 package org.lanternpowered.shards.test;
 
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.junit.Test;
-import org.lanternpowered.shards.impl.ComponentType;
+import org.lanternpowered.shards.component.ComponentType;
+import org.lanternpowered.shards.component.processor.ComponentParameterProcessor;
+import org.lanternpowered.shards.component.processor.DependencyPostProcessor;
+import org.lanternpowered.shards.component.processor.DependencyTypeProcessor;
+import org.lanternpowered.shards.component.processor.HolderParameterProcessor;
+import org.lanternpowered.shards.component.processor.HolderPostProcessor;
+import org.lanternpowered.shards.component.processor.WarnComponentTypeProcessor;
+import org.lanternpowered.shards.inject.AbstractModule;
+import org.lanternpowered.shards.inject.DelegateBinder;
+import org.lanternpowered.shards.processor.Processor;
+import org.lanternpowered.shards.processor.ProcessorContext;
+import org.lanternpowered.shards.processor.ProcessorContextImpl;
+import org.lanternpowered.shards.processor.ProcessorException;
 import org.lanternpowered.shards.test.components.TestComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ComponentsTest {
 
     @Test
     public void test() {
-        ComponentType.get(TestComponent.class);
+        final List<Processor> processorList = new ArrayList<>();
+        processorList.add(new WarnComponentTypeProcessor());
+        processorList.add(new DependencyTypeProcessor());
+        processorList.add(new HolderParameterProcessor());
+        processorList.add(new ComponentParameterProcessor());
+        processorList.add(new HolderPostProcessor());
+        processorList.add(new DependencyPostProcessor());
+
+        final ProcessorContextImpl context = new ProcessorContextImpl(TypeToken.of(TestComponent.class));
+        Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                try {
+                    context.process(new DelegateBinder(binder()), processorList);
+                } catch (ProcessorException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

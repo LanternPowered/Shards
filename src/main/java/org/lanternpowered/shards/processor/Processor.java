@@ -22,25 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.impl;
+package org.lanternpowered.shards.processor;
 
-import java.lang.reflect.AnnotatedElement;
+public interface Processor {
 
-public final class ObjectMapping {
-
-    private final AnnotatedElement annotations;
-    private final Class<?> objectType;
-
-    public ObjectMapping(Class<?> objectType, AnnotatedElement annotations) {
-        this.annotations = annotations;
-        this.objectType = objectType;
-    }
-
-    public AnnotatedElement getAnnotations() {
-        return this.annotations;
-    }
-
-    public Class<?> getObjectType() {
-        return this.objectType;
-    }
 }

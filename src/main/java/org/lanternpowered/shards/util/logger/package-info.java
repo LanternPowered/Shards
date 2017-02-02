@@ -22,10 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test.components;
+@NonnullByDefault
+package org.lanternpowered.shards.util.logger;
 
-import org.lanternpowered.shards.component.AbstractComponent;
-
-public class FooComponent extends AbstractComponent {
-
-}
+import org.lanternpowered.shards.util.NonnullByDefault;

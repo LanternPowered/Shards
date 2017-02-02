@@ -22,5 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@org.lanternpowered.shards.util.NonnullByDefault
-package org.lanternpowered.shards.requirement;
+package org.lanternpowered.shards.processor;
+
+import com.google.common.reflect.TypeToken;
+import org.lanternpowered.shards.inject.Binder;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.AnnotatedType;
+
+@FunctionalInterface
+public interface ParameterProcessor extends Processor {
+
+    /**
+     * Processes a field or parameter with the specified {@code type}. Providing
+     * it's {@link AnnotatedElement} and a {@link Binder} to add your mappings.
+     * Returns whether there was a successful registration and should skip
+     * any following {@link ParameterProcessor}s.
+     *
+     * @param context The processor context
+     * @param type The type of the parameter
+     * @param annotations The annotations
+     * @param binder The binder
+     * @return Skip next processors
+     */
+    boolean process(ProcessorContext context, TypeToken<?> type, AnnotatedElement annotations, Binder binder) throws ProcessorException;
+}

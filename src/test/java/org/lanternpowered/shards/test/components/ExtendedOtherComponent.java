@@ -26,7 +26,7 @@ package org.lanternpowered.shards.test.components;
 
 import org.lanternpowered.shards.OnAttach;
 
-public class ExtendedOtherComponent extends OtherComponent {
+public class ExtendedOtherComponent extends OtherComponent implements IComponent {
 
     @OnAttach
     @Override
