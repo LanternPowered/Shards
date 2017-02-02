@@ -24,6 +24,9 @@
  */
 package org.lanternpowered.shards;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -75,9 +78,55 @@ import javax.annotation.Nullable;
 @FunctionalInterface
 public interface Opt<T> extends Supplier<T> {
 
-    @Override
+    /**
+     * Returns an empty {@link Opt} instance, no value is present.
+     *
+     * @return An empty {@link Opt}
+     */
+    static <T> Opt<T> empty() {
+        //noinspection unchecked
+        return OptImpl.EMPTY;
+    }
+
+    /**
+     * Returns an {@link Opt} with the specified non-null value.
+     *
+     * @param value The value
+     * @return An {@link Opt} with the value present
+     */
+    static <T> Opt<T> of(T value) {
+        requireNonNull(value);
+        return () -> value;
+    }
+
+    /**
+     * Returns an {@link Opt} with the specified value if non-null,
+     * otherwise no value is present.
+     *
+     * @param value The value
+     * @return An {@link Opt} with the value if present, otherwise {@link #empty()}
+     */
+    static <T> Opt<T> ofNullable(@Nullable T value) {
+        return value == null ? empty() : of(value);
+    }
+
     @Nullable
-    T get();
+    T getOrNull();
+
+    /**
+     * Gets the value if present, otherwise throws {@link NoSuchElementException}.
+     *
+     * @return The value
+     * @throws NoSuchElementException If there is no value present
+     */
+    @Override
+    default T get() throws NoSuchElementException {
+        final T value = getOrNull();
+        if (value == null) {
+            throw new NoSuchElementException("No value present");
+        }
+        return value;
+    }
 
     /**
      * Gets whether the returned value (through {@link #get()})
@@ -86,7 +135,7 @@ public interface Opt<T> extends Supplier<T> {
      * @return Is present
      */
     default boolean isPresent() {
-        return get() != null;
+        return getOrNull() != null;
     }
 
     /**
@@ -95,7 +144,7 @@ public interface Opt<T> extends Supplier<T> {
      * @return The optional
      */
     default Optional<T> asOptional() {
-        return Optional.ofNullable(get());
+        return Optional.ofNullable(getOrNull());
     }
 
     /**
@@ -105,7 +154,7 @@ public interface Opt<T> extends Supplier<T> {
      * @param consumer The consumer to execute
      */
     default void ifPresent(Consumer<? super T> consumer) {
-        final T value = get();
+        final T value = getOrNull();
         if (value != null) {
             consumer.accept(value);
         }
@@ -118,7 +167,7 @@ public interface Opt<T> extends Supplier<T> {
      * @return The value if present, otherwise the other value
      */
     default T orElse(T other) {
-        final T value = get();
+        final T value = getOrNull();
         return value != null ? value : other;
     }
 
@@ -130,12 +179,12 @@ public interface Opt<T> extends Supplier<T> {
      * @return The value if present, otherwise the result of the supplier
      */
     default T orElseGet(Supplier<? extends T> other) {
-        final T value = get();
+        final T value = getOrNull();
         return value != null ? value : other.get();
     }
 
     default <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        final T value = get();
+        final T value = getOrNull();
         if (value != null) {
             return value;
         } else {
