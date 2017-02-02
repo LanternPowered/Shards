@@ -41,6 +41,7 @@ import org.lanternpowered.shards.processor.Processor;
 import org.lanternpowered.shards.processor.ProcessorContext;
 import org.lanternpowered.shards.processor.ProcessorContextImpl;
 import org.lanternpowered.shards.processor.ProcessorException;
+import org.lanternpowered.shards.test.components.ExtendedTestComponent;
 import org.lanternpowered.shards.test.components.TestComponent;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class ComponentsTest {
         processorList.add(new HolderPostProcessor());
         processorList.add(new DependencyPostProcessor());
 
-        final ProcessorContextImpl context = new ProcessorContextImpl(TypeToken.of(TestComponent.class));
+        final ProcessorContextImpl context = new ProcessorContextImpl(TypeToken.of(ExtendedTestComponent.class));
         Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {

@@ -39,9 +39,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -92,14 +94,14 @@ public class ProcessorContextImpl implements ProcessorContext {
                 .filter(p -> p instanceof PostProcessor).map(p -> (PostProcessor) p).collect(Collectors.toList());
         final List<ParameterProcessor> parameterProcessors = processors.stream()
                 .filter(p -> p instanceof ParameterProcessor).map(p -> (ParameterProcessor) p).collect(Collectors.toList());
-        process(binder, this.target, typeProcessors, parameterProcessors);
+        process(binder, this.target, typeProcessors, parameterProcessors, new HashSet<>());
         for (PostProcessor postProcessor : postProcessors) {
             postProcessor.process(this, binder);
         }
     }
 
     private void process(Binder binder, TypeToken<?> typeToken, List<TypeProcessor> typeProcessors,
-            List<ParameterProcessor> parameterProcessors) throws ProcessorException {
+            List<ParameterProcessor> parameterProcessors, Set<Class<?>> processed) throws ProcessorException {
         final Class<?> type = typeToken.getRawType();
         for (TypeProcessor typeProcessor : typeProcessors) {
             typeProcessor.process(this, typeToken, binder);
@@ -134,6 +136,15 @@ public class ProcessorContextImpl implements ProcessorContext {
                     }
                 }
             }
+        }
+        for (Class<?> interf : type.getInterfaces()) {
+            if (processed.add(interf)) {
+                process(binder, TypeToken.of(interf), typeProcessors, parameterProcessors, processed);
+            }
+        }
+        final Class<?> superClass = type.getSuperclass();
+        if (superClass != null && superClass != Object.class) {
+            process(binder, TypeToken.of(superClass), typeProcessors, parameterProcessors, processed);
         }
     }
 }
