@@ -45,6 +45,12 @@ public abstract class AbstractComponent implements Component {
      */
     @Nullable ComponentHolder holder;
 
+    /**
+     * The current amount of dependencies
+     * depending on this component.
+     */
+    int dependencies = 0;
+
     @Override
     public final ComponentHolder getHolder() {
         synchronized (this.lock) {

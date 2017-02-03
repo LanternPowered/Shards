@@ -53,30 +53,6 @@ public interface ComponentHolder {
     boolean addComponent(Component component) throws IllegalArgumentException;
 
     /**
-     * Attempts to replace the {@link Component} attached to the given type. If there are multiple
-     * ones found, only the first possible one will be replaced. If there were none found, the
-     * {@link Component} will just be attached to this holder.
-     *
-     * @param type The component type to replace
-     * @param component The new component instance
-     * @return Whether the replacement was successful
-     * @throws IllegalArgumentException If the given component instance is already attached
-     */
-    <T extends Component, I extends T> boolean replaceComponent(Class<T> type, I component) throws IllegalArgumentException;
-
-    /**
-     * Attempts to replace the {@link Component} attached to the given type. If there are multiple
-     * ones found, only the first possible one will be replaced. If there were none found, the
-     * {@link Component} will just be attached to this holder.
-     *
-     * @param type The component type to replace
-     * @param component The new component type
-     * @return Whether the replacement was successful
-     * @throws IllegalArgumentException If the given component instance is already attached
-     */
-    <T extends Component, I extends T> boolean replaceComponent(Class<T> type, Class<I> component) throws IllegalArgumentException;
-
-    /**
      * Gets the {@link Component} of the given type if present, otherwise {@link Optional#empty()}.
      * <p>
      * Only the first {@link Component} will be returned if there

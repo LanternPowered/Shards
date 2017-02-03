@@ -29,7 +29,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.ComponentHolder;
-import org.lanternpowered.shards.Lock;
 import org.lanternpowered.shards.util.GuavaCollectors;
 
 import java.util.Collection;
@@ -63,38 +62,6 @@ public class AbstractComponentHolder implements ComponentHolder {
             attachComponentData(component1);
             return true;
         }
-    }
-
-    @Override
-    public <T extends Component, I extends T> boolean replaceComponent(Class<T> type, I component) throws IllegalArgumentException {
-        checkNotNull(type, "type");
-        checkNotNull(component, "component");
-        final AbstractComponent component1 = (AbstractComponent) component;
-        synchronized (component1.lock) {
-            checkArgument(component1.holder == null,
-                    "The Component %s is already attached to a different ComponentHolder.", component);
-            for (Map.Entry<Class<?>, Component> entry : this.components.entrySet()) {
-                if (type.isInstance(entry.getValue())) {
-                    final AbstractComponent component2 = (AbstractComponent) entry.getValue();
-                    synchronized (component2.lock) {
-                        if (component2.componentType.getLockType() != Lock.Type.FULL) {
-                            if (!attachComponentData(component1)) {
-                                return false;
-                            }
-                            detachComponentData(component2);
-                            entry.setValue(component1);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public <T extends Component, I extends T> boolean replaceComponent(Class<T> type, Class<I> component) throws IllegalArgumentException {
-        return false;
     }
 
     private void detachComponentData(AbstractComponent component) {

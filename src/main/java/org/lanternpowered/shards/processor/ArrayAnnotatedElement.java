@@ -32,7 +32,7 @@ final class ArrayAnnotatedElement implements AnnotatedElement {
 
     private final Annotation[] annotations;
 
-    public ArrayAnnotatedElement(Annotation[] annotations) {
+    ArrayAnnotatedElement(Annotation[] annotations) {
         this.annotations = annotations;
     }
 

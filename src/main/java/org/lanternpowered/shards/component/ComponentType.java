@@ -31,10 +31,8 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import org.lanternpowered.shards.Component;
-import org.lanternpowered.shards.Lock;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -152,7 +150,7 @@ public final class ComponentType<T extends Component> {
         }
         //noinspection unchecked
         return new ComponentType(type, ImmutableMap.copyOf(mergedWrappers), null);*/
-        return new ComponentType(type, ImmutableMap.of(), null);
+        return new ComponentType(type, ImmutableMap.of());
     }
 
     /*
@@ -183,12 +181,10 @@ public final class ComponentType<T extends Component> {
 
     private final Class<T> componentType;
     private final Map<Class<? extends Component>, DependencySpec> requirements;
-    @Nullable private final Lock.Type lockType;
 
-    private ComponentType(Class<T> componentType, Map<Class<? extends Component>, DependencySpec> requirements, @Nullable Lock.Type lockType) {
+    private ComponentType(Class<T> componentType, Map<Class<? extends Component>, DependencySpec> requirements) {
         this.componentType = componentType;
         this.requirements = requirements;
-        this.lockType = lockType;
     }
 
     /**
@@ -208,16 +204,6 @@ public final class ComponentType<T extends Component> {
      */
     public Class<T> getComponentType() {
         return this.componentType;
-    }
-
-    /**
-     * Gets the {@link Lock.Type} of this {@link ComponentType}.
-     *
-     * @return The lock type
-     */
-    @Nullable
-    public Lock.Type getLockType() {
-        return this.lockType;
     }
 
     @Override

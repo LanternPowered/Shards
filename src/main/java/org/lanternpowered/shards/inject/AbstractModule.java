@@ -31,6 +31,9 @@ import com.google.inject.MembersInjector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 
+/**
+ * @see com.google.inject.AbstractModule
+ */
 public abstract class AbstractModule extends com.google.inject.AbstractModule {
 
     /**
