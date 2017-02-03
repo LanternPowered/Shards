@@ -26,6 +26,10 @@ package org.lanternpowered.shards.test.components;
 
 import org.lanternpowered.shards.component.AbstractComponent;
 
-public class AnotherTestComponent extends AbstractComponent implements IComponent {
+public class AnotherTestComponent extends AbstractComponent implements IComponent<Integer> {
 
+    @Override
+    public Integer getValue() {
+        return 5;
+    }
 }

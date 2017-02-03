@@ -26,6 +26,7 @@ package org.lanternpowered.shards.test.components;
 
 import org.lanternpowered.shards.Component;
 
-public interface IComponent extends Component {
+public interface IComponent<R> extends Component {
 
+    R getValue();
 }

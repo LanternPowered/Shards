@@ -26,12 +26,17 @@ package org.lanternpowered.shards.test.components;
 
 import org.lanternpowered.shards.OnAttach;
 
-public class ExtendedOtherComponent extends OtherComponent implements IComponent {
+public class ExtendedOtherComponent extends OtherComponent implements IComponent<Float> {
 
     @OnAttach
     @Override
     public void onAttach() {
         System.out.println("ExtendedOtherComponent: onAttach");
         super.onAttach();
+    }
+
+    @Override
+    public Float getValue() {
+        return 0.1f;
     }
 }

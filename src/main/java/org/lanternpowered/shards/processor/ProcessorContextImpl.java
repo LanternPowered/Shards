@@ -102,7 +102,7 @@ final class ProcessorContextImpl implements ProcessorContext {
     }
 
     private void process(Binder binder, TypeToken<?> typeToken, List<TypeProcessor> typeProcessors,
-            List<ParameterProcessor> parameterProcessors, Set<Class<?>> processed) throws ProcessorException {
+            List<ParameterProcessor> parameterProcessors, Set<Type> processed) throws ProcessorException {
         final Class<?> type = typeToken.getRawType();
         for (TypeProcessor typeProcessor : typeProcessors) {
             typeProcessor.process(this, typeToken, binder);
@@ -149,14 +149,14 @@ final class ProcessorContextImpl implements ProcessorContext {
                 }
             }
         }
-        for (Class<?> interf : type.getInterfaces()) {
+        for (Type interf : type.getGenericInterfaces()) {
             if (processed.add(interf)) {
                 process(binder, TypeToken.of(interf), typeProcessors, parameterProcessors, processed);
             }
         }
         final Class<?> superClass = type.getSuperclass();
         if (superClass != null && superClass != Object.class) {
-            process(binder, TypeToken.of(superClass), typeProcessors, parameterProcessors, processed);
+            process(binder, TypeToken.of(type.getGenericSuperclass()), typeProcessors, parameterProcessors, processed);
         }
     }
 }

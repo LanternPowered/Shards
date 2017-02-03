@@ -26,22 +26,32 @@ package org.lanternpowered.shards.test;
 
 import com.google.inject.name.Names;
 import org.junit.Test;
+import org.lanternpowered.shards.ComponentRegistry;
 import org.lanternpowered.shards.component.AbstractComponentHolder;
 import org.lanternpowered.shards.component.ComponentRegistryImpl;
 import org.lanternpowered.shards.inject.AbstractModule;
+import org.lanternpowered.shards.processor.TypeProcessor;
 import org.lanternpowered.shards.test.components.ExtendedTestComponent;
+import org.lanternpowered.shards.test.components.IComponent;
 import org.lanternpowered.shards.test.components.TestComponent;
 
 public class ComponentsTest {
 
     @Test
     public void test() {
-        ComponentRegistryImpl.get().registerModule(new AbstractModule() {
+        final ComponentRegistry registry = ComponentRegistryImpl.get();
+        registry.registerModule(new AbstractModule() {
             @Override
             protected void configure() {
                 bindConstant().annotatedWith(Names.named("AgentNumber")).to("007");
             }
         }).to(TestComponent.class);
+        final TypeProcessor typeProcessor = (context, type, binder) -> {
+            if (IComponent.class.isAssignableFrom(type.getRawType())) {
+                System.out.println(context.getTarget() + " -> " + type.resolveType(IComponent.class.getTypeParameters()[0]));
+            }
+        };
+        registry.registerProcessor(typeProcessor);
 
         final AbstractComponentHolder componentHolder = new FooComponentHolder();
         final ExtendedTestComponent component = componentHolder.addComponent(ExtendedTestComponent.class).get();
