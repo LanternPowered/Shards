@@ -41,6 +41,7 @@ public class OptComponentProvider<T extends Component> implements Provider<Opt<T
     @Override
     public Opt<T> get() {
         final AbstractComponentHolder holder = ComponentInjectionContext.current().get();
+        // TODO: Cache the component?
         return () -> holder.getComponent(this.componentType).orElse(null);
     }
 }

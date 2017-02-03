@@ -54,7 +54,8 @@ public class DependencyTypeProcessor implements TypeProcessor {
         if (dependencies1 != null) {
             final Dependency[] dependenciesArray = dependencies1.value();
             for (Dependency dependency : dependenciesArray) {
-                dependencies.add(new DependencySpec(dependency.value(), !dependency.optional(), dependency.autoAttach()));
+                dependencies.add(new DependencySpec(dependency.value(),
+                        dependency.optional() ? DependencySpec.Type.OPTIONAL : DependencySpec.Type.DYNAMIC_REQUIRED, dependency.autoAttach()));
             }
         }
     }

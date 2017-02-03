@@ -25,6 +25,7 @@
 package org.lanternpowered.shards.component.processor;
 
 import com.google.common.reflect.TypeToken;
+import org.lanternpowered.shards.Dyn;
 import org.lanternpowered.shards.Holder;
 import org.lanternpowered.shards.Opt;
 import org.lanternpowered.shards.component.HolderSpec;
@@ -32,15 +33,19 @@ import org.lanternpowered.shards.inject.Binder;
 import org.lanternpowered.shards.component.Params;
 import org.lanternpowered.shards.processor.ParameterProcessor;
 import org.lanternpowered.shards.processor.ProcessorContext;
+import org.lanternpowered.shards.processor.ProcessorException;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HolderParameterProcessor implements ParameterProcessor {
 
+    private final static TypeVariable<Class<Opt>> OPT_PARAM = Opt.class.getTypeParameters()[0];
+
     @Override
-    public boolean process(ProcessorContext context, TypeToken<?> type, AnnotatedElement annotations, Binder binder) {
+    public boolean process(ProcessorContext context, TypeToken<?> type, AnnotatedElement annotations, Binder binder) throws ProcessorException {
         // Only run this processor for holders
         if (!annotations.isAnnotationPresent(Holder.class)) {
             return false;
@@ -49,8 +54,10 @@ public class HolderParameterProcessor implements ParameterProcessor {
         boolean required = true;
         // The owner can also be wrapped in a Opt object
         if (Opt.class.isAssignableFrom(raw)) {
-            raw = type.resolveType(Opt.class.getTypeParameters()[0]).getRawType();
+            raw = type.resolveType(OPT_PARAM).getRawType();
             required = false;
+        } else if (Dyn.class.isAssignableFrom(raw)) {
+            throw new ProcessorException("Dynamic @Holder's are not supported.");
         }
         final List<HolderSpec> holderTypes = context.computeIfAbsent(Params.HOLDER_TYPES, ArrayList::new);
         holderTypes.add(new HolderSpec(raw, required));

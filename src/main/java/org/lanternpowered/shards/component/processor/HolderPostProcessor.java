@@ -28,6 +28,7 @@ import static java.lang.String.format;
 
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
+import org.lanternpowered.shards.Dyn;
 import org.lanternpowered.shards.Opt;
 import org.lanternpowered.shards.component.provider.HolderProvider;
 import org.lanternpowered.shards.component.HolderSpec;
@@ -101,6 +102,11 @@ public class HolderPostProcessor implements PostProcessor {
 
     static <T> TypeToken<Opt<T>> createOptType(Class<T> type) {
         return new TypeToken<Opt<T>>() {}
+                .where(new TypeParameter<T>() {}, type);
+    }
+
+    static <T> TypeToken<Dyn<T>> createDynType(Class<T> type) {
+        return new TypeToken<Dyn<T>>() {}
                 .where(new TypeParameter<T>() {}, type);
     }
 }

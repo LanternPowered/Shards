@@ -31,14 +31,24 @@ import java.util.Objects;
 
 public final class DependencySpec {
 
+    public enum Type {
+        REQUIRED,
+        DYNAMIC_REQUIRED,
+        OPTIONAL,
+    }
+
     private final Class<? extends Component> type;
     private final boolean autoAttach;
-    private final boolean required;
+    private final Type dependencyType;
 
-    public DependencySpec(Class<? extends Component> type, boolean required, boolean autoAttach) {
+    public DependencySpec(Class<? extends Component> type, Type requiredType, boolean autoAttach) {
+        this.dependencyType = requiredType;
         this.autoAttach = autoAttach;
-        this.required = required;
         this.type = type;
+    }
+
+    public Type getDependencyType() {
+        return this.dependencyType;
     }
 
     public Class<? extends Component> getType() {
@@ -49,15 +59,11 @@ public final class DependencySpec {
         return this.autoAttach;
     }
 
-    public boolean isRequired() {
-        return this.required;
-    }
-
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("type", this.type.getName())
-                .add("required", this.required)
+                .add("dependencyType", this.dependencyType)
                 .add("autoAttach", this.autoAttach)
                 .toString();
     }
@@ -70,11 +76,11 @@ public final class DependencySpec {
         final DependencySpec other = (DependencySpec) o;
         return this.type == other.type &&
                 this.autoAttach == other.autoAttach &&
-                this.required == other.required;
+                this.dependencyType == other.dependencyType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.type, this.autoAttach, this.required);
+        return Objects.hash(this.type, this.autoAttach, this.dependencyType);
     }
 }

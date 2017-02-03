@@ -22,31 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.inject;
+package org.lanternpowered.shards.component.provider;
 
-import static org.lanternpowered.shards.util.TypeTokenHelper.toTypeLiteral;
+import com.google.inject.Provider;
+import org.lanternpowered.shards.Component;
+import org.lanternpowered.shards.Dyn;
+import org.lanternpowered.shards.Opt;
+import org.lanternpowered.shards.component.AbstractComponentHolder;
+import org.lanternpowered.shards.component.ComponentInjectionContext;
 
-import com.google.common.reflect.TypeToken;
-import com.google.inject.MembersInjector;
-import com.google.inject.TypeLiteral;
-import com.google.inject.binder.AnnotatedBindingBuilder;
+public class DynComponentProvider<T extends Component> implements Provider<Dyn<T>> {
 
-/**
- * @see com.google.inject.Binder
- */
-public interface Binder extends com.google.inject.Binder {
+    private final Class<T> componentType;
 
-    /**
-     * @see #bind(TypeLiteral)
-     */
-    default <T> AnnotatedBindingBuilder<T> bind(TypeToken<T> typeToken) {
-        return bind(toTypeLiteral(typeToken));
+    public DynComponentProvider(Class<T> componentType) {
+        this.componentType = componentType;
     }
 
-    /**
-     * @see #getMembersInjector(TypeLiteral)
-     */
-    default <T> MembersInjector<T> getMembersInjector(TypeToken<T> type) {
-        return getMembersInjector(toTypeLiteral(type));
+    @Override
+    public Dyn<T> get() {
+        final AbstractComponentHolder holder = ComponentInjectionContext.current().get();
+        // TODO: Cache the component?
+        return () -> holder.getComponent(this.componentType).get();
     }
 }

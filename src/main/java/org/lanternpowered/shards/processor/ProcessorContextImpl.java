@@ -24,6 +24,7 @@
  */
 package org.lanternpowered.shards.processor;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Iterables;
@@ -33,7 +34,6 @@ import org.lanternpowered.shards.inject.Binder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -114,8 +114,13 @@ public class ProcessorContextImpl implements ProcessorContext {
             }
             final TypeToken<?> fieldType = TypeToken.of(field.getGenericType());
             for (ParameterProcessor parameterProcessor : parameterProcessors) {
-                if (parameterProcessor.process(this, fieldType, field, binder)) {
-                    break;
+                try {
+                    if (parameterProcessor.process(this, fieldType, field, binder)) {
+                        break;
+                    }
+                } catch (ProcessorException e) {
+                    throw new ProcessorException(format("An error occurred while processing a field: [%s#%s] of type [%s]",
+                            type.getName(), field.getName(), fieldType.toString()), e);
                 }
             }
         }
@@ -131,8 +136,14 @@ public class ProcessorContextImpl implements ProcessorContext {
                 final AnnotatedElement annotatedElement = new ArrayAnnotatedElement(annotations[i]);
                 final TypeToken<?> parameterType = TypeToken.of(genericParameterTypes[i]);
                 for (ParameterProcessor parameterProcessor : parameterProcessors) {
-                    if (parameterProcessor.process(this, parameterType, annotatedElement, binder)) {
-                        break;
+                    try {
+                        if (parameterProcessor.process(this, parameterType, annotatedElement, binder)) {
+                            break;
+                        }
+                    } catch (ProcessorException e) {
+                        throw new ProcessorException(format("An error occurred while processing a method/constructor parameter: "
+                                        + "[%s#%s] at the parameter %s of type [%s]",
+                                type.getName(), executable.getName(), i, parameterType.toString()), e);
                     }
                 }
             }

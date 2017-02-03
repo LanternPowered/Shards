@@ -24,14 +24,19 @@
  */
 package org.lanternpowered.shards.component.processor;
 
+import static org.lanternpowered.shards.component.processor.HolderPostProcessor.createDynType;
 import static org.lanternpowered.shards.component.processor.HolderPostProcessor.createOptType;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
+import org.lanternpowered.shards.Dyn;
 import org.lanternpowered.shards.Opt;
 import org.lanternpowered.shards.component.DependencySpec;
 import org.lanternpowered.shards.component.provider.ComponentProvider;
+import org.lanternpowered.shards.component.provider.ConstantDynComponentProvider;
+import org.lanternpowered.shards.component.provider.ConstantOptComponentProvider;
+import org.lanternpowered.shards.component.provider.DynComponentProvider;
 import org.lanternpowered.shards.component.provider.OptComponentProvider;
 import org.lanternpowered.shards.inject.Binder;
 import org.lanternpowered.shards.component.Params;
@@ -61,8 +66,11 @@ public class DependencyPostProcessor implements PostProcessor {
         final Map<Class<?>, TempDependency> tempDependencies = new HashMap<>();
         for (DependencySpec spec : dependencies) {
             final TempDependency temp = tempDependencies.computeIfAbsent(spec.getType(), type -> new TempDependency());
-            if (spec.isRequired()) {
+            final DependencySpec.Type type = spec.getDependencyType();
+            if (type == DependencySpec.Type.REQUIRED) {
                 temp.required = true;
+            } else if (type == DependencySpec.Type.DYNAMIC_REQUIRED) {
+                temp.dynamicRequired = true;
             } else {
                 temp.optional = true;
             }
@@ -119,14 +127,24 @@ public class DependencyPostProcessor implements PostProcessor {
                     // Register the provider
                     binder.bind((Class) entry.getKey()).toProvider(temp.provider);
                 }
+                if (temp.dynamicRequired) {
+                    if (temp.dynProvider == null) {
+                        temp.dynProvider = temp.required ? new ConstantDynComponentProvider(entry.getKey()) :
+                                new DynComponentProvider(entry.getKey());
+                    }
+                    // Register the provider
+                    binder.bind(createDynType((Class) entry.getKey())).toProvider(temp.dynProvider);
+                }
                 if (temp.optional) {
                     if (temp.optProvider == null) {
-                        temp.optProvider = new OptComponentProvider(entry.getKey());
+                        temp.optProvider = temp.required ? new ConstantOptComponentProvider(entry.getKey()) :
+                                new OptComponentProvider(entry.getKey());
                     }
                     // Register the provider
                     binder.bind(createOptType((Class) entry.getKey())).toProvider(temp.optProvider);
                 }
-                registerDependencies.add(new DependencySpec((Class) entry.getKey(), temp.required, temp.autoAttach));
+                registerDependencies.add(new DependencySpec((Class) entry.getKey(), temp.required ? DependencySpec.Type.REQUIRED :
+                        temp.dynamicRequired ? DependencySpec.Type.DYNAMIC_REQUIRED : DependencySpec.Type.OPTIONAL, temp.autoAttach));
             } else {
                 Class<?> exactType = null;
                 if (!entry.getValue().exactTypes.isEmpty()) {
@@ -134,17 +152,31 @@ public class DependencyPostProcessor implements PostProcessor {
                 } else if (!entry.getValue().optionalExactTypes.isEmpty()) {
                     exactType = entry.getValue().optionalExactTypes.iterator().next();
                 } else {
-                    registerDependencies.add(new DependencySpec((Class) entry.getKey(), temp.required, temp.autoAttach));
+                    registerDependencies.add(new DependencySpec((Class) entry.getKey(), temp.required ? DependencySpec.Type.REQUIRED :
+                            temp.dynamicRequired ? DependencySpec.Type.DYNAMIC_REQUIRED : DependencySpec.Type.OPTIONAL, temp.autoAttach));
                 }
                 if (exactType != null) {
                     final TempDependency temp1 = exactDependencies.get(exactType);
-                    if (temp.required && temp1.provider == null) {
-                        temp1.provider = new ComponentProvider(entry.getKey());
+                    if (temp.required) {
+                        if (temp1.provider == null) {
+                            temp1.provider = new ComponentProvider(exactType);
+                        }
                         // Register the provider
                         binder.bind((Class) entry.getKey()).toProvider(temp1.provider);
                     }
-                    if (temp.optional && temp1.optProvider == null) {
-                        temp1.optProvider = new OptComponentProvider(entry.getKey());
+                    if (temp.dynamicRequired) {
+                        if (temp1.dynProvider == null) {
+                            temp1.dynProvider = temp1.required ? new ConstantDynComponentProvider(exactType) :
+                                    new DynComponentProvider(exactType);
+                        }
+                        // Register the provider
+                        binder.bind(createDynType((Class) entry.getKey())).toProvider(temp1.dynProvider);
+                    }
+                    if (temp.optional) {
+                        if (temp1.optProvider == null) {
+                            temp1.optProvider = temp1.required ? new ConstantOptComponentProvider(exactType) :
+                                    new OptComponentProvider(exactType);
+                        }
                         // Register the provider
                         binder.bind(createOptType((Class) entry.getKey())).toProvider(temp1.optProvider);
                     }
@@ -172,6 +204,11 @@ public class DependencyPostProcessor implements PostProcessor {
         private boolean optional;
 
         /**
+         * The flag to define if the dynamicRequired type provider should be injected.
+         */
+        private boolean dynamicRequired;
+
+        /**
          * The flag to define whether the component should be attached automatically.
          */
         private boolean autoAttach;
@@ -186,6 +223,11 @@ public class DependencyPostProcessor implements PostProcessor {
          */
         @Nullable private Provider<Opt> optProvider;
 
+        /**
+         * The provider that should be used for the dynamic dependency.
+         */
+        @Nullable private Provider<Dyn> dynProvider;
+
         private Set<Class<?>> exactTypes = new HashSet<>();
         private Set<Class<?>> optionalExactTypes = new HashSet<>();
 
@@ -193,6 +235,7 @@ public class DependencyPostProcessor implements PostProcessor {
         public String toString() {
             return MoreObjects.toStringHelper(this)
                     .add("required", this.required)
+                    .add("dynamicRequired", this.dynamicRequired)
                     .add("optional", this.optional)
                     .add("autoAttach", this.autoAttach)
                     .add("exactTypes", Arrays.toString(this.exactTypes.stream().map(Class::getName).toArray()))

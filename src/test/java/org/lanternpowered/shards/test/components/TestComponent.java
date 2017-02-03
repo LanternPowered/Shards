@@ -26,6 +26,7 @@ package org.lanternpowered.shards.test.components;
 
 import com.google.inject.Inject;
 import org.lanternpowered.shards.Component;
+import org.lanternpowered.shards.Dyn;
 import org.lanternpowered.shards.Holder;
 import org.lanternpowered.shards.OnAttach;
 import org.lanternpowered.shards.OnDetach;
@@ -44,8 +45,8 @@ public class TestComponent extends AbstractComponent {
     @Inject @Holder public FooComponentHolder holder;
 
     // All the default inject components are required
-    @Inject @AutoAttach public ExtendedOtherComponent other;
-    @Inject public OtherComponent otherI;
+    @Inject @AutoAttach public Dyn<ExtendedOtherComponent> other;
+    //@Inject public OtherComponent otherI;
 
     @Inject public IComponent otherJ;
 
