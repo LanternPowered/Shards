@@ -27,6 +27,7 @@ package org.lanternpowered.shards.component;
 import org.lanternpowered.shards.processor.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public final class Params {
 
@@ -43,6 +44,8 @@ public final class Params {
      * All the holder types will be merged in a post processor.
      */
     public static final Param<List<HolderSpec>> HOLDER_TYPES = Param.of();
+
+    public static final Param<Set<Class<?>>> HOLDER_CHECKS = Param.of();
 
     private Params() {
     }

@@ -117,7 +117,7 @@ public class DependencyPostProcessor implements PostProcessor {
                         entry.getKey().getName(), Arrays.toString(entry.getValue().optionalExactTypes.stream().map(Class::getName).toArray()));
             }
             final TempDependency temp = entry.getValue();
-            System.out.println("Process: " + entry.getKey().getName() + " -> " + temp);
+            // System.out.println("Process: " + entry.getKey().getName() + " -> " + temp);
             // Exact type
             if (exactDependencies.containsKey(entry.getKey())) {
                 if (temp.required) {
@@ -184,11 +184,13 @@ public class DependencyPostProcessor implements PostProcessor {
             }
         }
 
+        /*
         registerDependencies.forEach(spec -> {
             System.out.printf("Dependency -> %s\n", spec);
         });
+        */
 
-        // TODO: Store the dependencies in the component type
+        context.put(Params.DEPENDENCIES, new ArrayList<>(registerDependencies));
     }
 
     private static final class TempDependency {

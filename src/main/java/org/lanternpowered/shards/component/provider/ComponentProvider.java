@@ -38,6 +38,7 @@ public class ComponentProvider<T extends Component> implements Provider<T> {
 
     @Override
     public T get() {
-        return ComponentInjectionContext.current().get().getComponent(this.componentType).get();
+        return ComponentInjectionContext.current().get().getComponent(this.componentType).orElseThrow(
+                () -> new IllegalStateException("Unable to retrieve the Component instance for " + this.componentType.getName()));
     }
 }

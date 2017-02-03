@@ -39,7 +39,7 @@ public interface ComponentHolder {
      * @param type The component type to attach
      * @return The component instance
      */
-    <T extends Component> T addComponent(Class<T> type);
+    <T extends Component> Optional<T> addComponent(Class<T> type);
 
     /**
      * Attempts to attach the given {@link Component} to this {@link ComponentHolder}. The method

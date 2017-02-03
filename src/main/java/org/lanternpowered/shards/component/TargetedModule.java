@@ -22,29 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test;
+package org.lanternpowered.shards.component;
 
-import com.google.inject.name.Names;
-import org.junit.Test;
-import org.lanternpowered.shards.component.AbstractComponentHolder;
-import org.lanternpowered.shards.component.ComponentRegistryImpl;
-import org.lanternpowered.shards.inject.AbstractModule;
-import org.lanternpowered.shards.test.components.ExtendedTestComponent;
-import org.lanternpowered.shards.test.components.TestComponent;
+import com.google.inject.Module;
 
-public class ComponentsTest {
+import java.util.function.Predicate;
 
-    @Test
-    public void test() {
-        ComponentRegistryImpl.get().registerModule(new AbstractModule() {
-            @Override
-            protected void configure() {
-                bindConstant().annotatedWith(Names.named("AgentNumber")).to("007");
-            }
-        }).to(TestComponent.class);
+public final class TargetedModule {
 
-        final AbstractComponentHolder componentHolder = new FooComponentHolder();
-        final ExtendedTestComponent component = componentHolder.addComponent(ExtendedTestComponent.class).get();
-        System.out.println("Agent -> " + component.agentNumber);
+    private final Module module;
+    private final Predicate<Class<?>> matcher;
+
+    public TargetedModule(Module module, Predicate<Class<?>> matcher) {
+        this.module = module;
+        this.matcher = matcher;
+    }
+
+    public Module getModule() {
+        return this.module;
+    }
+
+    public boolean isApplicable(Class<?> componentType) {
+        return this.matcher.test(componentType);
     }
 }

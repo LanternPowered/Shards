@@ -25,6 +25,7 @@
 package org.lanternpowered.shards.test.components;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.Dyn;
 import org.lanternpowered.shards.Holder;
@@ -48,7 +49,7 @@ public class TestComponent extends AbstractComponent {
     @Inject @AutoAttach public Dyn<ExtendedOtherComponent> other;
     //@Inject public OtherComponent otherI;
 
-    @Inject public IComponent otherJ;
+    // @Inject public IComponent otherJ;
 
     // The foo component is optional, the status of this
     // is dynamically updated.
@@ -56,6 +57,8 @@ public class TestComponent extends AbstractComponent {
 
     //@Inject public AnotherTestComponent another;
     public Opt<AnotherTestComponent> another;
+
+    @Inject @Named("AgentNumber") public String agentNumber;
 
     @OnAttach
     public void onAttach() {

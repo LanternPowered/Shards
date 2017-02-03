@@ -25,11 +25,21 @@
 package org.lanternpowered.shards.processor;
 
 import com.google.common.reflect.TypeToken;
+import org.lanternpowered.shards.inject.Binder;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 public interface ProcessorContext {
+
+    static ProcessorContext of(Class<?> target) {
+        return of(TypeToken.of(target));
+    }
+
+    static ProcessorContext of(TypeToken<?> target) {
+        return new ProcessorContextImpl(target);
+    }
 
     /**
      * Gets the {@link TypeToken} of the target class
@@ -70,4 +80,13 @@ public interface ProcessorContext {
      * @return The value if present
      */
     <T> Optional<T> get(Param<T> param);
+
+    /**
+     * Processes this context for the specified {@link Binder} and {@link Processor}s.
+     *
+     * @param binder The binder
+     * @param processors The processors
+     * @throws ProcessorException If something went wrong while processing the context
+     */
+    void process(Binder binder, List<Processor> processors) throws ProcessorException;
 }

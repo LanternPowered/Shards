@@ -31,22 +31,69 @@ import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.ComponentHolder;
 import org.lanternpowered.shards.util.GuavaCollectors;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nullable;
+
 public class AbstractComponentHolder implements ComponentHolder {
 
-    private final Map<Class<?>, Component> components = new ConcurrentHashMap<>();
+    private final Map<Class<?>, AbstractComponent> components = new ConcurrentHashMap<>();
 
     @Override
-    public <T extends Component> T addComponent(Class<T> type) {
+    public <T extends Component> Optional<T> addComponent(Class<T> type) {
         return addComponent(ComponentType.get(type));
     }
 
-    public <T extends Component> T addComponent(ComponentType<T> component) {
-        return null;
+    public <T extends Component> Optional<T> addComponent(ComponentType<T> component) {
+        AbstractComponent component1 = this.components.get(component.getComponentType());
+        if (component1 != null) {
+            //noinspection unchecked
+            return Optional.of((T) component1);
+        }
+        final List<Class<? extends Component>> attach = new ArrayList<>();
+        if (!canAddComponent(component, attach)) {
+            return Optional.empty();
+        }
+        attach.forEach(this::addComponent);
+        final ComponentInjectionContext context = ComponentInjectionContext.current();
+        context.join(this);
+        final T instance;
+        try {
+            instance = component.getInjector().getInstance(component.getComponentType());
+        } finally {
+            context.exit();
+        }
+        component1 = (AbstractComponent) instance;
+        synchronized (component1.lock) {
+            component1.holder = this;
+        }
+        this.components.put(component.getComponentType(), component1);
+        return Optional.of(instance);
+    }
+
+    private boolean canAddComponent(ComponentType<?> component, @Nullable List<Class<? extends Component>> attach) {
+        final Collection<DependencySpec> dependencySpecs = component.getDependencies();
+        for (DependencySpec spec : dependencySpecs) {
+            if (!this.components.containsKey(spec.getType()) && spec.getDependencyType() != DependencySpec.Type.OPTIONAL) {
+                if (spec.getAutoAttach()) {
+                    if (canAddComponent(ComponentType.get(spec.getType()), null)) {
+                        if (attach != null) {
+                            attach.add(spec.getType());
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -56,10 +103,17 @@ public class AbstractComponentHolder implements ComponentHolder {
         synchronized (component1.lock) {
             checkArgument(component1.holder == null,
                     "The Component %s is already attached to a different ComponentHolder.", component);
-            if (this.components.putIfAbsent(component.getClass(), component) != null) {
+            if (this.components.putIfAbsent(component.getClass(), component1) != null) {
                 return false;
             }
-            attachComponentData(component1);
+            component1.holder = this;
+            final ComponentInjectionContext context = ComponentInjectionContext.current();
+            context.join(this);
+            try {
+                component1.componentType.getInjector().injectMembers(component1);
+            } finally {
+                context.exit();
+            }
             return true;
         }
     }
@@ -68,18 +122,26 @@ public class AbstractComponentHolder implements ComponentHolder {
         checkNotNull(type, "type");
         checkNotNull(component, "component");
         final AbstractComponent component1 = (AbstractComponent) component;
+        final List<Class<? extends Component>> attach = new ArrayList<>();
+        if (!canAddComponent(component1.componentType, attach)) {
+            return false;
+        }
         synchronized (component1.lock) {
             checkArgument(component1.holder == null,
                     "The Component %s is already attached to a different ComponentHolder.", component);
-            for (Map.Entry<Class<?>, Component> entry : this.components.entrySet()) {
+            for (Map.Entry<Class<?>, AbstractComponent> entry : this.components.entrySet()) {
                 if (type.isInstance(entry.getValue())) {
-                    final AbstractComponent component2 = (AbstractComponent) entry.getValue();
+                    final AbstractComponent component2 = entry.getValue();
                     synchronized (component2.lock) {
-                        // TODO: Check lock
-                        if (!attachComponentData(component1)) {
-                            return false;
+                        attach.forEach(this::addComponent);
+                        final ComponentInjectionContext context = ComponentInjectionContext.current();
+                        context.join(this);
+                        try {
+                            component1.componentType.getInjector().injectMembers(component1);
+                        } finally {
+                            context.exit();
                         }
-                        detachComponentData(component2);
+                        component1.holder = this;
                         entry.setValue(component1);
                         return true;
                     }
@@ -91,6 +153,35 @@ public class AbstractComponentHolder implements ComponentHolder {
 
     @Override
     public <T extends Component, I extends T> boolean replaceComponent(Class<T> type, Class<I> component) throws IllegalArgumentException {
+        checkNotNull(type, "type");
+        checkNotNull(component, "component");
+        final ComponentType<I> componentType = ComponentType.get(component);
+        final List<Class<? extends Component>> attach = new ArrayList<>();
+        if (!canAddComponent(componentType, attach)) {
+            return false;
+        }
+        for (Map.Entry<Class<?>, AbstractComponent> entry : this.components.entrySet()) {
+            if (type.isInstance(entry.getValue())) {
+                final AbstractComponent component2 = entry.getValue();
+                synchronized (component2.lock) {
+                    attach.forEach(this::addComponent);
+                    final ComponentInjectionContext context = ComponentInjectionContext.current();
+                    context.join(this);
+                    final T instance;
+                    try {
+                        instance = componentType.getInjector().getInstance(component);
+                    } finally {
+                        context.exit();
+                    }
+                    final AbstractComponent component1 = (AbstractComponent) instance;
+                    component1.holder = this;
+                    synchronized (component1.lock) {
+                        entry.setValue(component1);
+                    }
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -101,7 +192,7 @@ public class AbstractComponentHolder implements ComponentHolder {
     private boolean attachComponentData(AbstractComponent component) {
         // First, prepare the dependencies of this component holder
         // for the target component
-        if (!attachRequirements(component.componentType.getRequirements())) {
+        if (!attachRequirements(component.componentType.getDependencies())) {
             return false;
         }
         // Now, inject the component data into the component instance

@@ -30,6 +30,8 @@ import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import org.lanternpowered.shards.Dyn;
 import org.lanternpowered.shards.Opt;
+import org.lanternpowered.shards.component.ComponentType;
+import org.lanternpowered.shards.component.DependencySpec;
 import org.lanternpowered.shards.component.provider.HolderProvider;
 import org.lanternpowered.shards.component.HolderSpec;
 import org.lanternpowered.shards.component.provider.OptHolderProvider;
@@ -52,8 +54,8 @@ public class HolderPostProcessor implements PostProcessor {
         final List<HolderSpec> specs = context.computeIfAbsent(Params.HOLDER_TYPES, ArrayList::new);
 
         final List<Class<?>> types = specs.stream()
-                .filter(type -> !type.getType().isInterface())
                 .map(HolderSpec::getType)
+                .filter(type -> !type.isInterface())
                 .collect(Collectors.toList());
         // Make sure that it is possible to attach the component to any holder
         for (int i = 0; i < types.size(); i++) {
@@ -78,7 +80,7 @@ public class HolderPostProcessor implements PostProcessor {
                 //noinspection unchecked
                 binder.bind(createOptType(spec.getType())).toProvider(new OptHolderProvider(spec.getType()));
             }
-            WarnComponentTypeProcessor.LOGGER.info("Holder spec {}", spec);
+            // WarnComponentTypeProcessor.LOGGER.info("Holder spec {}", spec);
         }
 
         // Now remove dependency types that are inherited, ect, to reduce the amount
@@ -89,6 +91,12 @@ public class HolderPostProcessor implements PostProcessor {
                 .filter(HolderSpec::isRequired)
                 .map(HolderSpec::getType)
                 .collect(Collectors.toSet());
+        context.get(Params.DEPENDENCIES).ifPresent(depSpecs -> {
+            for (DependencySpec dependencySpec : depSpecs) {
+                checks.addAll(ComponentType.get(dependencySpec.getType()).getOwnerTypes());
+            }
+        });
+
         // Reduce the checks
         for (Class<?> type : new HashSet<>(checks)) {
             if (!checks.contains(type)) {
@@ -97,7 +105,7 @@ public class HolderPostProcessor implements PostProcessor {
             checks.removeAll(TypeToken.of(type).getTypes().rawTypes());
         }
 
-        // TODO: Store instance checks in component type
+        context.put(Params.HOLDER_CHECKS, checks);
     }
 
     static <T> TypeToken<Opt<T>> createOptType(Class<T> type) {

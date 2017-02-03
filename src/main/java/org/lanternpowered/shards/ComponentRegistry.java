@@ -25,10 +25,35 @@
 package org.lanternpowered.shards;
 
 import com.google.inject.Module;
-
-import java.lang.annotation.Annotation;
+import org.lanternpowered.shards.processor.Processor;
 
 public interface ComponentRegistry {
+
+    /**
+     * Registers a {@link Processor} that will be applied to all
+     * the processed {@link Component} types.
+     *
+     * @param processor The processor
+     */
+    void registerProcessor(Processor processor);
+
+    /**
+     * Registers a {@link Processor} that will be applied to all
+     * the processed {@link Component} types.
+     *
+     * @param target The target the insert the new processor after
+     * @param processor The processor
+     */
+    void registerProcessorAfter(Class<? extends Processor> target, Processor processor);
+
+    /**
+     * Registers a {@link Processor} that will be applied to all
+     * the processed {@link Component} types.
+     *
+     * @param target The target the insert the new processor before
+     * @param processor The processor
+     */
+    void registerProcessorBefore(Class<? extends Processor> target, Processor processor);
 
     /**
      * Register a global {@link Module} that should be used for the injection
@@ -41,21 +66,11 @@ public interface ComponentRegistry {
     }
 
     /**
-     * Register a global {@link Module} that should be used for the injection
-     * of the {@link Component}s.
+     * Register a {@link Module} that should target a specific set of {@link Component}
+     * that can be specified through the {@link TargetedModuleBuilder}.
      *
      * @param module The module
-     * @return The module target
+     * @return The targeted module builder
      */
-    ModuleTarget registerModule(Module module);
-
-    /**
-     * Represents the target of a {@link Module}.
-     */
-    interface ModuleTarget {
-
-        ModuleTarget toScope(Class<? extends Annotation> annotation);
-
-        ModuleTarget to(Class<? extends Component> componentType);
-    }
+    TargetedModuleBuilder registerModule(Module module);
 }

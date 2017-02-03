@@ -47,12 +47,12 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class ProcessorContextImpl implements ProcessorContext {
+final class ProcessorContextImpl implements ProcessorContext {
 
     private final Map<Integer, Object> params = new HashMap<>();
     private final TypeToken<?> target;
 
-    public ProcessorContextImpl(TypeToken<?> target) {
+    ProcessorContextImpl(TypeToken<?> target) {
         this.target = target;
     }
 
@@ -87,6 +87,7 @@ public class ProcessorContextImpl implements ProcessorContext {
         return Optional.ofNullable((T) this.params.get(param.internalId));
     }
 
+    @Override
     public void process(Binder binder, List<Processor> processors) throws ProcessorException {
         final List<TypeProcessor> typeProcessors = processors.stream()
                 .filter(p -> p instanceof TypeProcessor).map(p -> (TypeProcessor) p).collect(Collectors.toList());

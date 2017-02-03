@@ -22,29 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.shards.test;
+package org.lanternpowered.shards;
 
-import com.google.inject.name.Names;
-import org.junit.Test;
-import org.lanternpowered.shards.component.AbstractComponentHolder;
-import org.lanternpowered.shards.component.ComponentRegistryImpl;
-import org.lanternpowered.shards.inject.AbstractModule;
-import org.lanternpowered.shards.test.components.ExtendedTestComponent;
-import org.lanternpowered.shards.test.components.TestComponent;
+import com.google.inject.Module;
 
-public class ComponentsTest {
+import java.lang.annotation.Annotation;
+import java.util.function.Predicate;
 
-    @Test
-    public void test() {
-        ComponentRegistryImpl.get().registerModule(new AbstractModule() {
-            @Override
-            protected void configure() {
-                bindConstant().annotatedWith(Names.named("AgentNumber")).to("007");
-            }
-        }).to(TestComponent.class);
+/**
+ * Represents the target of a {@link Module}.
+ */
+public interface TargetedModuleBuilder {
 
-        final AbstractComponentHolder componentHolder = new FooComponentHolder();
-        final ExtendedTestComponent component = componentHolder.addComponent(ExtendedTestComponent.class).get();
-        System.out.println("Agent -> " + component.agentNumber);
-    }
+    /**
+     * Binds the {@link Module} to a specific scope. All the target {@link Component}s
+     * annotated with the specified {@link Annotation} type will be targeted.
+     *
+     * @param annotation The annotation type
+     */
+    void toScope(Class<? extends Annotation> annotation);
+
+    /**
+     * Binds the {@link Module} to a specific {@link Component} type. All the target
+     * {@link Component}s that extend/implement the specified {@link Component} type
+     * will be targeted.
+     *
+     * @param componentType The component type
+     */
+    void to(Class<? extends Component> componentType);
+
+    /**
+     * Binds the {@link Module} to a specific {@link Component} type. All the target
+     * {@link Component}s that are matched by the {@link Predicate} will be targeted.
+     *
+     * @param componentTypeTester The component type tester
+     */
+    void to(Predicate<Class<? extends Component>> componentTypeTester);
 }
