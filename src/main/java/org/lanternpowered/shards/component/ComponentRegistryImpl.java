@@ -144,7 +144,7 @@ public class ComponentRegistryImpl implements ComponentRegistry {
         public void to(Predicate<Class<? extends Component>> componentTypeTester) {
             checkNotNull(componentTypeTester, "componentTypeTester");
             //noinspection unchecked
-            targetedModules.add(new TargetedModule(this.module, (Predicate<Class<?>>) componentTypeTester));
+            targetedModules.add(new TargetedModule(this.module, (Predicate) componentTypeTester));
             ComponentType.invalidateAll();
         }
     }
