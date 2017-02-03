@@ -26,28 +26,23 @@ package org.lanternpowered.shards.component;
 
 import com.google.common.base.MoreObjects;
 import org.lanternpowered.shards.Component;
+import org.lanternpowered.shards.dependency.DependencyType;
 
 import java.util.Objects;
 
 public final class DependencySpec {
 
-    public enum Type {
-        REQUIRED,
-        DYNAMIC_REQUIRED,
-        OPTIONAL,
-    }
-
     private final Class<? extends Component> type;
     private final boolean autoAttach;
-    private final Type dependencyType;
+    private final DependencyType dependencyType;
 
-    public DependencySpec(Class<? extends Component> type, Type requiredType, boolean autoAttach) {
+    public DependencySpec(Class<? extends Component> type, DependencyType requiredType, boolean autoAttach) {
         this.dependencyType = requiredType;
         this.autoAttach = autoAttach;
         this.type = type;
     }
 
-    public Type getDependencyType() {
+    public DependencyType getDependencyType() {
         return this.dependencyType;
     }
 

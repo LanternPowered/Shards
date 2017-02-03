@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.ComponentHolder;
+import org.lanternpowered.shards.dependency.DependencyType;
 import org.lanternpowered.shards.util.GuavaCollectors;
 
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class AbstractComponentHolder implements ComponentHolder {
     private boolean canAddComponent(ComponentType<?> component, @Nullable List<Class<? extends Component>> attach) {
         final Collection<DependencySpec> dependencySpecs = component.getDependencies();
         for (DependencySpec spec : dependencySpecs) {
-            if (!this.components.containsKey(spec.getType()) && spec.getDependencyType() != DependencySpec.Type.OPTIONAL) {
+            if (!this.components.containsKey(spec.getType()) && spec.getDependencyType() != DependencyType.OPTIONAL) {
                 if (spec.getAutoAttach()) {
                     if (canAddComponent(ComponentType.get(spec.getType()), null)) {
                         if (attach != null) {
@@ -183,36 +184,6 @@ public class AbstractComponentHolder implements ComponentHolder {
             }
         }
         return false;
-    }
-
-    private void detachComponentData(AbstractComponent component) {
-        component.holder = null;
-    }
-
-    private boolean attachComponentData(AbstractComponent component) {
-        // First, prepare the dependencies of this component holder
-        // for the target component
-        if (!attachRequirements(component.componentType.getDependencies())) {
-            return false;
-        }
-        // Now, inject the component data into the component instance
-        component.holder = this;
-        return true;
-    }
-
-    private boolean attachRequirements(Collection<DependencySpec> requirements) {
-        for (DependencySpec requirement : requirements) {
-            final Optional optComponent = getComponent(requirement.getType());
-            if (!optComponent.isPresent()) {
-                // This component holder is missing the dependency and cannot
-                // be attached automatically, just fail
-                if (!requirement.getAutoAttach()) {
-                    return false;
-                }
-                addComponent(requirement.getType());
-            }
-        }
-        return true;
     }
 
     @SuppressWarnings("unchecked")

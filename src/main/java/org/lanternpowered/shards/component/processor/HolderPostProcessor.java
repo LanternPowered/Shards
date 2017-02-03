@@ -80,7 +80,6 @@ public class HolderPostProcessor implements PostProcessor {
                 //noinspection unchecked
                 binder.bind(createOptType(spec.getType())).toProvider(new OptHolderProvider(spec.getType()));
             }
-            // WarnComponentTypeProcessor.LOGGER.info("Holder spec {}", spec);
         }
 
         // Now remove dependency types that are inherited, ect, to reduce the amount

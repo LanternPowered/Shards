@@ -38,6 +38,7 @@ import org.lanternpowered.shards.component.provider.ConstantDynComponentProvider
 import org.lanternpowered.shards.component.provider.ConstantOptComponentProvider;
 import org.lanternpowered.shards.component.provider.DynComponentProvider;
 import org.lanternpowered.shards.component.provider.OptComponentProvider;
+import org.lanternpowered.shards.dependency.DependencyType;
 import org.lanternpowered.shards.inject.Binder;
 import org.lanternpowered.shards.component.Params;
 import org.lanternpowered.shards.processor.ProcessorException;
@@ -66,10 +67,10 @@ public class DependencyPostProcessor implements PostProcessor {
         final Map<Class<?>, TempDependency> tempDependencies = new HashMap<>();
         for (DependencySpec spec : dependencies) {
             final TempDependency temp = tempDependencies.computeIfAbsent(spec.getType(), type -> new TempDependency());
-            final DependencySpec.Type type = spec.getDependencyType();
-            if (type == DependencySpec.Type.REQUIRED) {
+            final DependencyType type = spec.getDependencyType();
+            if (type == DependencyType.REQUIRED) {
                 temp.required = true;
-            } else if (type == DependencySpec.Type.DYNAMIC_REQUIRED) {
+            } else if (type == DependencyType.REQUIRED_DYNAMIC) {
                 temp.dynamicRequired = true;
             } else {
                 temp.optional = true;
@@ -77,7 +78,6 @@ public class DependencyPostProcessor implements PostProcessor {
             if (spec.getAutoAttach()) {
                 temp.autoAttach = true;
             }
-            // WarnComponentTypeProcessor.LOGGER.info("Dependency spec: {}", spec);
         }
 
         // Get the most exact dependencies
@@ -94,7 +94,6 @@ public class DependencyPostProcessor implements PostProcessor {
                         // Only suggest the more exact type if it is actually required
                         exactDependencies.remove(type);
                         tempDependency.exactTypes.add(entry.getKey());
-                        // System.out.println(type.getName() + " --> " + entry.getKey().getName());
                     } else {
                         // Since the sub types is optional, let's suggest the
                         // component type as the more precise one
@@ -117,7 +116,6 @@ public class DependencyPostProcessor implements PostProcessor {
                         entry.getKey().getName(), Arrays.toString(entry.getValue().optionalExactTypes.stream().map(Class::getName).toArray()));
             }
             final TempDependency temp = entry.getValue();
-            // System.out.println("Process: " + entry.getKey().getName() + " -> " + temp);
             // Exact type
             if (exactDependencies.containsKey(entry.getKey())) {
                 if (temp.required) {
@@ -143,8 +141,8 @@ public class DependencyPostProcessor implements PostProcessor {
                     // Register the provider
                     binder.bind(createOptType((Class) entry.getKey())).toProvider(temp.optProvider);
                 }
-                registerDependencies.add(new DependencySpec((Class) entry.getKey(), temp.required ? DependencySpec.Type.REQUIRED :
-                        temp.dynamicRequired ? DependencySpec.Type.DYNAMIC_REQUIRED : DependencySpec.Type.OPTIONAL, temp.autoAttach));
+                registerDependencies.add(new DependencySpec((Class) entry.getKey(), temp.required ? DependencyType.REQUIRED :
+                        temp.dynamicRequired ? DependencyType.REQUIRED_DYNAMIC : DependencyType.OPTIONAL, temp.autoAttach));
             } else {
                 Class<?> exactType = null;
                 if (!entry.getValue().exactTypes.isEmpty()) {
@@ -152,8 +150,8 @@ public class DependencyPostProcessor implements PostProcessor {
                 } else if (!entry.getValue().optionalExactTypes.isEmpty()) {
                     exactType = entry.getValue().optionalExactTypes.iterator().next();
                 } else {
-                    registerDependencies.add(new DependencySpec((Class) entry.getKey(), temp.required ? DependencySpec.Type.REQUIRED :
-                            temp.dynamicRequired ? DependencySpec.Type.DYNAMIC_REQUIRED : DependencySpec.Type.OPTIONAL, temp.autoAttach));
+                    registerDependencies.add(new DependencySpec((Class) entry.getKey(), temp.required ? DependencyType.REQUIRED :
+                            temp.dynamicRequired ? DependencyType.REQUIRED_DYNAMIC : DependencyType.OPTIONAL, temp.autoAttach));
                 }
                 if (exactType != null) {
                     final TempDependency temp1 = exactDependencies.get(exactType);
@@ -183,12 +181,6 @@ public class DependencyPostProcessor implements PostProcessor {
                 }
             }
         }
-
-        /*
-        registerDependencies.forEach(spec -> {
-            System.out.printf("Dependency -> %s\n", spec);
-        });
-        */
 
         context.put(Params.DEPENDENCIES, new ArrayList<>(registerDependencies));
     }

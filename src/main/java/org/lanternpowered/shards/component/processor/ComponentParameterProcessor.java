@@ -29,6 +29,7 @@ import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.Dyn;
 import org.lanternpowered.shards.Opt;
 import org.lanternpowered.shards.component.DependencySpec;
+import org.lanternpowered.shards.dependency.DependencyType;
 import org.lanternpowered.shards.inject.Binder;
 import org.lanternpowered.shards.component.Params;
 import org.lanternpowered.shards.processor.ParameterProcessor;
@@ -49,15 +50,15 @@ public class ComponentParameterProcessor implements ParameterProcessor {
     @Override
     public boolean process(ProcessorContext context, TypeToken<?> type, AnnotatedElement annotations, Binder binder) throws ProcessorException {
         Class<?> raw = type.getRawType();
-        DependencySpec.Type dependencyType = DependencySpec.Type.REQUIRED;
+        DependencyType dependencyType = DependencyType.REQUIRED;
         // Only run this processor for components
         // The component can also be wrapped in a Opt object
         if (Opt.class.isAssignableFrom(raw)) {
             raw = type.resolveType(OPT_PARAM).getRawType();
-            dependencyType = DependencySpec.Type.OPTIONAL;
+            dependencyType = DependencyType.OPTIONAL;
         } else if (Dyn.class.isAssignableFrom(raw)) {
             raw = type.resolveType(DYN_PARAM).getRawType();
-            dependencyType = DependencySpec.Type.DYNAMIC_REQUIRED;
+            dependencyType = DependencyType.REQUIRED_DYNAMIC;
         }
         if (!Component.class.isAssignableFrom(raw)) {
             return false;

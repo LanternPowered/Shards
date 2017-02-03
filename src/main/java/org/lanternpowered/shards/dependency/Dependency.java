@@ -46,12 +46,11 @@ public @interface Dependency {
     Class<? extends Component> value();
 
     /**
-     * Gets whether the dependency {@link Component} isn't required
-     * for the target {@link Component} to function, is optional.
+     * Gets the {@link DependencyType} of the dependency.
      *
-     * @return Is optional
+     * @return The dependency type
      */
-    boolean optional() default false;
+    DependencyType type() default DependencyType.REQUIRED_DYNAMIC;
 
     /**
      * Whether the dependency can be automatically attached to

@@ -55,6 +55,7 @@ import javax.annotation.Nullable;
  *         });
  *     }
  * }
+ * }
  * </pre>
  * This can also be applied to {@link ComponentHolder} injection to allow
  * injection if the holder the target class implements.
@@ -70,6 +71,7 @@ import javax.annotation.Nullable;
  *             holder.doStuff();
  *         });
  *     }
+ * }
  * }
  * </pre>
  *

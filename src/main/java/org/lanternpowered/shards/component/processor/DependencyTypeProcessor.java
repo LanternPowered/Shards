@@ -27,12 +27,12 @@ package org.lanternpowered.shards.component.processor;
 import com.google.common.reflect.TypeToken;
 import org.lanternpowered.shards.Component;
 import org.lanternpowered.shards.component.DependencySpec;
-import org.lanternpowered.shards.inject.Binder;
 import org.lanternpowered.shards.component.Params;
+import org.lanternpowered.shards.dependency.Dependencies;
+import org.lanternpowered.shards.dependency.Dependency;
+import org.lanternpowered.shards.inject.Binder;
 import org.lanternpowered.shards.processor.ProcessorContext;
 import org.lanternpowered.shards.processor.TypeProcessor;
-import org.lanternpowered.shards.dependency.Dependency;
-import org.lanternpowered.shards.dependency.Dependencies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +54,7 @@ public class DependencyTypeProcessor implements TypeProcessor {
         if (dependencies1 != null) {
             final Dependency[] dependenciesArray = dependencies1.value();
             for (Dependency dependency : dependenciesArray) {
-                dependencies.add(new DependencySpec(dependency.value(),
-                        dependency.optional() ? DependencySpec.Type.OPTIONAL : DependencySpec.Type.DYNAMIC_REQUIRED, dependency.autoAttach()));
+                dependencies.add(new DependencySpec(dependency.value(), dependency.type(), dependency.autoAttach()));
             }
         }
     }
