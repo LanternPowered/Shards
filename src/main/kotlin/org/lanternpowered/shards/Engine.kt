@@ -73,6 +73,10 @@ class Engine internal constructor(
     this.mutator.fn()
   }
 
+  fun isActive(entityId: EntityId, version: Int): Boolean {
+    TODO()
+  }
+
   fun getEntity(entityId: EntityId): Entity {
     TODO()
   }

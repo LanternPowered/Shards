@@ -46,20 +46,20 @@ class EntityArrayList internal constructor(
     Entity(backing.getLong(index))
 
   override fun set(index: Int, entity: Entity): Entity =
-    Entity(backing.set(index, entity.reference.value))
+    Entity(backing.set(index, entity.ref.value))
 
   override fun add(index: Int, entity: Entity) {
-    backing.add(index, entity.reference.value)
+    backing.add(index, entity.ref.value)
   }
 
   override fun add(entity: Entity): Boolean =
-    backing.add(entity.reference.value)
+    backing.add(entity.ref.value)
 
   override fun removeAt(index: Int): Entity =
     Entity(backing.removeLong(index))
 
   override fun remove(entity: Entity): Boolean =
-    backing.rem(entity.reference.value)
+    backing.rem(entity.ref.value)
 
   override fun clear() {
     backing.clear()
@@ -68,7 +68,7 @@ class EntityArrayList internal constructor(
   override fun isEmpty(): Boolean = backing.isEmpty()
 
   override fun contains(entity: Entity): Boolean =
-    backing.contains(entity.reference.value)
+    backing.contains(entity.ref.value)
 
   override fun containsAll(entities: Collection<Entity>): Boolean =
     entities.all { contains(it) }
@@ -78,10 +78,10 @@ class EntityArrayList internal constructor(
     else entities.all { contains(it) }
 
   override fun indexOf(entity: Entity): Int =
-    backing.indexOf(entity.reference.value)
+    backing.indexOf(entity.ref.value)
 
   override fun lastIndexOf(entity: Entity): Int =
-    backing.lastIndexOf(entity.reference.value)
+    backing.lastIndexOf(entity.ref.value)
 
   override fun iterator(): EntityIterator {
     val itr = backing.iterator()
@@ -97,6 +97,6 @@ private fun EntityCollection.toReferenceList(): LongList {
     return LongArrayList(this.backing)
   val list = LongArrayList(size)
   for (entity in this)
-    list.add(entity.reference.value)
+    list.add(entity.ref.value)
   return list
 }

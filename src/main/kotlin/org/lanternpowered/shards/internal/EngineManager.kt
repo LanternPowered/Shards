@@ -50,28 +50,31 @@ internal object EngineManager {
     }
   }
 
-  fun modify(reference: EntityReference, fn: EntityMutator.() -> Unit) =
-    this[reference.engine].modify(reference.id, fn)
+  fun modify(reference: InternalEntityRef, fn: EntityMutator.() -> Unit) =
+    this[reference.engine].modify(reference.entityId, fn)
+
+  fun isActive(reference: InternalEntityRef): Boolean =
+    this[reference.engine].isActive(reference.entityId, reference.version)
 
   fun containsComponent(
-    reference: EntityReference, type: ComponentType<*>
-  ): Boolean = this[reference.engine].containsComponent(reference.id, type)
+    reference: InternalEntityRef, type: ComponentType<*>
+  ): Boolean = this[reference.engine].containsComponent(reference.entityId, type)
 
   fun <T : Component> getComponentOrNull(
-    reference: EntityReference, type: ComponentType<T>
-  ): T? = this[reference.engine].getComponentOrNull(reference.id, type)
+    reference: InternalEntityRef, type: ComponentType<T>
+  ): T? = this[reference.engine].getComponentOrNull(reference.entityId, type)
 
   fun <T : Component> getComponent(
-    reference: EntityReference, type: ComponentType<T>
-  ): T = this[reference.engine].getComponent(reference.id, type)
+    reference: InternalEntityRef, type: ComponentType<T>
+  ): T = this[reference.engine].getComponent(reference.entityId, type)
 
   fun <T : Component> addComponent(
-    reference: EntityReference, type: ComponentType<T>
-  ): T = this[reference.engine].addComponent(reference.id, type)
+    reference: InternalEntityRef, type: ComponentType<T>
+  ): T = this[reference.engine].addComponent(reference.entityId, type)
 
   fun <T : Component> getOrAddComponent(
-    reference: EntityReference, type: ComponentType<T>
-  ): T = this[reference.engine].getOrAddComponent(reference.id, type)
+    reference: InternalEntityRef, type: ComponentType<T>
+  ): T = this[reference.engine].getOrAddComponent(reference.entityId, type)
 }
 
 fun test(list: EntitySequence) {

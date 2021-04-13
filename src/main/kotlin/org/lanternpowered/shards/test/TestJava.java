@@ -12,6 +12,7 @@ package org.lanternpowered.shards.test;
 import org.lanternpowered.shards.component.Component;
 import org.lanternpowered.shards.component.ComponentType;
 import org.lanternpowered.shards.system.OnAdd;
+import org.lanternpowered.shards.system.OnProcess;
 import org.lanternpowered.shards.system.System;
 import org.lanternpowered.shards.aspect.Aspect;
 import org.lanternpowered.shards.jvm.JvmEntityId;
@@ -48,7 +49,7 @@ public class TestJava {
       component.health = 255.0;
     }
 
-    @OnAdd
+    @OnProcess
     void process(final Duration deltaTime, @JvmEntityId final int entityId) {
       final JTestComponent component =
         get(entityId, JTestComponent.TYPE);

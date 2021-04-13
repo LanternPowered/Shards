@@ -12,14 +12,14 @@ package org.lanternpowered.shards.entity
 /**
  * An iterator for [Entity]s.
  */
-interface OptionalEntityIterator : Iterator<OptionalEntity> {
+interface OptionalEntityIterator : Iterator<EntityReference> {
 
-  override fun next(): OptionalEntity = this.next()
+  override fun next(): EntityReference = this.next()
 
   /**
    * Gets the next optional entity without boxing.
    */
-  fun nextEntity(): OptionalEntity
+  fun nextEntity(): EntityReference
 
   /**
    * Gets the next nullable entity.

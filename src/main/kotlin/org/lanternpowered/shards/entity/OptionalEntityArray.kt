@@ -9,7 +9,7 @@
  */
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.internal.EntityReference
+import org.lanternpowered.shards.internal.InternalEntityRef
 
 /**
  * Represents an array of entities.
@@ -23,7 +23,7 @@ inline class OptionalEntityArray private constructor(
    * Constructs a new [OptionalEntityArray] with the given size.
    */
   constructor(size: Int) :
-    this(LongArray(size) { EntityReference.Empty.value })
+    this(LongArray(size) { InternalEntityRef.Empty.value })
 
   /**
    * The number of elements in the array.
@@ -32,10 +32,10 @@ inline class OptionalEntityArray private constructor(
     get() = array.size
 
   /**
-   * Gets the [OptionalEntity] at the given [index].
+   * Gets the [EntityReference] at the given [index].
    */
-  operator fun get(index: Int): OptionalEntity =
-    OptionalEntity(EntityReference(array[index]))
+  operator fun get(index: Int): EntityReference =
+    EntityReference(InternalEntityRef(array[index]))
 
   /**
    * Gets the nullable [Entity] at the given [index].
@@ -43,24 +43,24 @@ inline class OptionalEntityArray private constructor(
   fun getNullable(index: Int): Entity? = this[index].orNull()
 
   /**
-   * Sets the [OptionalEntity] at the given [index].
+   * Sets the [EntityReference] at the given [index].
    */
-  operator fun set(index: Int, entity: OptionalEntity) {
-    array[index] = entity.reference.value
+  operator fun set(index: Int, entity: EntityReference) {
+    array[index] = entity.ref.value
   }
 
   /**
-   * Sets the [OptionalEntity] at the given [index].
+   * Sets the [EntityReference] at the given [index].
    */
   operator fun set(index: Int, entity: Entity) {
-    array[index] = entity.reference.value
+    array[index] = entity.ref.value
   }
 
   /**
-   * Sets the [OptionalEntity] at the given [index].
+   * Sets the [EntityReference] at the given [index].
    */
   operator fun set(index: Int, entity: Entity?) {
-    array[index] = OptionalEntity.ofNullable(entity).reference.value
+    array[index] = EntityReference(entity).ref.value
   }
 
   /**
@@ -69,8 +69,8 @@ inline class OptionalEntityArray private constructor(
   operator fun iterator(): OptionalEntityIterator {
     val itr = array.iterator()
     return object : OptionalEntityIterator {
-      override fun nextEntity(): OptionalEntity =
-        OptionalEntity(EntityReference(itr.nextLong()))
+      override fun nextEntity(): EntityReference =
+        EntityReference(InternalEntityRef(itr.nextLong()))
       override fun hasNext(): Boolean = itr.hasNext()
     }
   }
@@ -81,14 +81,14 @@ inline class OptionalEntityArray private constructor(
   fun filterToEntityArray(): EntityArray {
     var size = 0
     for (i in array.indices) {
-      if (!EntityReference(array[i]).isEmpty)
+      if (!InternalEntityRef(array[i]).isEmpty)
         size++
     }
     val array = LongArray(size)
     var index = 0
     for (i in array.indices) {
       val value = array[i]
-      if (!EntityReference(value).isEmpty)
+      if (!InternalEntityRef(value).isEmpty)
         array[index++] = value
     }
     return EntityArray(array)

@@ -9,19 +9,31 @@
  */
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.internal.EntityReference
-import java.util.Optional
+import org.lanternpowered.shards.internal.EngineManager
+import org.lanternpowered.shards.internal.InternalEntityRef
 
 /**
- * Represents an optional entity.
+ * Constructs an [EntityReference] for the specified [Entity].
+ */
+fun EntityReference(entity: Entity): EntityReference =
+  EntityReference(entity.ref)
+
+/**
+ * Constructs an [EntityReference] for the specified [Entity].
+ */
+fun EntityReference(entity: Entity?): EntityReference =
+  if (entity == null) EntityReference.Empty else EntityReference(entity)
+
+/**
+ * Represents a reference to an entity.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-inline class OptionalEntity internal constructor(
-  internal val reference: EntityReference
+inline class EntityReference internal constructor(
+  internal val ref: InternalEntityRef
 ) {
 
   /**
-   * Gets the entity if present, otherwise throws a [NoSuchElementException].
+   * Gets the entity if it exists, otherwise throws a [NoSuchElementException].
    */
   fun get(): Entity =
     if (isPresent()) asEntity()
@@ -46,7 +58,8 @@ inline class OptionalEntity internal constructor(
     if (isPresent()) asEntity() else other
 
   /**
-   * Gets the entity if present, otherwise returns the entity provided by the supplier.
+   * Gets the entity if present, otherwise returns the entity provided by the
+   * supplier.
    *
    * @param fallback The fallback entity to be used
    * @return The entity
@@ -55,7 +68,8 @@ inline class OptionalEntity internal constructor(
     if (isPresent()) asEntity() else fallback()
 
   /**
-   * Gets the entity if present, otherwise throws the exception provided by the supplier.
+   * Gets the entity if present, otherwise throws the exception provided by the
+   * supplier.
    *
    * @param ex The exception to thrown if the entity isn't present
    * @return The entity
@@ -73,7 +87,8 @@ inline class OptionalEntity internal constructor(
   /**
    * Gets whether the entity is present.
    */
-  fun isPresent(): Boolean = !reference.isEmpty
+  fun isPresent(): Boolean =
+    !ref.isEmpty && EngineManager.isActive(ref)
 
   /**
    * Executes the given function if the entity is present.
@@ -86,49 +101,30 @@ inline class OptionalEntity internal constructor(
   /**
    * Maps the entity to a value of type [T], if present.
    */
-  inline fun <T : Any> map(fn: (Entity) -> T): Optional<T> =
-    if (isPresent()) Optional.of(fn(asEntity())) else Optional.empty()
-
-  /**
-   * Maps the entity to a value of type [T], if present.
-   */
-  inline fun <T : Any> flatMap(fn: (Entity) -> Optional<T>): Optional<T> =
-    if (isPresent()) fn(asEntity()) else Optional.empty()
+  inline fun <T> map(fn: (Entity) -> T): T? =
+    if (isPresent()) fn(asEntity()) else null
 
   /**
    * Filters this optional entity with the given function.
    */
-  inline fun filter(fn: (Entity) -> Boolean): OptionalEntity =
-    if (isPresent() && fn(asEntity())) this else empty()
+  inline fun filter(fn: (Entity) -> Boolean): EntityReference =
+    if (isPresent() && fn(asEntity())) this else Empty
 
   /**
    * Gets the reference as an entity, without any checks.
    */
   @PublishedApi
-  internal fun asEntity(): Entity = Entity(reference)
+  internal fun asEntity(): Entity = Entity(ref)
 
   override fun toString(): String =
-    if (isPresent()) "OptionalEntity[${asEntity()}]"
-    else "OptionalEntity.empty"
+    if (isPresent()) "EntityReference(${asEntity()})"
+    else "EntityReference.Empty"
 
   companion object {
 
     /**
-     * Gets an empty optional entity.
+     * An empty entity reference.
      */
-    fun empty(): OptionalEntity =
-      OptionalEntity(EntityReference.Empty)
-
-    /**
-     * Gets an optional entity from the given [entity].
-     */
-    fun of(entity: Entity): OptionalEntity =
-      OptionalEntity(entity.reference)
-
-    /**
-     * Gets an optional entity from the given nullable [entity].
-     */
-    fun ofNullable(entity: Entity?): OptionalEntity =
-      if (entity == null) empty() else of(entity)
+    val Empty: EntityReference = EntityReference(InternalEntityRef.Empty)
   }
 }

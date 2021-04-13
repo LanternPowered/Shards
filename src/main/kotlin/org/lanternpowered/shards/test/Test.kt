@@ -20,7 +20,7 @@ import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityArray
 import org.lanternpowered.shards.entity.EntityCollection
 import org.lanternpowered.shards.entity.EntitySequence
-import org.lanternpowered.shards.entity.OptionalEntity
+import org.lanternpowered.shards.entity.EntityReference
 import org.lanternpowered.shards.entity.add
 import org.lanternpowered.shards.entity.forEach
 import org.lanternpowered.shards.entity.modify
@@ -59,7 +59,7 @@ fun init() {
   engine.createEntity().modify {
     add(HealthComponent) {
       health = 0.3
-      lastAttacker = OptionalEntity.empty()
+      lastAttacker = EntityReference.Empty
     }
   }
 }
@@ -74,7 +74,7 @@ data class OtherComponent(
 
 data class HealthComponent(
   var health: Double = 10.0,
-  var lastAttacker: OptionalEntity = OptionalEntity.empty()
+  var lastAttacker: EntityReference = EntityReference.Empty
 ) : InvalidatableComponent() {
 
   companion object Type : ComponentType<HealthComponent>()

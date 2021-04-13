@@ -13,29 +13,33 @@ import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.modify
 import org.lanternpowered.shards.internal.EngineManager
-import org.lanternpowered.shards.internal.EntityReference
+import org.lanternpowered.shards.internal.InternalEntityRef
+import org.lanternpowered.shards.Engine
 
 /**
  * Internal constructor to reduce duplication when creating [Entity]s from
  * reference values.
  */
 internal fun Entity(referenceValue: Long): Entity =
-  Entity(EntityReference(referenceValue))
+  Entity(InternalEntityRef(referenceValue))
 
 /**
- * Represents a reference to an entity.
+ * Represents an entity of an [Engine].
  */
 @EntityDsl
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 inline class Entity internal constructor(
-  @PublishedApi internal val reference: EntityReference
+  @PublishedApi internal val ref: InternalEntityRef
 ) {
 
   /**
    * The id of the entity.
    */
   val id: EntityId
-    get() = reference.id
+    get() = ref.entityId
+
+  override fun toString(): String =
+    "Entity(id=$id, engineId=${ref.engine})"
 
   /**
    * Applies the given function to this entity.
@@ -48,10 +52,16 @@ inline class Entity internal constructor(
 }
 
 /**
+ * Whether the [Entity] is still active and exists in its [Engine].
+ */
+val Entity.isActive: Boolean
+  get() = EngineManager.isActive(ref)
+
+/**
  * Modifies the entity with the given [operation].
  */
 fun Entity.modify(operation: @EntityDsl EntityMutator.() -> Unit): Entity {
-  EngineManager.modify(reference, operation)
+  EngineManager.modify(ref, operation)
   return this
 }
 
@@ -59,21 +69,21 @@ fun Entity.modify(operation: @EntityDsl EntityMutator.() -> Unit): Entity {
  * Returns if the entity contains a component of the specified [type].
  */
 operator fun Entity.contains(type: ComponentType<*>): Boolean =
-  EngineManager.containsComponent(reference, type)
+  EngineManager.containsComponent(ref, type)
 
 /**
  * Gets the component instance of the given [type] and fails if the component
  * wasn't found.
  */
 fun <T : Component> Entity.get(type: ComponentType<T>): T =
-  EngineManager.getComponent(reference, type)
+  EngineManager.getComponent(ref, type)
 
 /**
  * Gets the component instance of the given [type] and returns `null` if the
  * component wasn't found.
  */
 fun <T : Component> Entity.getOrNull(type: ComponentType<T>): T? =
-  EngineManager.getComponentOrNull(reference, type)
+  EngineManager.getComponentOrNull(ref, type)
 
 /**
  * Adds the component of the specified [type] to the entity and gets the
@@ -81,14 +91,14 @@ fun <T : Component> Entity.getOrNull(type: ComponentType<T>): T? =
  * already owns a component of the specified [type].
  */
 fun <T : Component> Entity.add(type: ComponentType<T>): T =
-  EngineManager.addComponent(reference, type)
+  EngineManager.addComponent(ref, type)
 
 /**
  * Gets the component of the specified [type] if it exists, otherwise a new
  * component will be created.
  */
 fun <T : Component> Entity.getOrAdd(type: ComponentType<T>): T =
-  EngineManager.getOrAddComponent(reference, type)
+  EngineManager.getOrAddComponent(ref, type)
 
 /**
  * Adds the component of the specified [type] to the entity and gets the

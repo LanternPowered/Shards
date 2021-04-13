@@ -9,8 +9,6 @@
  */
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.test.HealthComponent
-
 /**
  * Represents an empty [EntityList].
  */

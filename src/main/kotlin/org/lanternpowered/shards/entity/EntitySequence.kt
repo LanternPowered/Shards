@@ -10,7 +10,7 @@
 package org.lanternpowered.shards.entity
 
 import org.lanternpowered.shards.component.ComponentType
-import org.lanternpowered.shards.internal.EntityReference
+import org.lanternpowered.shards.internal.InternalEntityRef
 
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values
@@ -149,7 +149,7 @@ internal class FilteringEntitySequence(
 
     // -1 for unknown, 0 for done, 1 for continue
     var state = 0
-    var next = Entity(EntityReference.Empty)
+    var next = Entity(InternalEntityRef.Empty)
 
     fun findNext() {
       while (hasNext()) {

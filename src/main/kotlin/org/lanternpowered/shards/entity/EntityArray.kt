@@ -11,7 +11,7 @@
 
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.internal.EntityReference
+import org.lanternpowered.shards.internal.InternalEntityRef
 
 /**
  * Converts the iterable of [Entity]s to an [EntityArray].
@@ -21,7 +21,7 @@ fun EntityIterable.toEntityArray(): EntityArray {
   val itr = iterator()
   var index = 0
   while (itr.hasNext())
-    value[index++] = itr.next().reference.value
+    value[index++] = itr.next().ref.value
   return EntityArray(value)
 }
 
@@ -33,7 +33,7 @@ fun Iterable<Entity>.toEntityArray(): EntityArray {
   val itr = iterator()
   var index = 0
   while (itr.hasNext())
-    value[index++] = itr.next().reference.value
+    value[index++] = itr.next().ref.value
   return EntityArray(value)
 }
 
@@ -43,7 +43,7 @@ fun Iterable<Entity>.toEntityArray(): EntityArray {
 fun List<Entity>.toEntityArray(): EntityArray {
   val value = LongArray(size)
   for (index in indices)
-    value[index] = this[index].reference.value
+    value[index] = this[index].ref.value
   return EntityArray(value)
 }
 
@@ -53,7 +53,7 @@ fun List<Entity>.toEntityArray(): EntityArray {
 inline fun EntityArray(size: Int, init: (index: Int) -> Entity): EntityArray {
   val value = LongArray(size)
   for (index in 0 until size)
-    value[index] = init(index).reference.value
+    value[index] = init(index).ref.value
   return EntityArray(value)
 }
 
@@ -84,28 +84,28 @@ inline class EntityArray @PublishedApi internal constructor(
     get() = value.size
 
   /**
-   * Gets the [OptionalEntity] at the given [index].
+   * Gets the [EntityReference] at the given [index].
    */
   override fun get(index: Int): Entity =
-    Entity(EntityReference(value[index]))
+    Entity(InternalEntityRef(value[index]))
 
   /**
-   * Sets the [OptionalEntity] at the given [index].
+   * Sets the [EntityReference] at the given [index].
    */
   operator fun set(index: Int, entity: Entity) {
-    value[index] = entity.reference.value
+    value[index] = entity.ref.value
   }
 
   override fun indexOf(entity: Entity): Int =
-    value.indexOf(entity.reference.value)
+    value.indexOf(entity.ref.value)
 
   override fun lastIndexOf(entity: Entity): Int =
-    value.lastIndexOf(entity.reference.value)
+    value.lastIndexOf(entity.ref.value)
 
   override fun isEmpty(): Boolean = size == 0
 
   override fun contains(entity: Entity): Boolean =
-    value.any { it == entity.reference.value }
+    value.any { it == entity.ref.value }
 
   override fun containsAll(entities: Collection<Entity>): Boolean =
     entities.all(::contains)

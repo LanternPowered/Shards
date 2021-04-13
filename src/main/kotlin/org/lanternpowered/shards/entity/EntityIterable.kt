@@ -34,7 +34,7 @@ internal inline fun EntityIterable.performInBulk(
   var lastEngineId = -1
   var engine: Engine? = null
   for (entity in this) {
-    val engineId = entity.reference.engine
+    val engineId = entity.ref.engine
     // Cache the last accessed engine to reduce lookups
     if (engineId != lastEngineId) {
       engine = EngineManager[engineId]
