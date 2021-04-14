@@ -77,6 +77,10 @@ class Engine internal constructor(
     TODO()
   }
 
+  fun isActive(entityId: EntityId): Boolean {
+    TODO()
+  }
+
   fun getEntity(entityId: EntityId): Entity {
     TODO()
   }
@@ -111,21 +115,39 @@ class Engine internal constructor(
     TODO()
   }
 
+  override inline val Entity.isActive: Boolean
+    get() = isActive(ref.entityId, ref.version)
+
+  override fun Entity.modify(
+    operation: EntityMutator.() -> Unit
+  ): Entity {
+    modify(id, operation)
+    return this
+  }
+
+  override inline fun Entity.contains(
+    type: ComponentType<*>
+  ): Boolean = containsComponent(id, type)
+
   override inline fun <T : Component> Entity.get(
     type: ComponentType<T>
-  ): T = getComponent(this.id, type)
+  ): T = getComponent(id, type)
 
   override inline fun <T : Component> Entity.getOrNull(
     type: ComponentType<T>
-  ): T? = getComponentOrNull(this.id, type)
+  ): T? = getComponentOrNull(id, type)
 
   override inline fun <T : Component> Entity.add(
     type: ComponentType<T>
-  ): T = addComponent(this.id, type)
+  ): T = addComponent(id, type)
 
-  inline fun <T : Component> Entity.add(
-    type: ComponentType<T>, fn: T.() -> Unit
-  ): T = addComponent(this.id, type).apply { modify(fn) }
+  override inline fun <T : Component> Entity.add(
+    type: ComponentType<T>, operation: T.() -> Unit
+  ): T = addComponent(id, type).apply { modify(operation) }
+
+  override inline fun <T : Component> Entity.getOrAdd(
+    type: ComponentType<T>
+  ): T = getOrAddComponent(id, type)
 
   /**
    * Destroys the engine. This must be called when

@@ -79,42 +79,102 @@ abstract class EntityMutator {
    * Returns if the entity contains a component of the specified [type].
    */
   @Suppress("unused", "UNUSED_PARAMETER")
-  @Deprecated(message = "Use the mutator methods.",
-    level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("require(type)"))
+  @Deprecated(message = "Use the mutator functions.",
+    level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("contains(type)"))
   @JvmSynthetic
   fun Entity.contains(type: ComponentType<*>): Boolean =
-    error("Use the mutator methods.")
+    error("Use the mutator functions.")
 
   /**
    * Gets the component instance of the given [type] and fails
    * if the component wasn't found.
    */
   @Suppress("unused", "UNUSED_PARAMETER")
-  @Deprecated(message = "Use the mutator methods.",
-    level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("require(type)"))
+  @Deprecated(message = "Use the mutator functions.",
+    level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("get(type)"))
   @JvmSynthetic
   fun <T : Component> Entity.get(type: ComponentType<T>): T =
-    error("Use the mutator methods.")
+    error("Use the mutator functions.")
 
   /**
    * Gets the component instance of the given [type] and returns `null`
    * if the component wasn't found.
    */
   @Suppress("RedundantNullableReturnType", "unused", "UNUSED_PARAMETER")
-  @Deprecated(message = "Use the mutator methods.",
-    level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("require(type)"))
+  @Deprecated(message = "Use the mutator functions.",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("getOrNull(type)")
+  )
   @JvmSynthetic
   fun <T : Component> Entity.getOrNull(type: ComponentType<T>): T? =
-    error("Use the mutator methods.")
+    error("Use the mutator functions.")
 
   /**
    * Adds the component of the given [type] to the entity and gets
    * the instance.
    */
   @Suppress("unused", "UNUSED_PARAMETER")
-  @Deprecated(message = "Use the mutator methods.",
-    level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("require(type)"))
+  @Deprecated(message = "Use the mutator functions.",
+    level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("add(type)"))
   @JvmSynthetic
   fun <T : Component> Entity.add(type: ComponentType<T>): T =
-    error("Use the mutator methods.")
+    error("Use the mutator functions.")
+
+
+  /**
+   * Gets the component of the specified [type] if it exists, otherwise a new
+   * component will be created.
+   */
+  @Suppress("unused", "UNUSED_PARAMETER")
+  @Deprecated(message = "Use the mutator functions.",
+    level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("getOrAdd(type)"))
+  @JvmSynthetic
+  fun <T : Component> Entity.getOrAdd(type: ComponentType<T>): T =
+    error("Use the mutator functions.")
+
+  /**
+   * Adds the component of the specified [type] to the entity and gets the
+   * instance. An [IllegalArgumentException] will be thrown if the entity
+   * already owns a component of the specified [type]. The [operation] will be
+   * applied to the constructed component.
+   */
+  @Suppress("unused", "UNUSED_PARAMETER")
+  @Deprecated(message = "Use the mutator functions.",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("add(type, operation)")
+  )
+  @JvmSynthetic
+  fun <T : Component> Entity.add(
+    type: ComponentType<T>, operation: T.() -> Unit
+  ): T = error("Use the mutator functions.")
+
+  /**
+   * Gets the component of the specified [type] and applies the given
+   * [operation] to it. An [IllegalArgumentException] will be thrown if the
+   * entity doesn't own a component with the specified [type].
+   */
+  @Suppress("unused", "UNUSED_PARAMETER")
+  @Deprecated(message = "Use the mutator functions.",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("modify(type, operation)")
+  )
+  @JvmSynthetic
+  fun <T : Component> Entity.modify(
+    type: ComponentType<T>, operation: T.() -> Unit
+  ): T = error("Use the mutator functions.")
+
+  /**
+   * Gets the component of the specified [type] if it exists, otherwise a new
+   * component will be created. The [operation] will be applied to the
+   * retrieved or constructed component.
+   */
+  @Suppress("unused", "UNUSED_PARAMETER")
+  @Deprecated(message = "Use the mutator functions.",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("modify(type, operation)")
+  )
+  @JvmSynthetic
+  fun <T : Component> Entity.modifyOrAdd(
+    type: ComponentType<T>, operation: T.() -> Unit
+  ): T = error("Use the mutator functions.")
 }

@@ -38,6 +38,12 @@ inline class Entity internal constructor(
   val id: EntityId
     get() = ref.entityId
 
+  /**
+   * The engine this entity belongs to.
+   */
+  val engine: Engine
+    get() = EngineManager[ref.engine]
+
   override fun toString(): String =
     "Entity(id=$id, engineId=${ref.engine})"
 
@@ -108,7 +114,7 @@ fun <T : Component> Entity.getOrAdd(type: ComponentType<T>): T =
  */
 fun <T : Component> Entity.add(
   type: ComponentType<T>, operation: T.() -> Unit
-): T = add(type, operation).apply { modify(operation) }
+): T = add(type).apply { modify(operation) }
 
 /**
  * Gets the component of the specified [type] and applies the given

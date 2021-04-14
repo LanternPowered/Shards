@@ -34,16 +34,16 @@ inline class MonotonicInstant internal constructor(
 ) : Comparable<MonotonicInstant> {
 
   operator fun plus(duration: Duration): MonotonicInstant =
-    MonotonicInstant(this.value + duration.toLongNanoseconds())
+    MonotonicInstant(value + duration.toLongNanoseconds())
 
   operator fun minus(duration: Duration): MonotonicInstant =
-    MonotonicInstant(this.value - duration.toLongNanoseconds())
+    MonotonicInstant(value - duration.toLongNanoseconds())
 
   operator fun minus(instant: MonotonicInstant): Duration =
-    (this.value - instant.value).nanoseconds
+    (value - instant.value).nanoseconds
 
   override fun compareTo(other: MonotonicInstant): Int =
-    this.value.compareTo(other.value)
+    value.compareTo(other.value)
 
   fun toLongNanoseconds(): Long = value
 

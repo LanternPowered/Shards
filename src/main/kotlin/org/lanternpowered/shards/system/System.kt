@@ -13,6 +13,7 @@ import org.lanternpowered.shards.Engine
 import org.lanternpowered.shards.aspect.Aspect
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
+import org.lanternpowered.shards.component.modify
 import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityContext
 import org.lanternpowered.shards.entity.EntityDsl
@@ -40,44 +41,59 @@ abstract class System(val aspect: Aspect = Aspect.Empty) : EntityContext {
   internal val engine: Engine
     get() = _engine!!
 
-  /**
-   * Returns if the entity contains a component of the specified [type].
-   */
-  @JvmSynthetic
-  operator fun Entity.contains(type: ComponentType<*>): Boolean =
-    this@System.engine.containsComponent(id, type)
+  @get:JvmSynthetic
+  final override val Entity.isActive: Boolean
+    get() = this@System.engine.isActive(ref.entityId, ref.version)
 
-  /**
-   * Gets the component instance of the given [type] and fails
-   * if the component wasn't found.
-   */
   @JvmSynthetic
-  override fun <T : Component> Entity.get(type: ComponentType<T>): T =
-    this@System.engine.getComponent(id, type)
+  final override fun Entity.contains(
+    type: ComponentType<*>
+  ): Boolean = this@System.engine.containsComponent(id, type)
 
-  /**
-   * Gets the component instance of the given [type] and returns `null`
-   * if the component wasn't found.
-   */
   @JvmSynthetic
-  override fun <T : Component> Entity.getOrNull(type: ComponentType<T>): T? =
-    this@System.engine.getComponentOrNull(id, type)
+  final override fun <T : Component> Entity.get(
+    type: ComponentType<T>
+  ): T = this@System.engine.getComponent(id, type)
 
-  /**
-   * Adds the component of the given [type] to the entity and gets
-   * the instance.
-   */
   @JvmSynthetic
-  override fun <T : Component> Entity.add(type: ComponentType<T>): T =
-    this@System.engine.addComponent(id, type)
+  final override fun <T : Component> Entity.getOrNull(
+    type: ComponentType<T>
+  ): T? = this@System.engine.getComponentOrNull(id, type)
 
-  /**
-   * Modifies the entity with the given [operation].
-   */
-  fun Entity.modify(operation: @EntityDsl EntityMutator.() -> Unit): Entity {
+  @JvmSynthetic
+  final override fun <T : Component> Entity.add(
+    type: ComponentType<T>
+  ): T = this@System.engine.addComponent(id, type)
+
+  @JvmSynthetic
+  final override fun Entity.modify(
+    operation: @EntityDsl EntityMutator.() -> Unit
+  ): Entity {
     this@System.engine.modify(id, operation)
     return this
   }
+
+  @JvmSynthetic
+  final override fun <T : Component> Entity.getOrAdd(
+    type: ComponentType<T>
+  ): T = this@System.engine.getOrAddComponent(id, type)
+
+  @JvmSynthetic
+  final override fun <T : Component> Entity.add(
+    type: ComponentType<T>, operation: T.() -> Unit
+  ): T = this@System.engine.addComponent(id, type).apply { modify(operation) }
+
+  @JvmSynthetic
+  final override fun <T : Component> Entity.modify(
+    type: ComponentType<T>, operation: T.() -> Unit
+  ): T = this@System.engine.getComponent(id, type).apply { modify(operation) }
+
+  @JvmSynthetic
+  final override fun <T : Component> Entity.modifyOrAdd(
+    type: ComponentType<T>, operation: T.() -> Unit
+  ): T = this@System.engine
+    .getOrAddComponent(id, type)
+    .apply { modify(operation) }
 
   /**
    * Modifies all the entities in the [EntityIterable] using the given

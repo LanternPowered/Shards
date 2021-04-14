@@ -15,6 +15,17 @@ import org.lanternpowered.shards.internal.EngineManager
 
 object SimpleEntityContext : EntityContext {
 
+  override val Entity.isActive: Boolean
+    get() = EngineManager.isActive(ref)
+
+  override fun Entity.modify(operation: EntityMutator.() -> Unit): Entity {
+    EngineManager.modify(ref, operation)
+    return this
+  }
+
+  override fun Entity.contains(type: ComponentType<*>): Boolean =
+    EngineManager.containsComponent(ref, type)
+
   override fun <T : Component> Entity.get(type: ComponentType<T>): T =
     EngineManager.getComponent(ref, type)
 
@@ -23,4 +34,7 @@ object SimpleEntityContext : EntityContext {
 
   override fun <T : Component> Entity.add(type: ComponentType<T>): T =
     EngineManager.addComponent(ref, type)
+
+  override fun <T : Component> Entity.getOrAdd(type: ComponentType<T>): T =
+    EngineManager.getOrAddComponent(ref, type)
 }
