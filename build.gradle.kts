@@ -41,17 +41,20 @@ subprojects {
           }
         }
 
+        val nativeTargets = targets
+          .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>()
+
         // val jvmMain = findByName("jvmMain")
         val jvmTest = findByName("jvmTest")
 
-        val jsAndNativeCommonMain = findByName("jsAndNativeMain")
-        val jsAndNativeCommonTest = findByName("jsAndNativeTest")
+        val jsAndNativeMain = findByName("jsAndNativeMain")
+        val jsAndNativeTest = findByName("jsAndNativeTest")
 
         val jsMain = findByName("jsMain")
         val jsTest = findByName("jsTest")
 
-        val nativeMain = findByName("nativeCommonMain")
-        val nativeTest = findByName("nativeCommonTest")
+        val nativeMain = findByName("nativeMain")
+        val nativeTest = findByName("nativeTest")
 
         jvmTest?.dependencies {
           implementation(kotlin("test-junit"))
@@ -60,22 +63,37 @@ subprojects {
           implementation(kotlin("test-js"))
         }
 
-        if (jsAndNativeCommonMain != null) {
-          jsAndNativeCommonMain.dependsOn(commonMain)
-          nativeMain?.dependsOn(jsAndNativeCommonMain)
-          jsMain?.dependsOn(jsAndNativeCommonMain)
+        if (jsAndNativeMain != null) {
+          jsAndNativeMain.dependsOn(commonMain)
+          nativeMain?.dependsOn(jsAndNativeMain)
+          jsMain?.dependsOn(jsAndNativeMain)
         }
-        if (jsAndNativeCommonTest != null) {
-          jsAndNativeCommonTest.dependsOn(commonTest)
-          if (jsAndNativeCommonMain != null)
-            jsAndNativeCommonTest.dependsOn(jsAndNativeCommonMain)
-          nativeTest?.dependsOn(jsAndNativeCommonTest)
-          jsTest?.dependsOn(jsAndNativeCommonTest)
+        if (jsAndNativeTest != null) {
+          jsAndNativeTest.dependsOn(commonTest)
+          if (jsAndNativeMain != null)
+            jsAndNativeTest.dependsOn(jsAndNativeMain)
+          nativeTest?.dependsOn(jsAndNativeTest)
+          jsTest?.dependsOn(jsAndNativeTest)
         }
         if (jsMain != null)
           jsTest?.dependsOn(jsMain)
         if (nativeMain != null)
           nativeTest?.dependsOn(nativeMain)
+
+        nativeTargets
+          .map { it.name }
+          .forEach { target ->
+            if (target == "native")
+              return@forEach
+            findByName("${target}Main")?.apply {
+              if (nativeMain != null)
+                dependsOn(nativeMain)
+            }
+            findByName("${target}Test")?.apply {
+              if (nativeTest != null)
+                dependsOn(nativeTest)
+            }
+          }
 
         all {
           languageSettings.apply {

@@ -20,9 +20,9 @@ internal actual fun <T : Component> resolveInternalComponentType(
   val constructor = componentClass.js.asDynamic()
   // The component type is stored directly on the JS object, to reduce map
   // lookups
-  var componentType = constructor.`$compType$` as? InternalComponentType<T>
+  var componentType = constructor.`$compType$`
   if (componentType != null)
-    return componentType
+    return componentType.unsafeCast<InternalComponentType<T>>()
   // Construct an instantiator from the js constructor
   val instantiator = resolveInstantiator<T>(constructor.unsafeCast<Any>())
   val id = idCounter++

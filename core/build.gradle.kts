@@ -8,7 +8,8 @@ kotlin {
     browser()
     nodejs()
   }
-  // mingwX64()
+  mingwX64()
+  mingwX64("native") // TODO: Temporarily for creating a "common" native sourceset
 
   sourceSets {
     val commonMain by getting {
@@ -28,5 +29,8 @@ kotlin {
 
     val jsAndNativeMain by creating {}
     val jsAndNativeTest by creating {}
+
+    // val nativeMain by creating {}
+    // val nativeTest by creating {}
   }
 }

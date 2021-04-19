@@ -9,11 +9,13 @@
  */
 package org.lanternpowered.shards.component
 
+import org.lanternpowered.shards.IgnoreNative
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ComponentTypeTest {
 
+  @IgnoreNative // Instantiator will always fail on native
   @Test
   fun testInstantiator() {
     val healthType = componentType<Health>()
