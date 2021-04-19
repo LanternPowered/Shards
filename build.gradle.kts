@@ -1,117 +1,129 @@
 plugins {
-  java
-  idea
-  eclipse
-  kotlin("jvm") version "1.4.32"
+  kotlin("multiplatform") version "1.4.32" apply false
   id("net.minecrell.licenser") version "0.4.1"
-  id("me.champeau.gradle.jmh") version "0.4.7"
 }
 
-group = "org.lanternpowered"
-version = "1.0-SNAPSHOT"
+allprojects {
+  group = "org.lanternpowered"
+  version = "0.0.1"
 
-defaultTasks("licenseFormat", "build")
-
-repositories {
-  mavenCentral()
-  maven("https://jitpack.io")
-  maven("https://kotlin.bintray.com/kotlinx")
-  maven("https://oss.sonatype.org/content/groups/public")
+  repositories {
+    mavenCentral()
+    maven("https://dl.bintray.com/kotlin/kotlinx")
+    maven("https://oss.sonatype.org/content/groups/public")
+  }
 }
 
-dependencies {
-  implementation(kotlin("stdlib-jdk8"))
-  implementation(kotlin("reflect"))
-  implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.3")
-  implementation(group = "org.slf4j", name = "slf4j-api", version = "1.7.21")
-  implementation(group = "org.checkerframework", name = "checker-qual", version = "3.6.0")
-  implementation(group = "it.unimi.dsi", name = "fastutil", version = "8.4.0")
-  implementation(group = "it.unimi.dsi", name = "dsiutils", version = "2.6.6")
-  implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.8.5")
-  implementation(group = "org.lanternpowered", name = "lmbda", version = "2.0.0-SNAPSHOT")
-}
+subprojects {
+  afterEvaluate {
+    apply(plugin = "net.minecrell.licenser")
 
-jmh {
-  duplicateClassesStrategy = DuplicatesStrategy.WARN
-}
+    val multiplatform = extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()
 
-tasks {
-  val javadocJar = create<Jar>("javadocJar") {
-    archiveBaseName.set(project.name)
-    archiveClassifier.set("javadoc")
-    from(javadoc)
-  }
+    multiplatform?.apply {
+      targets
+        .filterIsInstance<org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget>()
+        .flatMap { it.compilations }
+        .forEach {
+          it.apply {
+            kotlinOptions {
+              jvmTarget = "1.8"
+            }
+          }
+        }
 
-  val sourceJar = create<Jar>("sourceJar") {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-    exclude("**/*.class") // For module-info.class
-  }
+      sourceSets {
+        val commonMain by getting {}
+        val commonTest by getting {
+          dependencies {
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
+          }
+        }
 
-  assemble {
-    dependsOn(sourceJar)
-    dependsOn(javadocJar)
-  }
+        // val jvmMain = findByName("jvmMain")
+        val jvmTest = findByName("jvmTest")
 
-  artifacts {
-    archives(jar.get())
-    archives(sourceJar)
-    archives(javadocJar)
-  }
+        val jsAndNativeCommonMain = findByName("jsAndNativeMain")
+        val jsAndNativeCommonTest = findByName("jsAndNativeTest")
 
-  listOf(jar.get(), sourceJar, javadocJar).forEach {
-    it.from(project.file("LICENSE.txt"))
-  }
+        val jsMain = findByName("jsMain")
+        val jsTest = findByName("jsTest")
 
-  test {
-    useJUnitPlatform()
-  }
+        val nativeMain = findByName("nativeCommonMain")
+        val nativeTest = findByName("nativeCommonTest")
 
-  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().forEach {
-    it.kotlinOptions.apply {
-      jvmTarget = "1.8"
-      languageVersion = "1.3"
+        jvmTest?.dependencies {
+          implementation(kotlin("test-junit"))
+        }
+        jsTest?.dependencies {
+          implementation(kotlin("test-js"))
+        }
 
-      val args = mutableListOf<String>()
-      args += "-Xjvm-default=enable"
-      args += "-Xallow-result-return-type"
+        if (jsAndNativeCommonMain != null) {
+          jsAndNativeCommonMain.dependsOn(commonMain)
+          nativeMain?.dependsOn(jsAndNativeCommonMain)
+          jsMain?.dependsOn(jsAndNativeCommonMain)
+        }
+        if (jsAndNativeCommonTest != null) {
+          jsAndNativeCommonTest.dependsOn(commonTest)
+          if (jsAndNativeCommonMain != null)
+            jsAndNativeCommonTest.dependsOn(jsAndNativeCommonMain)
+          nativeTest?.dependsOn(jsAndNativeCommonTest)
+          jsTest?.dependsOn(jsAndNativeCommonTest)
+        }
+        if (jsMain != null)
+          jsTest?.dependsOn(jsMain)
+        if (nativeMain != null)
+          nativeTest?.dependsOn(nativeMain)
 
-      fun useExperimentalAnnotation(name: String) {
-        args += "-Xuse-experimental=$name"
+        all {
+          languageSettings.apply {
+            enableLanguageFeature("InlineClasses")
+            enableLanguageFeature("NewInference")
+            enableLanguageFeature("NonParenthesizedAnnotationsOnFunctionalTypes")
+
+            useExperimentalAnnotation("kotlin.ExperimentalUnsignedTypes")
+            useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+            useExperimentalAnnotation("kotlin.ExperimentalStdlibApi")
+            useExperimentalAnnotation("kotlin.experimental.ExperimentalTypeInference")
+            useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+
+            // useExperimentalAnnotation("kotlinx.serialization.UnstableDefault")
+            // useExperimentalAnnotation("kotlinx.serialization.ExperimentalSerializationApi")
+          }
+        }
       }
-
-      fun enableLanguageFeature(name: String) {
-        args += "-XXLanguage:+$name"
-      }
-
-      enableLanguageFeature("InlineClasses")
-      enableLanguageFeature("NewInference")
-      enableLanguageFeature("NonParenthesizedAnnotationsOnFunctionalTypes")
-
-      useExperimentalAnnotation("kotlin.ExperimentalUnsignedTypes")
-      useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
-      useExperimentalAnnotation("kotlin.ExperimentalStdlibApi")
-      useExperimentalAnnotation("kotlin.experimental.ExperimentalTypeInference")
-      useExperimentalAnnotation("kotlin.time.ExperimentalTime")
-      useExperimentalAnnotation("kotlinx.serialization.UnstableDefault")
-
-      freeCompilerArgs = args
     }
-  }
-}
 
-license {
-  header = rootProject.file("HEADER.txt")
-  newLine = false
-  ignoreFailures = false
-  sourceSets = project.sourceSets
+    license {
+      header = rootProject.file("HEADER.txt")
+      newLine = false
+      ignoreFailures = false
 
-  include("**/*.java")
-  include("**/*.kt")
+      val sourceSetContainer = project.the<SourceSetContainer>()
 
-  ext {
-    set("name", rootProject.name)
-    set("url", "https://www.lanternpowered.org")
-    set("organization", "LanternPowered")
+      if (multiplatform != null) {
+        val temp = mutableListOf<SourceSet>()
+        for ((name, kotlinSourceSet) in multiplatform.sourceSets.asMap) {
+          temp += sourceSetContainer.create(project.name + "_" + name) {
+            allSource.source(kotlinSourceSet.kotlin)
+          }
+        }
+        gradle.taskGraph.whenReady {
+          // Remove them when the license plugin has detected them
+          // so the dev environment doesn't get polluted
+          sourceSetContainer.removeAll(temp)
+        }
+      }
+
+      include("**/*.kt")
+
+      ext {
+        set("name", rootProject.name)
+        set("url", "https://www.lanternpowered.org")
+        set("organization", "LanternPowered")
+      }
+    }
   }
 }

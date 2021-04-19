@@ -21,6 +21,9 @@ ij_kotlin_name_count_to_use_star_import_for_members = 100
 ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
 
+[*.kts]
+max_line_length = 200
+
 # [{*.kts,*.kt}]
 # ij_kotlin_align_in_columns_case_branch = false
 # ij_kotlin_align_multiline_binary_operation = false
