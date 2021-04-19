@@ -9,7 +9,9 @@
  */
 package org.lanternpowered.shards.test
 
+import kotlinx.coroutines.Deferred
 import org.lanternpowered.shards.Engine
+import org.lanternpowered.shards.aspect.Aspect
 import org.lanternpowered.shards.aspect.exclude
 import org.lanternpowered.shards.aspect.plus
 import org.lanternpowered.shards.component.Component
@@ -19,12 +21,12 @@ import org.lanternpowered.shards.component.modify
 import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityArray
 import org.lanternpowered.shards.entity.EntityCollection
-import org.lanternpowered.shards.entity.EntitySequence
+import org.lanternpowered.shards.entity.EntityIterator
 import org.lanternpowered.shards.entity.EntityReference
+import org.lanternpowered.shards.entity.EntitySequence
 import org.lanternpowered.shards.entity.add
 import org.lanternpowered.shards.entity.forEach
 import org.lanternpowered.shards.entity.modify
-import org.lanternpowered.shards.entity.with
 import org.lanternpowered.shards.system.IfModified
 import org.lanternpowered.shards.system.OnAdd
 import org.lanternpowered.shards.system.OnDelete
@@ -83,6 +85,20 @@ data class HealthComponent(
 class ExcludedComponent : Component {
 
   companion object Type : ComponentType<ExcludedComponent>()
+}
+
+data class NameComponent(
+  var name: String = ""
+) : Component {
+
+  companion object Type : ComponentType<NameComponent>()
+}
+
+data class FoodComponent(
+  var food: Double = 10.0
+) : InvalidatableComponent() {
+
+  companion object Type : ComponentType<FoodComponent>()
 }
 
 /**
@@ -178,23 +194,223 @@ class TestSystem : System(HealthComponent + exclude(ExcludedComponent)) {
   fun process() {
     // Process ignoring delta time
   }
+}
 
-  @OnProcess
-  fun alternativeFiltering(entities: EntitySequence) {
-    // Exploring alternative solutions to the annotation based system
-    // TODO: how can dependencies on component types be determined through this?
+// Exploring an alternative system that's not dependent on annotations
+class AlternativeSystem : System(Aspect.Empty) {
 
+  private val withHealth = entityQuery()
+    .with(HealthComponent)
+
+  @OnProcess // Would be replaced by an overridden function
+  fun process(entities: EntitySequence) {
     entities
-      // .filter { entity -> entity.contains(HealthComponent) }
-      .with(HealthComponent)
-      .forEach { entity ->
-        entity.modify(HealthComponent) {
-          health += 2
+      .execute(withHealth)
+      .forEach { healthComponent ->
+        healthComponent.health += 1.0
+      }
+  }
+
+  // OR
+
+  @OnProcess // Would be replaced by an overridden function
+  fun SystemContext.execute() {
+    // Execute is only called once, to setup the system context, after that
+    // only `process` is called
+
+    // Using a EntityQuery allows a system to automatically track
+    // dependencies that are being used on combination with `readOnly` and
+    // `readWrite`
+
+    // Other dependencies that aren't defined in a query, a processed entity
+    // isn't required to contain the component type, but the system depends
+    // on it so other systems will not simultaneously try to access them
+    dependsOn(FoodComponent) // By default read-write here
+    dependsOn(FoodComponent.readOnly()) // Read-only dependency
+
+    val withHealth = entityQuery()
+      .with(HealthComponent, NameComponent.readOnly())
+      // `readWrite` is necessary here if you want to modify/read a
+      // FoodComponent and if you didn't specify them in a normal `with`
+      .filterWith(FoodComponent) // By default no dependency here
+      .filterWith(FoodComponent.readWrite()) // Read-write dependency
+      // Only entities that don't have the specified component will be processed
+      .filterWithout(ExcludedComponent)
+
+    val withHealthWithoutFood = entityQuery()
+      .filterWith(HealthComponent)
+      .filterWithout(FoodComponent)
+
+    // Process will be called for every system update
+    process {
+      var counter = 0
+
+      withHealth.forEach { entity, health, name ->
+        health.health += 10.0
+        if (name.name.isBlank()) {
+          health.health += 2.0
+        } else if (name.name == "WantsFood") {
+          entity.modify(FoodComponent) {
+            food += 100.0
+          }
+          counter++
         }
       }
 
-    val fn: (Entity, HealthComponent) -> Unit = { entity, health ->
-      health.health += 2
+      withHealth
+        .drop(NameComponent) // Drop the NameComponent from the sequence
+        .filter { health -> health.health <= 2.0 }
+        .forEach { health ->
+          health.lastAttacker = EntityReference.Empty
+        }
+
+      println("$counter entities wanted food.")
+
+      // Also possible, but less optimal
+      for (entity in withHealthWithoutFood) {
+        entity.modify(HealthComponent) {
+          health -= 1.0
+        }
+      }
     }
   }
+}
+
+@Target(
+  AnnotationTarget.TYPE,
+  AnnotationTarget.FUNCTION,
+  AnnotationTarget.CLASS
+)
+@Retention(AnnotationRetention.RUNTIME)
+@DslMarker
+annotation class SystemDsl
+
+@SystemDsl
+interface SystemContext {
+
+  fun dependsOn(type: ComponentType<*>)
+
+  fun entityQuery(): EntityQuery.With0
+
+  fun EntityQuery.filterWith(type: ComponentType<*>): EntityQuery
+  fun EntityQuery.filterWithout(type: ComponentType<*>): EntityQuery
+
+  fun EntityQuery.With0.filterWith(type: ComponentType<*>): EntityQuery.With0
+  fun EntityQuery.With0.filterWithout(type: ComponentType<*>): EntityQuery.With0
+
+  fun <T1> EntityQuery.With1<T1>.filterWith(type: ComponentType<*>): EntityQuery.With1<T1>
+  fun <T1> EntityQuery.With1<T1>.filterWithout(type: ComponentType<*>): EntityQuery.With1<T1>
+
+  fun <T1, T2> EntityQuery.With2<T1, T2>.filterWith(type: ComponentType<*>): EntityQuery.With2<T1, T2>
+  fun <T1, T2> EntityQuery.With2<T1, T2>.filterWithout(type: ComponentType<*>): EntityQuery.With2<T1, T2>
+
+  fun process(fn: suspend SystemProcessContext.() -> Unit)
+}
+
+@SystemDsl
+abstract class SystemProcessContext {
+
+  abstract fun <R> async(fn: () -> R): Deferred<R>
+
+  abstract operator fun EntityQuery.iterator(): EntityIterator
+
+  abstract fun EntityQuery.With0.filter(predicate: (Entity) -> Boolean):
+    EntitySequence
+
+  fun <T1 : Component> EntityQuery.With1<T1>.drop(
+    type: ComponentType<T1>
+  ): EntitySequence {
+    TODO()
+  }
+
+  @JvmName("drop2")
+  fun <T1 : Component, T2> EntityQuery.With2<T1, T2>.drop(
+    type: ComponentType<T1>
+  ): EntitySeq1<T2> {
+    TODO()
+  }
+
+  @JvmName("drop1")
+  fun <T1, T2 : Component> EntityQuery.With2<T1, T2>.drop(
+    type: ComponentType<T2>
+  ): EntitySeq1<T1> {
+    TODO()
+  }
+
+  abstract fun <T1> EntitySeq1<T1>.filter(predicate: (T1) -> Boolean): EntitySeq1<T1>
+  abstract fun <T1> EntitySeq1<T1>.filter(predicate: (Entity, T1) -> Boolean): EntitySeq1<T1>
+
+  abstract fun <T1> EntityQuery.With1<T1>.filter(predicate: (T1) -> Boolean): EntitySeq1<T1>
+  abstract fun <T1> EntityQuery.With1<T1>.filter(predicate: (Entity, T1) -> Boolean): EntitySeq1<T1>
+
+  abstract fun <T1, R> EntityQuery.With1<T1>.map(transform: (T1) -> R): Sequence<R>
+  abstract fun <T1, R> EntityQuery.With1<T1>.map(transform: (Entity, T1) -> R): Sequence<R>
+
+  abstract fun <T1, T2> EntityQuery.With2<T1, T2>.filter(
+    predicate: (T1, T2) -> Boolean
+  ): EntitySeq2<T1, T2>
+
+  abstract fun <T1, T2> EntityQuery.With2<T1, T2>.filter(
+    predicate: (Entity, T1, T2) -> Boolean
+  ): EntitySeq2<T1, T2>
+
+  abstract fun EntityQuery.map(predicate: (Entity) -> Boolean): EntitySequence
+
+  abstract fun EntityQuery.With0.sequence(): EntitySequence
+  abstract fun EntityQuery.With0.forEach(fn: (Entity) -> Unit)
+
+  abstract fun <T1> EntityQuery.With1<T1>.forEach(fn: (Entity, T1) -> Unit)
+
+  abstract fun <T1, T2> EntityQuery.With2<T1, T2>.forEach(
+    fn: (Entity, T1, T2) -> Unit
+  )
+}
+
+fun System.entityQuery(): EntityQuery.With0 {
+  TODO()
+}
+
+fun EntitySequence.execute(query: EntityQuery.With0): EntitySequence {
+  TODO()
+}
+
+fun <T1> EntitySequence.execute(query: EntityQuery.With1<T1>): EntitySeq1<T1> {
+  TODO()
+}
+
+fun <T : Component> ComponentType<T>.readWrite(): ComponentType<T> = TODO()
+fun <T : Component> ComponentType<T>.readOnly(): ComponentType<T> = TODO()
+
+@SystemDsl
+interface EntityQuery {
+
+  interface With0 : EntityQuery {
+
+    fun <T1 : Component> with(type1: ComponentType<T1>): With1<T1>
+
+    fun <T1 : Component, T2 : Component> with(
+      type1: ComponentType<T1>,
+      type2: ComponentType<T2>
+    ): With2<T1, T2>
+  }
+
+  interface With1<T1> : EntityQuery {
+
+    fun <T2 : Component> with(type: ComponentType<T2>): With2<T1, T2>
+  }
+
+  interface With2<T1, T2> : EntityQuery {
+  }
+}
+
+interface EntitySeq1<T1> {
+
+  fun forEach(fn: (T1) -> Unit)
+  fun forEach(fn: (Entity, T1) -> Unit)
+}
+
+interface EntitySeq2<T1, T2> {
+
+  fun forEach(fn: (T1, T2) -> Unit)
+  fun forEach(fn: (Entity, T1, T2) -> Unit)
 }

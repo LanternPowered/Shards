@@ -22,6 +22,7 @@ repositories {
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation(kotlin("reflect"))
+  implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.3")
   implementation(group = "org.slf4j", name = "slf4j-api", version = "1.7.21")
   implementation(group = "org.checkerframework", name = "checker-qual", version = "3.6.0")
   implementation(group = "it.unimi.dsi", name = "fastutil", version = "8.4.0")

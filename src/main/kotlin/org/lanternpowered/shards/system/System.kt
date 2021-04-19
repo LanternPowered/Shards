@@ -112,24 +112,23 @@ abstract class System(val aspect: Aspect = Aspect.Empty) : EntityContext {
   ): Boolean = engine.containsComponent(entityId, type)
 
   /**
-   * Gets the component instance of the given [type] and fails
-   * if the component wasn't found.
+   * Gets the component instance of the given [type] and fails if the
+   * component wasn't found.
    */
   fun <T : Component> get(
     entityId: EntityId, type: ComponentType<T>
   ): T = engine.getComponent(entityId, type)
 
   /**
-   * Gets the component instance of the given [type] and returns `null`
-   * if the component wasn't found.
+   * Gets the component instance of the given [type] and returns `null` if
+   * the component wasn't found.
    */
   fun <T : Component> getOrNull(
     entityId: EntityId, type: ComponentType<T>
   ): T? = engine.getComponentOrNull(entityId, type)
 
   /**
-   * Adds the component of the given [type] to the entity and gets
-   * the instance.
+   * Adds the component of the given [type] to the entity and gets the instance.
    */
   fun <T : Component> add(
     entityId: EntityId, type: ComponentType<T>
