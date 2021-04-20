@@ -15,6 +15,11 @@ import kotlin.test.assertEquals
 class ComponentTypeTest {
 
   @Test
+  fun testType() {
+    assertEquals(Health.componentClass, Health::class)
+  }
+
+  @Test
   fun testInstantiator() {
     val healthType = Health
     val health = healthType.instantiator()
@@ -28,4 +33,6 @@ class ComponentTypeTest {
 data class Health(var value: Double = 20.0) : Component {
   companion object Type : ComponentType<Health>(::Health)
 }
-data class Food(var value: Double = 30.0) : Component
+data class Food(var value: Double = 30.0) : Component {
+  companion object Type : ComponentType<Food>(::Food)
+}

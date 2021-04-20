@@ -13,15 +13,9 @@ package org.lanternpowered.shards.component
 
 import kotlin.reflect.KClass
 
-/**
- * Constructs a new [ComponentType] with the specified type [T].
- */
-inline fun <reified T : Component> componentType(): ComponentType<T> =
-  ComponentType(T::class)
-
-/**
- * Constructs a new [ComponentType] with the specified type component class.
- */
-expect fun <T : Component> ComponentType(
+actual fun <T : Component> ComponentType(
   componentClass: KClass<T>
-): ComponentType<T>
+): ComponentType<T> = SimpleComponentType(componentClass)
+
+private class SimpleComponentType<T : Component>(componentClass: KClass<T>) :
+  ComponentType<T>(componentClass, null)
