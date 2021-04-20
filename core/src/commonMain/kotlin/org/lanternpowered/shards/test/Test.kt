@@ -17,7 +17,6 @@ import org.lanternpowered.shards.aspect.plus
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.InvalidatableComponent
-import org.lanternpowered.shards.component.componentType
 import org.lanternpowered.shards.component.modify
 import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityArray

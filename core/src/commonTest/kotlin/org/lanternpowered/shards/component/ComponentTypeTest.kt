@@ -9,16 +9,14 @@
  */
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.IgnoreNative
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ComponentTypeTest {
 
-  @IgnoreNative // Instantiator will always fail on native
   @Test
   fun testInstantiator() {
-    val healthType = componentType<Health>()
+    val healthType = Health
     val health = healthType.instantiator()
     assertEquals(health::class, Health::class)
     assertEquals(20.0, health.value)
@@ -27,5 +25,7 @@ class ComponentTypeTest {
   }
 }
 
-data class Health(var value: Double = 20.0) : Component
+data class Health(var value: Double = 20.0) : Component {
+  companion object Type : ComponentType<Health>(::Health)
+}
 data class Food(var value: Double = 30.0) : Component

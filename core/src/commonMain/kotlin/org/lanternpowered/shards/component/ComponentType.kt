@@ -28,7 +28,7 @@ open class ComponentType<T : Component> {
   constructor(instantiator: () -> T) {
     @Suppress("UNCHECKED_CAST")
     val componentClass = instantiator()::class as KClass<T>
-    internalType = resolveInternalComponentType(componentClass)
+    internalType = resolveInternalComponentType(componentClass, instantiator)
   }
 
   /**
