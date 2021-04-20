@@ -92,6 +92,8 @@ subprojects {
           jsTest?.dependsOn(jsAndNativeTest)
         }
 
+        if (jvmMain != null)
+          jvmTest?.dependsOn(jvmMain)
         if (jsMain != null)
           jsTest?.dependsOn(jsMain)
         if (nativeMain != null)
