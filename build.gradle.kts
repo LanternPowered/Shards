@@ -44,11 +44,14 @@ subprojects {
         val nativeTargets = targets
           .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>()
 
-        // val jvmMain = findByName("jvmMain")
+        val jvmMain = findByName("jvmMain")
         val jvmTest = findByName("jvmTest")
 
         val jsAndNativeMain = findByName("jsAndNativeMain")
         val jsAndNativeTest = findByName("jsAndNativeTest")
+
+        val jsAndJvmMain = findByName("jsAndJvmMain")
+        val jsAndJvmTest = findByName("jsAndJvmTest")
 
         val jsMain = findByName("jsMain")
         val jsTest = findByName("jsTest")
@@ -63,10 +66,23 @@ subprojects {
           implementation(kotlin("test-js"))
         }
 
+        if (jsAndJvmMain != null) {
+          jsAndJvmMain.dependsOn(commonMain)
+          jsMain?.dependsOn(jsAndJvmMain)
+          jvmMain?.dependsOn(jsAndJvmMain)
+        }
+        if (jsAndJvmTest != null) {
+          jsAndJvmTest.dependsOn(commonTest)
+          if (jsAndJvmMain != null)
+            jsAndJvmTest.dependsOn(jsAndJvmMain)
+          jvmTest?.dependsOn(jsAndJvmTest)
+          jsTest?.dependsOn(jsAndJvmTest)
+        }
+
         if (jsAndNativeMain != null) {
           jsAndNativeMain.dependsOn(commonMain)
-          nativeMain?.dependsOn(jsAndNativeMain)
           jsMain?.dependsOn(jsAndNativeMain)
+          nativeMain?.dependsOn(jsAndNativeMain)
         }
         if (jsAndNativeTest != null) {
           jsAndNativeTest.dependsOn(commonTest)
@@ -75,6 +91,7 @@ subprojects {
           nativeTest?.dependsOn(jsAndNativeTest)
           jsTest?.dependsOn(jsAndNativeTest)
         }
+
         if (jsMain != null)
           jsTest?.dependsOn(jsMain)
         if (nativeMain != null)

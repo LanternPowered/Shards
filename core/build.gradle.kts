@@ -27,6 +27,9 @@ kotlin {
       }
     }
 
+    val jsAndJvmMain by creating {}
+    val jsAndJvmTest by creating {}
+
     val jsAndNativeMain by creating {}
     val jsAndNativeTest by creating {}
 

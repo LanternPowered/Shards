@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 private var idCounter = 0
 
 internal actual fun <T : Component> resolveInternalComponentType(
-  componentClass: KClass<T>
+  componentClass: KClass<T>, instantiator: (() -> T)?
 ): InternalComponentType<T> {
   val constructor = componentClass.js.asDynamic()
   // The component type is stored directly on the JS object, to reduce map
@@ -24,15 +24,15 @@ internal actual fun <T : Component> resolveInternalComponentType(
   if (componentType != null)
     return componentType.unsafeCast<InternalComponentType<T>>()
   // Construct an instantiator from the js constructor
-  val instantiator = resolveInstantiator<T>(constructor.unsafeCast<Any>())
+  val actualInstantiator = resolveInstantiator<T>(constructor.unsafeCast<Any>())
   val id = idCounter++
-  componentType = InternalComponentType(id, componentClass, instantiator)
+  componentType = InternalComponentType(id, componentClass, actualInstantiator)
   constructor.`$compType$` = componentType
   return componentType
 }
 
 private fun <T> resolveInstantiator(constructor: Any): () -> T =
-  { instantiate(constructor.unsafeCast<Any>()) }
+  { instantiate(constructor) }
 
 @Suppress("UNUSED_PARAMETER") // `constructor` is actually used
 private fun <T> instantiate(constructor: Any): T =

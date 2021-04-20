@@ -25,5 +25,5 @@ internal class InternalComponentType<T : Component>(
 )
 
 internal expect fun <T : Component> resolveInternalComponentType(
-  componentClass: KClass<T>
+  componentClass: KClass<T>, instantiator: (() -> T)? = null
 ): InternalComponentType<T>

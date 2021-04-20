@@ -73,7 +73,7 @@ data class OtherComponent(
   var value: String = ""
 ) : InvalidatableComponent() {
 
-  companion object Type : ComponentType<OtherComponent>()
+  companion object Type : ComponentType<OtherComponent>(::OtherComponent)
 }
 
 data class HealthComponent(
@@ -81,26 +81,26 @@ data class HealthComponent(
   var lastAttacker: EntityReference = EntityReference.Empty
 ) : InvalidatableComponent() {
 
-  companion object Type : ComponentType<HealthComponent>()
+  companion object Type : ComponentType<HealthComponent>(::HealthComponent)
 }
 
 class ExcludedComponent : Component {
 
-  companion object Type : ComponentType<ExcludedComponent>()
+  companion object Type : ComponentType<ExcludedComponent>(::ExcludedComponent)
 }
 
 data class NameComponent(
   var name: String = ""
 ) : Component {
 
-  companion object Type : ComponentType<NameComponent>()
+  companion object Type : ComponentType<NameComponent>(::NameComponent)
 }
 
 data class FoodComponent(
   var food: Double = 10.0
 ) : InvalidatableComponent() {
 
-  companion object Type : ComponentType<FoodComponent>()
+  companion object Type : ComponentType<FoodComponent>(::FoodComponent)
 }
 
 /**

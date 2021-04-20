@@ -19,12 +19,11 @@ private val lookup = HashMap<KClass<*>, InternalComponentType<*>>()
 
 @Suppress("UNCHECKED_CAST")
 internal actual fun <T : Component> resolveInternalComponentType(
-  componentClass: KClass<T>
+  componentClass: KClass<T>, instantiator: (() -> T)?
 ): InternalComponentType<T> {
   // Construct an instantiator from the js constructor
   return lookup.getOrPut(componentClass) {
     val id = idCounter++
-    val instantiator: () -> T = { throw UnsupportedOperationException() }
-    InternalComponentType(id, componentClass, instantiator)
+    InternalComponentType(id, componentClass, instantiator!!)
   } as InternalComponentType<T>
 }

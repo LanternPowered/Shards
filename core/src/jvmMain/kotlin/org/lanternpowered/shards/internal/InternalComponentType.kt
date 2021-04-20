@@ -23,7 +23,7 @@ private val lookup = ConcurrentHashMap<Class<*>, InternalComponentType<*>>()
 
 @Suppress("UNCHECKED_CAST")
 internal actual fun <T : Component> resolveInternalComponentType(
-  componentClass: KClass<T>
+  componentClass: KClass<T>, instantiator: (() -> T)?
 ): InternalComponentType<T> = lookup.computeIfAbsent(componentClass.java) {
   createInternalComponentType(componentClass)
 } as InternalComponentType<T>

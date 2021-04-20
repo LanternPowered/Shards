@@ -17,43 +17,24 @@ import kotlin.jvm.JvmSynthetic
 import kotlin.reflect.KClass
 
 /**
- * Constructs a new [ComponentType] with the specified type [T].
- */
-inline fun <reified T : Component> componentType(): ComponentType<T> =
-  SimpleComponentType(T::class)
-
-/**
- * Constructs a new [ComponentType] with the specified type component class.
- */
-fun <T : Component> ComponentType(componentClass: KClass<T>): ComponentType<T> =
-  SimpleComponentType(componentClass)
-
-/**
  * Represents the type of a [Component].
- *
- * @constructor Constructs a new [ComponentType] with the specified
- *              `componentClass`.
  */
-abstract class ComponentType<T : Component> {
+open class ComponentType<T : Component> {
 
-  // TODO: Delete this
-  constructor() {
-    /*
-    val theClass = this::class
-    val superClass = theClass.superclass
-    check(superClass == ComponentType::class.java) {
-      "Only direct subclasses of ComponentType are allowed." }
-    val superType = theClass.genericSuperclass
-    check(superType is ParameterizedType) {
-      "Direct subclasses of ComponentType must be a parameterized type." }
-    val id = this.idCounter.getAndIncrement()
+  /**
+   * Constructs a new [ComponentType] with the specified [Component]
+   * instantiator.
+   */
+  constructor(instantiator: () -> T) {
     @Suppress("UNCHECKED_CAST")
-    val componentClass = (superType.rawType as Class<T>).kotlin
-    return ResolvedComponentType(id, componentClass)*/
-    internalType = resolveInternalComponentType(Component::class) as InternalComponentType<T>
+    val componentClass = instantiator()::class as KClass<T>
+    internalType = resolveInternalComponentType(componentClass)
   }
 
-  internal constructor(componentClass: KClass<T>, ignored: Unit?) {
+  /**
+   * Internal constructor used in JVM and JS targets.
+   */
+  internal constructor(componentClass: KClass<T>, ignored: Nothing? = null) {
     internalType = resolveInternalComponentType(componentClass)
   }
 
@@ -75,7 +56,3 @@ abstract class ComponentType<T : Component> {
   final override fun toString(): String =
     internalType.toString()
 }
-
-@PublishedApi
-internal class SimpleComponentType<T : Component>(componentClass: KClass<T>) :
-  ComponentType<T>(componentClass, null)
