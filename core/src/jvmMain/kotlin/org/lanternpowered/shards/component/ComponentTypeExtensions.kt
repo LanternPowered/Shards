@@ -13,9 +13,28 @@ package org.lanternpowered.shards.component
 
 import kotlin.reflect.KClass
 
-actual fun <T : Component> ComponentType(
-  componentClass: KClass<T>
-): ComponentType<T> = SimpleComponentType(componentClass)
+actual inline fun <reified T : Component> type(): ComponentType<T> =
+  type(T::class)
 
-private class SimpleComponentType<T : Component>(componentClass: KClass<T>) :
-  ComponentType<T>(componentClass, null)
+actual inline fun <reified T : Component> readOnly(): ComponentType<T> =
+  readOnly(T::class)
+
+actual inline fun <reified T : Component> readWrite(): ComponentType<T> =
+  readWrite(T::class)
+
+actual fun <T : Component> type(
+  componentClass: KClass<T>
+): ComponentType<T> =
+  resolveInternalComponentType(componentClass).componentType
+
+@PublishedApi
+internal fun <T : Component> readOnly(
+  componentClass: KClass<T>
+): ComponentType<T> =
+  resolveInternalComponentType(componentClass).componentTypeReadOnly
+
+@PublishedApi
+internal fun <T : Component> readWrite(
+  componentClass: KClass<T>
+): ComponentType<T> =
+  resolveInternalComponentType(componentClass).componentTypeReadWrite

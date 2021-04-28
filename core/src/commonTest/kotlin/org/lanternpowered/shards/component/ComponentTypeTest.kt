@@ -9,6 +9,7 @@
  */
 package org.lanternpowered.shards.component
 
+import org.lanternpowered.shards.util.AccessMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,17 +17,24 @@ class ComponentTypeTest {
 
   @Test
   fun testType() {
-    assertEquals(Health.componentClass, Health::class)
+    assertEquals(Health::class, Health.componentClass)
   }
 
   @Test
   fun testInstantiator() {
     val healthType = Health
     val health = healthType.instantiator()
-    assertEquals(health::class, Health::class)
+    assertEquals(Health::class, health::class)
     assertEquals(20.0, health.value)
     health.value = 10.0
     assertEquals(10.0, health.value)
+  }
+
+  @Test
+  fun testAccessMode() {
+    assertEquals(AccessMode.Undefined, Health.accessMode)
+    assertEquals(AccessMode.ReadOnly, readOnly(Health).accessMode)
+    assertEquals(AccessMode.ReadWrite, readWrite(Health).accessMode)
   }
 }
 

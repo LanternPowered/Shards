@@ -11,7 +11,7 @@
 
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.internal.InternalComponentType
+import org.lanternpowered.shards.util.AccessMode
 
 /**
  * Represents the type of a [Component].
@@ -26,7 +26,14 @@ expect abstract class ComponentType<T : Component>(instantiator: () -> T) {
    */
   internal val internalType: InternalComponentType<T>
 
+  /**
+   * The access mode.
+   */
+  internal val accessMode: AccessMode
+
   final override fun equals(other: Any?): Boolean
   final override fun hashCode(): Int
   final override fun toString(): String
+
+  companion object
 }

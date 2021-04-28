@@ -18,6 +18,8 @@ import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.InvalidatableComponent
 import org.lanternpowered.shards.component.modify
+import org.lanternpowered.shards.component.readOnly
+import org.lanternpowered.shards.component.readWrite
 import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityArray
 import org.lanternpowered.shards.entity.EntityCollection
@@ -26,25 +28,22 @@ import org.lanternpowered.shards.entity.EntityReference
 import org.lanternpowered.shards.entity.EntitySequence
 import org.lanternpowered.shards.entity.add
 import org.lanternpowered.shards.entity.modify
-import org.lanternpowered.shards.system.IfModified
-import org.lanternpowered.shards.system.OnAdd
-import org.lanternpowered.shards.system.OnDelete
-import org.lanternpowered.shards.system.OnProcess
 import org.lanternpowered.shards.system.System
 import kotlin.jvm.JvmName
-import kotlin.reflect.typeOf
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 import kotlin.time.Duration
 
 fun init() {
   val engine = Engine()
   val entity0 = engine.createEntity()
-  val testComponent = entity0.add(HealthComponent)
+  val testComponent = entity0.add(Health)
   testComponent.health = 1000.0
 
   val entities = engine.use {
     EntityArray(1000) {
       val entity = createEntity()
-      val health = entity.add(HealthComponent)
+      val health = entity.add(Health)
       health.health = 1000.0
       entity
     }
@@ -52,7 +51,7 @@ fun init() {
   val entities1 = engine.use {
     EntityArray(1000) {
       createEntity().modify {
-        add(HealthComponent) {
+        add(Health) {
           health = 125.0
         }
       }
@@ -60,7 +59,7 @@ fun init() {
   }
 
   engine.createEntity().modify {
-    add(HealthComponent) {
+    add(Health) {
       health = 0.3
       lastAttacker = EntityReference.Empty
     }
@@ -68,45 +67,34 @@ fun init() {
 }
 
 
-data class OtherComponent(
-  var value: String = ""
-) : InvalidatableComponent() {
-
-  companion object Type : ComponentType<OtherComponent>(::OtherComponent)
+data class Other(var value: String = "") : InvalidatableComponent() {
+  companion object Type : ComponentType<Other>(::Other)
 }
 
-data class HealthComponent(
+data class Health(
   var health: Double = 10.0,
   var lastAttacker: EntityReference = EntityReference.Empty
 ) : InvalidatableComponent() {
-
-  companion object Type : ComponentType<HealthComponent>(::HealthComponent)
+  companion object Type : ComponentType<Health>(::Health)
 }
 
-class ExcludedComponent : Component {
-
-  companion object Type : ComponentType<ExcludedComponent>(::ExcludedComponent)
+class Excluded : Component {
+  companion object Type : ComponentType<Excluded>(::Excluded)
 }
 
-data class NameComponent(
-  var name: String = ""
-) : Component {
-
-  companion object Type : ComponentType<NameComponent>(::NameComponent)
+data class Name(var name: String = "") : Component {
+  companion object Type : ComponentType<Name>(::Name)
 }
 
-data class FoodComponent(
-  var food: Double = 10.0
-) : InvalidatableComponent() {
-
-  companion object Type : ComponentType<FoodComponent>(::FoodComponent)
+data class Food(var food: Double = 10.0) : InvalidatableComponent() {
+  companion object Type : ComponentType<Food>(::Food)
 }
 
 /**
- * A test system targeting [HealthComponent] ignoring all entities holding
- * [ExcludedComponent].
+ * A test system targeting [Health] ignoring all entities holding
+ * [Excluded].
  */
-class TestSystem : System(HealthComponent + exclude(ExcludedComponent)) {
+class TestSystem : System(Health + exclude(Excluded)) {
 
   // TODO: Figure out how dependencies on certain component types can be
   //  determined, so we know which systems depend on eachother and which
@@ -118,7 +106,6 @@ class TestSystem : System(HealthComponent + exclude(ExcludedComponent)) {
    * Is called when an entity was added to the engine or components were
    * added so the entity is now valid to be processed using this system.
    */
-  @OnAdd
   private fun added(entity: Entity) {
   }
 
@@ -126,7 +113,6 @@ class TestSystem : System(HealthComponent + exclude(ExcludedComponent)) {
    * Is called when an entity was deleted from the engine or components were
    * removed so the entity is no longer valid to be processed using this system.
    */
-  @OnDelete
   private fun deleted(entity: Entity) {
   }
 
@@ -138,60 +124,48 @@ class TestSystem : System(HealthComponent + exclude(ExcludedComponent)) {
    * be nullable if they are considered optional
    */
 
-  @OnProcess
   fun process(deltaTime: Duration, entity: Entity) {
-    val test = entity.get(HealthComponent)
+    val test = entity.get(Health)
     test.health += 100.0
     entity.modify {
-      get(HealthComponent).modify {
+      get(Health).modify {
 
       }
       // OR
-      modify(HealthComponent) {
+      modify(Health) {
         health -= 0.1
       }
     }
     // Process
   }
 
-  @OnProcess
   fun bulkProcess(deltaTime: Duration, entities: EntityCollection) {
     // Process all the applicable entities in bulk, instead of calling a
     // single process function for every entity
     for (entity in entities) {
       // Do things
       entity.modify {
-        get(HealthComponent).modify {
+        get(Health).modify {
           health -= 2.0
         }
       }
     }
     // OR better
     entities.modifyAll {
-      modify(HealthComponent) {
+      modify(Health) {
         health -= 2.0
       }
     }
   }
 
-  @OnProcess
-  fun process(deltaTime: Duration, component: HealthComponent) {
+  fun process(deltaTime: Duration, component: Health) {
     // Process with required components
   }
 
-  @OnProcess
-  fun process(deltaTime: Duration, entity: Entity, component: HealthComponent) {
+  fun process(deltaTime: Duration, entity: Entity, component: Health) {
     // Process with required components
   }
 
-  @OnProcess
-  fun processIfModified(deltaTime: Duration, component: @IfModified HealthComponent) {
-    // Process with required components, if the target component type was
-    // modified, this filter only works for Components of subtype
-    // InvalidatableComponent, the filter will be ignored for other types
-  }
-
-  @OnProcess
   fun process() {
     // Process ignoring delta time
   }
@@ -201,9 +175,8 @@ class TestSystem : System(HealthComponent + exclude(ExcludedComponent)) {
 class AlternativeSystem : System(Aspect.Empty) {
 
   private val withHealth = entityQuery()
-    .with(HealthComponent)
+    .with(Health)
 
-  @OnProcess // Would be replaced by an overridden function
   fun process(entities: EntitySequence) {
     entities
       .execute(withHealth)
@@ -214,7 +187,6 @@ class AlternativeSystem : System(Aspect.Empty) {
 
   // OR
 
-  @OnProcess // Would be replaced by an overridden function
   fun SystemContext.execute() {
     // Execute is only called once, to setup the system context, after that
     // only `process` is called
@@ -226,40 +198,43 @@ class AlternativeSystem : System(Aspect.Empty) {
     // Other dependencies that aren't defined in a query, a processed entity
     // isn't required to contain the component type, but the system depends
     // on it so other systems will not simultaneously try to access them
-    dependsOn(FoodComponent) // By default read-write here
-    dependsOn(FoodComponent.readOnly()) // Read-only dependency
+    dependsOn(Food) // By default read-write here
+    dependsOn(readOnly(Food)) // Read-only dependency
 
-    val withHealth = entityQuery()
-      .with(HealthComponent, readOnly<NameComponent>())
+    val withHealth by entityQuery()
+      // .with(Health, readOnly<Name>())
+      .with(Health, readOnly(Name))
       // `readWrite` is necessary here if you want to modify/read a
       // FoodComponent and if you didn't specify them in a normal `with`
-      .filterWith(FoodComponent) // By default no dependency here
-      .filterWith(FoodComponent.readWrite()) // Read-write dependency
+      .filterWith(Food) // By default no dependency here
+      .filterWith(readWrite(Food)) // Read-write dependency
       // Only entities that don't have the specified component will be processed
-      .filterWithout(ExcludedComponent)
+      .filterWithout(Excluded)
 
-    val withHealthWithoutFood = entityQuery()
-      .filterWith(HealthComponent)
-      .filterWithout(FoodComponent)
+    val withHealthWithoutFood by entityQuery()
+      .filterWith(Health)
+      .filterWithout(Food)
 
     // Process will be called for every system update
     process {
       var counter = 0
 
-      withHealth.forEach { entity, health, name ->
-        health.health += 10.0
-        if (name.name.isBlank()) {
-          health.health += 2.0
-        } else if (name.name == "WantsFood") {
-          entity.modify(FoodComponent) {
-            food += 100.0
+      withHealth
+        .filter { entity, health, name -> true }
+        .forEach { entity, health, name ->
+          health.health += 10.0
+          if (name.name.isBlank()) {
+            health.health += 2.0
+          } else if (name.name == "WantsFood") {
+            entity.modify(Food) {
+              food += 100.0
+            }
+            counter++
           }
-          counter++
         }
-      }
 
       withHealth
-        .drop(NameComponent) // Drop the NameComponent from the sequence
+        .drop(Name) // Drop the NameComponent from the sequence
         .filter { health -> health.health <= 2.0 }
         .forEach { health ->
           health.lastAttacker = EntityReference.Empty
@@ -269,7 +244,7 @@ class AlternativeSystem : System(Aspect.Empty) {
 
       // Also possible, but less optimal
       for (entity in withHealthWithoutFood) {
-        entity.modify(HealthComponent) {
+        entity.modify(Health) {
           health -= 1.0
         }
       }
@@ -282,7 +257,7 @@ class AlternativeSystem : System(Aspect.Empty) {
   AnnotationTarget.FUNCTION,
   AnnotationTarget.CLASS
 )
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.BINARY)
 @DslMarker
 annotation class SystemDsl
 
@@ -292,6 +267,10 @@ interface SystemContext {
   fun dependsOn(type: ComponentType<*>)
 
   fun entityQuery(): EntityQuery.With0
+
+  operator fun <T : EntityQuery> T.provideDelegate(
+    target: Any?, prop: KProperty<*>
+  ): ReadOnlyProperty<Any?, T>
 
   fun EntityQuery.filterWith(type: ComponentType<*>): EntityQuery
   fun EntityQuery.filterWithout(type: ComponentType<*>): EntityQuery
@@ -305,7 +284,7 @@ interface SystemContext {
   fun <T1, T2> EntityQuery.With2<T1, T2>.filterWith(type: ComponentType<*>): EntityQuery.With2<T1, T2>
   fun <T1, T2> EntityQuery.With2<T1, T2>.filterWithout(type: ComponentType<*>): EntityQuery.With2<T1, T2>
 
-  fun process(fn: suspend SystemProcessContext.() -> Unit)
+  fun process(fn: SystemProcessContext.() -> Unit)
 }
 
 @SystemDsl
@@ -379,9 +358,6 @@ fun <T1> EntitySequence.execute(query: EntityQuery.With1<T1>): EntitySeq1<T1> {
   TODO()
 }
 
-fun <T : Component> ComponentType<T>.readWrite(): ComponentType<T> = TODO()
-fun <T : Component> ComponentType<T>.readOnly(): ComponentType<T> = TODO()
-
 @SystemDsl
 interface EntityQuery {
 
@@ -415,20 +391,6 @@ interface EntitySeq2<T1, T2> {
   fun forEach(fn: (T1, T2) -> Unit)
   fun forEach(fn: (Entity, T1, T2) -> Unit)
 }
-
-fun testInstantiate() {
-  val healthComponent = HealthComponent()
-  healthComponent.health = 10.0
-  healthComponent.modify {
-    health += 2.0
-  }
-
-  readOnly<HealthComponent>()
-  readWrite<HealthComponent>()
-}
-
-inline fun <reified T : Component> readOnly(): ComponentType<T> = TODO()
-inline fun <reified T : Component> readWrite(): ComponentType<T> = TODO()
 
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)

@@ -9,6 +9,8 @@
  */
 package org.lanternpowered.shards.component
 
+import org.lanternpowered.shards.system.System
+
 /**
  * Represents a component of a component holder (also known as entity). There
  * are generally two ways to compose a component.

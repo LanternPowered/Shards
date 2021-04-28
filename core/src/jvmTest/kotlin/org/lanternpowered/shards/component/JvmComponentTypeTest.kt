@@ -16,10 +16,10 @@ class JvmComponentTypeTest {
 
   @Test
   fun testGenericTypeExtraction() {
-    assertEquals(Saturation.componentClass, Saturation::class)
+    assertEquals(Saturation::class, Saturation.componentClass)
   }
 }
 
-data class Saturation(val value: Double = 5.0) : Component {
+data class Saturation(var value: Double = 5.0) : Component {
   companion object Type : ComponentType<Saturation>()
 }

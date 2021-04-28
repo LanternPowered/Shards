@@ -13,7 +13,6 @@ import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.modify
 import org.lanternpowered.shards.internal.EngineManager
-import org.lanternpowered.shards.internal.InternalEntityRef
 import org.lanternpowered.shards.Engine
 
 /**
@@ -112,7 +111,7 @@ fun <T : Component> Entity.getOrAdd(type: ComponentType<T>): T =
  * already owns a component of the specified [type]. The [operation] will be
  * applied to the constructed component.
  */
-fun <T : Component> Entity.add(
+inline fun <T : Component> Entity.add(
   type: ComponentType<T>, operation: T.() -> Unit
 ): T = add(type).apply { modify(operation) }
 
@@ -130,6 +129,6 @@ inline fun <T : Component> Entity.modify(
  * component will be created. The [operation] will be applied to the
  * retrieved or constructed component.
  */
-fun <T : Component> Entity.modifyOrAdd(
+inline fun <T : Component> Entity.modifyOrAdd(
   type: ComponentType<T>, operation: T.() -> Unit
 ): T = getOrAdd(type).apply { modify(operation) }

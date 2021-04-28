@@ -10,7 +10,6 @@
 package org.lanternpowered.shards.entity
 
 import org.lanternpowered.shards.component.ComponentType
-import org.lanternpowered.shards.internal.InternalEntityRef
 
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values

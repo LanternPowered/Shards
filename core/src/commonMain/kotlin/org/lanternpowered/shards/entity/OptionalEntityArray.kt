@@ -9,8 +9,6 @@
  */
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.internal.InternalEntityRef
-
 /**
  * Represents an array of entities.
  */

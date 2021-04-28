@@ -10,7 +10,6 @@
 package org.lanternpowered.shards.entity
 
 import org.lanternpowered.shards.internal.EngineManager
-import org.lanternpowered.shards.internal.InternalEntityRef
 
 /**
  * Constructs an [EntityReference] for the specified [Entity].

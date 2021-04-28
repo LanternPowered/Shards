@@ -13,6 +13,7 @@ import org.lanternpowered.shards.Engine
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.entity.EntityMutator
+import org.lanternpowered.shards.entity.InternalEntityRef
 import org.lanternpowered.shards.internal.util.IntList
 
 internal object EngineManager {

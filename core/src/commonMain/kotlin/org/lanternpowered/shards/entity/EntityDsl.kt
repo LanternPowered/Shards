@@ -14,6 +14,6 @@ package org.lanternpowered.shards.entity
   AnnotationTarget.FUNCTION,
   AnnotationTarget.CLASS
 )
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.BINARY)
 @DslMarker
 annotation class EntityDsl

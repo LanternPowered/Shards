@@ -11,8 +11,6 @@
 
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.internal.InternalEntityRef
-
 /**
  * Converts the iterable of [Entity]s to an [EntityArray].
  */

@@ -7,9 +7,7 @@
  * This work is licensed under the terms of the MIT License (MIT). For
  * a copy, see 'LICENSE.txt' or <https://opensource.org/licenses/MIT>.
  */
-package org.lanternpowered.shards.internal
-
-import org.lanternpowered.shards.entity.EntityId
+package org.lanternpowered.shards.entity
 
 /**
  * An internal representation of a reference to an entity of a specific

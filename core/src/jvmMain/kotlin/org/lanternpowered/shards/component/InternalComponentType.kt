@@ -7,12 +7,13 @@
  * This work is licensed under the terms of the MIT License (MIT). For
  * a copy, see 'LICENSE.txt' or <https://opensource.org/licenses/MIT>.
  */
-package org.lanternpowered.shards.internal
+package org.lanternpowered.shards.component
 
 import org.lanternpowered.lmbda.kt.createLambda
 import org.lanternpowered.lmbda.kt.lambdaType
 import org.lanternpowered.lmbda.kt.privateLookupIn
-import org.lanternpowered.shards.component.Component
+import org.lanternpowered.shards.util.AccessMode
+import org.lanternpowered.shards.util.unsafeCast
 import java.lang.invoke.MethodHandles
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -21,20 +22,28 @@ import kotlin.reflect.KClass
 private val idCounter = AtomicInteger()
 private val lookup = ConcurrentHashMap<Class<*>, InternalComponentType<*>>()
 
-@Suppress("UNCHECKED_CAST")
 internal actual fun <T : Component> resolveInternalComponentType(
   componentClass: KClass<T>, instantiator: (() -> T)?
-): InternalComponentType<T> = lookup.computeIfAbsent(componentClass.java) {
-  createInternalComponentType(componentClass)
-} as InternalComponentType<T>
+): InternalComponentType<T> = resolveInternalComponentType(componentClass.java)
+
+internal fun <T : Component> resolveInternalComponentType(
+  componentClass: Class<T>
+): InternalComponentType<T> = lookup.computeIfAbsent(componentClass) {
+  createInternalComponentType(componentClass.kotlin)
+}.unsafeCast()
 
 private fun <T : Component> createInternalComponentType(
   componentClass: KClass<T>
 ): InternalComponentType<T> {
   val id = idCounter.getAndIncrement()
   val instantiator = resolveInstantiator(componentClass)
-  return InternalComponentType(id, componentClass, instantiator)
+  return InternalComponentType(id, componentClass, instantiator,
+    ::SimpleComponentType)
 }
+
+private class SimpleComponentType<T : Component>(
+  internalType: InternalComponentType<T>, accessMode: AccessMode
+) : ComponentType<T>(internalType, accessMode)
 
 private val instantiatorType = lambdaType<() -> Any>()
 
@@ -53,6 +62,5 @@ private fun <T : Any> resolveInstantiator(type: KClass<T>): () -> T {
     } ?: error("Class '$type' is missing a default constructor.")
   val lookup = MethodHandles.lookup().privateLookupIn(type)
   val handle = lookup.unreflectConstructor(constructor)
-  @Suppress("UNCHECKED_CAST")
-  return handle.createLambda(instantiatorType) as () -> T
+  return handle.createLambda(instantiatorType).unsafeCast()
 }

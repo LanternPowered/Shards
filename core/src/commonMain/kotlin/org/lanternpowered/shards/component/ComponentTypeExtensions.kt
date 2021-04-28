@@ -20,5 +20,17 @@ import kotlin.reflect.KClass
 val <T : Component> ComponentType<T>.componentClass: KClass<T>
   get() = internalType.componentClass
 
+/**
+ * Returns this [ComponentType] with a read-only access mode.
+ */
+fun <T : Component> readOnly(type: ComponentType<T>): ComponentType<T> =
+  type.internalType.componentTypeReadOnly
+
+/**
+ * Returns this [ComponentType] with a read-write access mode.
+ */
+fun <T : Component> readWrite(type: ComponentType<T>): ComponentType<T> =
+  type.internalType.componentTypeReadWrite
+
 internal val <T : Component> ComponentType<T>.instantiator: () -> T
   get() = internalType.instantiator

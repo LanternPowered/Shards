@@ -14,14 +14,22 @@ package org.lanternpowered.shards.component
 import kotlin.reflect.KClass
 
 /**
- * Constructs a new [ComponentType] with the specified type [T].
+ * Returns the [ComponentType] for the specified type [T].
  */
-inline fun <reified T : Component> componentType(): ComponentType<T> =
-  ComponentType(T::class)
+expect inline fun <reified T : Component> type(): ComponentType<T>
 
 /**
- * Constructs a new [ComponentType] with the specified type component class.
+ * Returns the [ComponentType] for the specified type component class.
  */
-expect fun <T : Component> ComponentType(
-  componentClass: KClass<T>
-): ComponentType<T>
+expect fun <T : Component> type(componentClass: KClass<T>): ComponentType<T>
+
+/**
+ * Returns the [ComponentType] for the specified type [T] with read-only access.
+ */
+expect inline fun <reified T : Component> readOnly(): ComponentType<T>
+
+/**
+ * Returns the [ComponentType] for the specified type [T] with read-write
+ * access.
+ */
+expect inline fun <reified T : Component> readWrite(): ComponentType<T>

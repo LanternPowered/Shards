@@ -11,8 +11,8 @@
 
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.internal.InternalComponentType
-import org.lanternpowered.shards.internal.resolveInternalComponentType
+import org.lanternpowered.shards.util.AccessMode
+import org.lanternpowered.shards.util.unsafeCast
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
 
@@ -21,14 +21,17 @@ actual abstract class ComponentType<T : Component> {
   @JvmSynthetic
   internal actual val internalType: InternalComponentType<T>
 
+  @JvmSynthetic
+  internal actual val accessMode: AccessMode
+
   /**
    * Constructs a new [ComponentType] with the specified [Component]
    * instantiator.
    */
   actual constructor(instantiator: () -> T) {
-    @Suppress("UNCHECKED_CAST")
-    val componentClass = instantiator()::class as KClass<T>
+    val componentClass = instantiator()::class.unsafeCast<KClass<T>>()
     internalType = resolveInternalComponentType(componentClass)
+    accessMode = AccessMode.Undefined
   }
 
   /**
@@ -43,17 +46,19 @@ actual abstract class ComponentType<T : Component> {
     val supertype = javaClass.genericSuperclass
     check(supertype is ParameterizedType) {
       "Direct subclasses of ComponentType must be a parameterized type." }
-    @Suppress("UNCHECKED_CAST")
-    val componentClass = (supertype.rawType as Class<T>).kotlin
+    val componentType = supertype.actualTypeArguments[0]
+    check(componentType is Class<*>) {
+      "The generic parameter type must be a non-parameterized Class<*>." }
+    val componentClass = componentType.unsafeCast<Class<T>>().kotlin
     internalType = resolveInternalComponentType(componentClass)
+    accessMode = AccessMode.Undefined
   }
 
-  /**
-   * Internal constructor.
-   */
-  @Suppress("UNUSED_PARAMETER")
-  internal constructor(componentClass: KClass<T>, ignored: Nothing?) {
-    internalType = resolveInternalComponentType(componentClass)
+  internal constructor(
+    internalType: InternalComponentType<T>, accessMode: AccessMode
+  ) {
+    this.internalType = internalType
+    this.accessMode = accessMode
   }
 
   actual final override fun equals(other: Any?): Boolean =
@@ -64,4 +69,21 @@ actual abstract class ComponentType<T : Component> {
 
   actual final override fun toString(): String =
     internalType.toString()
+
+  actual companion object {
+
+    /**
+     * Returns the [ComponentType] for the specified type component class.
+     */
+    @JvmStatic
+    fun <T : Component> of(componentClass: KClass<T>): ComponentType<T> =
+      resolveInternalComponentType(componentClass).componentType
+
+    /**
+     * Returns the [ComponentType] for the specified type component class.
+     */
+    @JvmStatic
+    fun <T : Component> of(componentClass: Class<T>): ComponentType<T> =
+      resolveInternalComponentType(componentClass).componentType
+  }
 }

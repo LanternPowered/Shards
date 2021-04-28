@@ -7,8 +7,9 @@
  * This work is licensed under the terms of the MIT License (MIT). For
  * a copy, see 'LICENSE.txt' or <https://opensource.org/licenses/MIT>.
  */
-package org.lanternpowered.shards
+package org.lanternpowered.shards.util
 
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-expect annotation class IgnoreNative()
+/**
+ * Performs an unsafe cast.
+ */
+internal expect inline fun <T> Any?.unsafeCast(): T

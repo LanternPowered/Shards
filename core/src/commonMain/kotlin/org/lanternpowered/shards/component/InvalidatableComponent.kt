@@ -9,7 +9,7 @@
  */
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.system.IfModified
+import org.lanternpowered.shards.system.System
 import org.lanternpowered.shards.util.MonotonicInstant
 import org.lanternpowered.shards.util.MonotonicTime
 import org.lanternpowered.shards.util.now
