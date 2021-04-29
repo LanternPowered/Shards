@@ -59,7 +59,7 @@ private fun <T : Any> resolveInstantiator(type: KClass<T>): () -> T {
   val constructor = type.java.declaredConstructors
     .firstOrNull { constructor ->
       constructor.parameterCount == 0
-    } ?: error("Class '$type' is missing a default constructor.")
+    } ?: failNoDefaultConstructor(type)
   val lookup = MethodHandles.lookup().privateLookupIn(type)
   val handle = lookup.unreflectConstructor(constructor)
   return handle.createLambda(instantiatorType).unsafeCast()

@@ -82,7 +82,7 @@ class Excluded : Component {
   companion object Type : ComponentType<Excluded>(::Excluded)
 }
 
-data class Name(var name: String = "") : Component {
+data class Name(var name: String = "defaultName") : Component {
   companion object Type : ComponentType<Name>(::Name)
 }
 
