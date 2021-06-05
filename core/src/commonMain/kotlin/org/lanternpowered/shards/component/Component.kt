@@ -9,16 +9,12 @@
  */
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.system.System
-
 /**
- * Represents a component of a component holder (also known as entity). There
- * are generally two ways to compose a component.
+ * Represents a component of an entity. Components should be immutable and
+ * only contain data, not any or a limited amount of logic.
  *
- * The first way is to only define the data which should be attached to the
- * component and logic will be separated into a [System].
- *
- * Modifications to components are recommend to be handled through [modify].
+ * Component classes are not allowed to be abstract or subclassed. Ideally is
+ * a component a data or value class.
  */
 interface Component
 
@@ -28,17 +24,4 @@ interface Component
  */
 inline fun <T : Component> T.modify(operation: T.() -> Unit) {
   operation()
-  // Update the last time the component was modified
-  if (this is InvalidatableComponent)
-    invalidate()
-}
-
-/**
- * Modifies the component using the specified [operation] and updates the last
- * modified field if the component is an [InvalidatableComponent].
- */
-inline fun <T : InvalidatableComponent> T.modify(operation: T.() -> Unit) {
-  operation()
-  // Update the last time the component was modified
-  invalidate()
 }

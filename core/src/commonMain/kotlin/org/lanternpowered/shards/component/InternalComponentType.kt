@@ -21,7 +21,6 @@ import kotlin.reflect.KClass
 internal class InternalComponentType<T : Component>(
   val id: Int,
   val componentClass: KClass<T>,
-  val instantiator: () -> T,
   componentType: (InternalComponentType<T>, AccessMode) -> ComponentType<T>
 ) {
   val componentType = componentType(this, AccessMode.Undefined)
@@ -30,5 +29,5 @@ internal class InternalComponentType<T : Component>(
 }
 
 internal expect fun <T : Component> resolveInternalComponentType(
-  componentClass: KClass<T>, instantiator: (() -> T)? = null
+  componentClass: KClass<T>
 ): InternalComponentType<T>

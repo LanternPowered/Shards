@@ -10,7 +10,6 @@
 package org.lanternpowered.shards.component
 
 import org.lanternpowered.shards.util.AccessMode
-import org.lanternpowered.shards.util.unsafeCast
 import kotlin.jvm.JvmSynthetic
 import kotlin.reflect.KClass
 
@@ -26,9 +25,8 @@ actual abstract class ComponentType<T : Component> {
    * Constructs a new [ComponentType] with the specified [Component]
    * instantiator.
    */
-  actual constructor(instantiator: () -> T) {
-    val componentClass = instantiator()::class.unsafeCast<KClass<T>>()
-    internalType = resolveInternalComponentType(componentClass, instantiator)
+  actual constructor(componentClass: KClass<T>) {
+    internalType = resolveInternalComponentType(componentClass)
     accessMode = AccessMode.Undefined
   }
 

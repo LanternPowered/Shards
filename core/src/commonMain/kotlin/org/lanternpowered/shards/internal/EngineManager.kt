@@ -43,10 +43,10 @@ internal object EngineManager {
   }
 
   fun destroy(engine: Engine) {
-    //synchronized(lock) {
+    lock.withLock {
       reusedIds.add(engine.id)
       engines[engine.id] = null
-    //}
+    }
   }
 
   fun modify(ref: InternalEntityRef, fn: EntityMutator.() -> Unit) =

@@ -13,7 +13,6 @@ import kotlinx.coroutines.Deferred
 import org.lanternpowered.shards.Engine
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
-import org.lanternpowered.shards.component.InvalidatableComponent
 import org.lanternpowered.shards.component.modify
 import org.lanternpowered.shards.component.readOnly
 import org.lanternpowered.shards.component.readWrite
@@ -64,27 +63,27 @@ fun init() {
 }
 
 
-data class Other(var value: String = "") : InvalidatableComponent() {
-  companion object Type : ComponentType<Other>(::Other)
+data class Other(var value: String = "") : Component {
+  companion object Type : ComponentType<Other>(Other::class)
 }
 
 data class Health(
   var health: Double = 10.0,
   var lastAttacker: EntityReference = EntityReference.Empty
-) : InvalidatableComponent() {
-  companion object Type : ComponentType<Health>(::Health)
+) : Component {
+  companion object Type : ComponentType<Health>(Health::class)
 }
 
 class Excluded : Component {
-  companion object Type : ComponentType<Excluded>(::Excluded)
+  companion object Type : ComponentType<Excluded>(Excluded::class)
 }
 
 data class Name(var name: String = "defaultName") : Component {
-  companion object Type : ComponentType<Name>(::Name)
+  companion object Type : ComponentType<Name>(Name::class)
 }
 
-data class Food(var food: Double = 10.0) : InvalidatableComponent() {
-  companion object Type : ComponentType<Food>(::Food)
+data class Food(var food: Double = 10.0) : Component {
+  companion object Type : ComponentType<Food>(Food::class)
 }
 
 /**

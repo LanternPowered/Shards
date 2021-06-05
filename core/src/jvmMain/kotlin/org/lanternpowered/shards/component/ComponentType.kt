@@ -28,8 +28,7 @@ actual abstract class ComponentType<T : Component> {
    * Constructs a new [ComponentType] with the specified [Component]
    * instantiator.
    */
-  actual constructor(instantiator: () -> T) {
-    val componentClass = instantiator()::class.unsafeCast<KClass<T>>()
+  actual constructor(componentClass: KClass<T>) {
     internalType = resolveInternalComponentType(componentClass)
     accessMode = AccessMode.Undefined
   }

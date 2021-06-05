@@ -10,6 +10,6 @@
 package org.lanternpowered.shards.component
 
 /**
- * An exception that can be thrown if a [Component] class is incorrectly setup.
+ * An exception that can be thrown if an invalid [Component] class is used.
  */
 class InvalidComponentException(message: String) : Exception(message)

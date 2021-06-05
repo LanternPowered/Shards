@@ -7,7 +7,7 @@
  * This work is licensed under the terms of the MIT License (MIT). For
  * a copy, see 'LICENSE.txt' or <https://opensource.org/licenses/MIT>.
  */
-@file:Suppress("UNUSED_PARAMETER", "NOTHING_TO_INLINE", "unused")
+@file:Suppress("UNUSED_PARAMETER", "NOTHING_TO_INLINE", "unused", "ClassName")
 
 package org.lanternpowered.shards.system
 
@@ -203,10 +203,6 @@ abstract class EntitySeqContext5<
   inline fun <T : T5> Entity.transform(operation: (T5) -> T5): T5 =
     operation(get5()).also { set5(it) }
 }
-
-@Suppress("ClassName", "unused")
-@JsName("Dummy")
-class ` `<T> private constructor()
 
 abstract class EntitySeq<S, C>
   where S : EntitySeq<S, C>,
@@ -445,3 +441,6 @@ abstract class EntitySeq3<T1, T2, T3> :
 {
 
 }
+
+@JsName("Space")
+class ` `<T> private constructor()

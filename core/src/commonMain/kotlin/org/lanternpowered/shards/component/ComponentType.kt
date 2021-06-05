@@ -12,6 +12,7 @@
 package org.lanternpowered.shards.component
 
 import org.lanternpowered.shards.util.AccessMode
+import kotlin.reflect.KClass
 
 /**
  * Represents the type of a [Component].
@@ -19,7 +20,7 @@ import org.lanternpowered.shards.util.AccessMode
  * @constructor Constructs a new [ComponentType] with the specified [Component]
  *              instantiator.
  */
-expect abstract class ComponentType<T : Component>(instantiator: () -> T) {
+expect abstract class ComponentType<T : Component>(componentClass: KClass<T>) {
 
   /**
    * Information resolved about the component type.

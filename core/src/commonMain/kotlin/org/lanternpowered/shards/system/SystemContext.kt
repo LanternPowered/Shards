@@ -20,8 +20,18 @@ import kotlin.reflect.KClass
  */
 abstract class SystemContext : CoroutineScope {
 
+  /**
+   * A sequence of all the entities in the current engine.
+   */
   abstract val entities: EntitySeq0
 
+  /**
+   * Executes an async task within the scope of the current [System] execution.
+   *
+   * All launched async tasks will be waited for after [System.execute]. If
+   * the async task returns a result that is needed for execution, then it can
+   * be awaited for using [Deferred.await].
+   */
   abstract fun <R> async(
     operation: suspend CoroutineScope.() -> R
   ): Deferred<R>
@@ -31,12 +41,28 @@ abstract class SystemContext : CoroutineScope {
    */
   abstract fun Entity.contains(type: KClass<out Component>): Boolean
 
-  abstract fun Entity.remove(type: KClass<out Component>)
+  /**
+   * Removes the [Component] with the given [type] from the [Entity]. Returns
+   * `true` if the component existed, `false` otherwise.
+   */
+  abstract fun Entity.remove(type: KClass<out Component>): Boolean
 
+  /**
+   * Returns the [Component] with the given [type] which is held by the
+   * [Entity]. If no compound is found, an [IllegalStateException] will be
+   * thrown.
+   */
   abstract fun <T : Component> Entity.get(type: KClass<out T>): T
 
+  /**
+   * Returns the [Component] with the given [type] which is held by the
+   * [Entity]. If no compound is found, `null` will be returned instead.
+   */
   abstract fun <T : Component> Entity.getOrNull(type: KClass<out T>): T?
 
+  /**
+   * Sets the [Component] on the [Entity].
+   */
   abstract fun Entity.set(value: Component)
 
   /**

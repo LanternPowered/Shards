@@ -11,7 +11,6 @@ package org.lanternpowered.shards.system
 
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
-import org.lanternpowered.shards.component.InvalidatableComponent
 import org.lanternpowered.shards.entity.EntityReference
 import kotlin.jvm.JvmInline
 
@@ -62,18 +61,18 @@ value class Tag(val tag: String) : Component
 data class Health(
   var health: Double = 10.0,
   var lastAttacker: EntityReference = EntityReference.Empty
-) : InvalidatableComponent() {
-  companion object Type : ComponentType<Health>(::Health)
+) : Component {
+  companion object Type : ComponentType<Health>(Health::class)
 }
 
 class Excluded : Component {
-  companion object Type : ComponentType<Excluded>(::Excluded)
+  companion object Type : ComponentType<Excluded>(Excluded::class)
 }
 
 data class Name(var name: String = "defaultName") : Component {
-  companion object Type : ComponentType<Name>(::Name)
+  companion object Type : ComponentType<Name>(Name::class)
 }
 
-data class Food(var food: Double = 10.0) : InvalidatableComponent() {
-  companion object Type : ComponentType<Food>(::Food)
+data class Food(var food: Double = 10.0) : Component {
+  companion object Type : ComponentType<Food>(Food::class)
 }

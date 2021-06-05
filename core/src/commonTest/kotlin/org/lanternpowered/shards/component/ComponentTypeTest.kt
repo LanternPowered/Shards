@@ -21,26 +21,41 @@ class ComponentTypeTest {
   }
 
   @Test
-  fun testInstantiator() {
-    val healthType = Health
-    val health = healthType.instantiator()
-    assertEquals(Health::class, health::class)
-    assertEquals(20.0, health.value)
-    health.value = 10.0
-    assertEquals(10.0, health.value)
-  }
-
-  @Test
   fun testAccessMode() {
     assertEquals(AccessMode.Undefined, Health.accessMode)
     assertEquals(AccessMode.ReadOnly, readOnly(Health).accessMode)
     assertEquals(AccessMode.ReadWrite, readWrite(Health).accessMode)
   }
+
+  @Test
+  fun testGenericType() {
+    assertEquals(Tag::class, type<Tag>().componentClass)
+    assertEquals(DoubleTag::class, type<DoubleTag>().componentClass)
+  }
+
+  @Test
+  fun testGenericTypeWithModeAccess() {
+    assertEquals(AccessMode.Undefined, type<Tag>().accessMode)
+    assertEquals(AccessMode.ReadOnly, readOnly<Tag>().accessMode)
+    assertEquals(AccessMode.ReadWrite, readWrite<Tag>().accessMode)
+  }
 }
 
 data class Health(var value: Double = 20.0) : Component {
-  companion object Type : ComponentType<Health>(::Health)
+  companion object Type : ComponentType<Health>(Health::class)
 }
+
 data class Food(var value: Double = 30.0) : Component {
-  companion object Type : ComponentType<Food>(::Food)
+  companion object Type : ComponentType<Food>(Food::class)
+}
+
+data class Tag(var tag: String = "") : Component {
+  companion object Type : ComponentType<Tag>(Tag::class)
+}
+
+data class DoubleTag(
+  var tag: String = "first",
+  val tag2: String = "second"
+) : Component {
+  companion object Type : ComponentType<DoubleTag>(DoubleTag::class)
 }
