@@ -11,7 +11,6 @@
 
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.util.AccessMode
 import kotlin.reflect.KClass
 
 /**
@@ -26,11 +25,6 @@ expect abstract class ComponentType<T : Component>(componentClass: KClass<T>) {
    * Information resolved about the component type.
    */
   internal val internalType: InternalComponentType<T>
-
-  /**
-   * The access mode.
-   */
-  internal val accessMode: AccessMode
 
   final override fun equals(other: Any?): Boolean
   final override fun hashCode(): Int

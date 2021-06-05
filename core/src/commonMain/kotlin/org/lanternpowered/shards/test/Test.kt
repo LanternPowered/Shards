@@ -14,8 +14,6 @@ import org.lanternpowered.shards.Engine
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.modify
-import org.lanternpowered.shards.component.readOnly
-import org.lanternpowered.shards.component.readWrite
 import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityArray
 import org.lanternpowered.shards.entity.EntityCollection
@@ -202,15 +200,15 @@ class AlternativeSystem : System() {
     // isn't required to contain the component type, but the system depends
     // on it so other systems will not simultaneously try to access them
     dependsOn(Food) // By default read-write here
-    dependsOn(readOnly(Food)) // Read-only dependency
+    //dependsOn(readOnly(Food)) // Read-only dependency
 
     val withHealth by entityQuery()
       // .with(Health, readOnly<Name>())
-      .with(Health, readOnly(Name))
+      //.with(Health, readOnly(Name))
       // `readWrite` is necessary here if you want to modify/read a
       // FoodComponent and if you didn't specify them in a normal `with`
       .filterWith(Food) // By default no dependency here
-      .filterWith(readWrite(Food)) // Read-write dependency
+      //.filterWith(readWrite(Food)) // Read-write dependency
       // Only entities that don't have the specified component will be processed
       .filterWithout(Excluded)
 
@@ -222,6 +220,7 @@ class AlternativeSystem : System() {
     process {
       var counter = 0
 
+      /*
       withHealth
         .filter { entity, health, name -> true }
         .forEach { entity, health, name ->
@@ -241,7 +240,7 @@ class AlternativeSystem : System() {
         .filter { health -> health.health <= 2.0 }
         .forEach { health ->
           health.lastAttacker = EntityReference.Empty
-        }
+        }*/
 
       println("$counter entities wanted food.")
 

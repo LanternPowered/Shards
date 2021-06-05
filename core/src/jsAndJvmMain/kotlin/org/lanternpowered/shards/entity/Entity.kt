@@ -12,64 +12,64 @@
 package org.lanternpowered.shards.entity
 
 import org.lanternpowered.shards.component.Component
-import org.lanternpowered.shards.component.type
+import org.lanternpowered.shards.component.componentType
 import kotlin.jvm.JvmName
 
 /**
- * Returns if the entity contains a component of the specified [type].
+ * Returns if the entity contains a component of the specified [componentType].
  */
 inline fun <reified T : Component> Entity.contains(): Boolean =
-  contains(type<T>())
+  contains(componentType<T>())
 
 /**
- * Gets the component instance of the given [type] and fails if the component
+ * Gets the component instance of the given [componentType] and fails if the component
  * wasn't found.
  */
-inline fun <reified T : Component> Entity.get(): T = get(type())
+inline fun <reified T : Component> Entity.get(): T = get(componentType())
 
 /**
- * Gets the component instance of the given [type] and returns `null` if the
+ * Gets the component instance of the given [componentType] and returns `null` if the
  * component wasn't found.
  */
-inline fun <reified T : Component> Entity.getOrNull(): T? = getOrNull(type())
+inline fun <reified T : Component> Entity.getOrNull(): T? = getOrNull(componentType())
 
 /**
  * Adds the component of the specified type [T] to the entity and gets the
  * instance. An [IllegalArgumentException] will be thrown if the entity
  * already owns a component of the specified type [T].
  */
-inline fun <reified T : Component> Entity.add(): T = add(type())
+inline fun <reified T : Component> Entity.add(): T = add(componentType())
 
 /**
- * Gets the component of the specified [type] if it exists, otherwise a new
+ * Gets the component of the specified [componentType] if it exists, otherwise a new
  * component will be created.
  */
-inline fun <reified T : Component> Entity.getOrAdd(): T = getOrAdd(type())
+inline fun <reified T : Component> Entity.getOrAdd(): T = getOrAdd(componentType())
 
 /**
- * Adds the component of the specified [type] to the entity and gets the
+ * Adds the component of the specified [componentType] to the entity and gets the
  * instance. An [IllegalArgumentException] will be thrown if the entity
- * already owns a component of the specified [type]. The [operation] will be
+ * already owns a component of the specified [componentType]. The [operation] will be
  * applied to the constructed component.
  */
 inline fun <reified T : Component> Entity.add(
   operation: T.() -> Unit
-): T = add(type(), operation)
+): T = add(componentType(), operation)
 
 /**
- * Gets the component of the specified [type] and applies the given
+ * Gets the component of the specified [componentType] and applies the given
  * [operation] to it. An [IllegalArgumentException] will be thrown if the
- * entity doesn't own a component with the specified [type].
+ * entity doesn't own a component with the specified [componentType].
  */
 inline fun <reified T : Component> Entity.modify(
   operation: T.() -> Unit
-): T = modify(type(), operation)
+): T = modify(componentType(), operation)
 
 /**
- * Gets the component of the specified [type] if it exists, otherwise a new
+ * Gets the component of the specified [componentType] if it exists, otherwise a new
  * component will be created. The [operation] will be applied to the
  * retrieved or constructed component.
  */
 inline fun <reified T : Component> Entity.modifyOrAdd(
   operation: T.() -> Unit
-): T = modifyOrAdd(type(), operation)
+): T = modifyOrAdd(componentType(), operation)

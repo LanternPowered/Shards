@@ -9,23 +9,18 @@
  */
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.util.AccessMode
 import kotlin.reflect.KClass
 
 /**
  * @property id An unique identifier which represents the component type
  * @property componentClass The type of the component
- * @property instantiator An instantiator used to create instances of the
- *                        component
  */
 internal class InternalComponentType<T : Component>(
   val id: Int,
   val componentClass: KClass<T>,
-  componentType: (InternalComponentType<T>, AccessMode) -> ComponentType<T>
+  componentType: (InternalComponentType<T>) -> ComponentType<T>
 ) {
-  val componentType = componentType(this, AccessMode.Undefined)
-  val componentTypeReadOnly = componentType(this, AccessMode.ReadOnly)
-  val componentTypeReadWrite = componentType(this, AccessMode.ReadWrite)
+  val componentType = componentType(this)
 }
 
 internal expect fun <T : Component> resolveInternalComponentType(

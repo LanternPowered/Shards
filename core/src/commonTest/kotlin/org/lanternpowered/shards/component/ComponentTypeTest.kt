@@ -9,7 +9,6 @@
  */
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.util.AccessMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,23 +20,9 @@ class ComponentTypeTest {
   }
 
   @Test
-  fun testAccessMode() {
-    assertEquals(AccessMode.Undefined, Health.accessMode)
-    assertEquals(AccessMode.ReadOnly, readOnly(Health).accessMode)
-    assertEquals(AccessMode.ReadWrite, readWrite(Health).accessMode)
-  }
-
-  @Test
   fun testGenericType() {
-    assertEquals(Tag::class, type<Tag>().componentClass)
-    assertEquals(DoubleTag::class, type<DoubleTag>().componentClass)
-  }
-
-  @Test
-  fun testGenericTypeWithModeAccess() {
-    assertEquals(AccessMode.Undefined, type<Tag>().accessMode)
-    assertEquals(AccessMode.ReadOnly, readOnly<Tag>().accessMode)
-    assertEquals(AccessMode.ReadWrite, readWrite<Tag>().accessMode)
+    assertEquals(Tag::class, componentType<Tag>().componentClass)
+    assertEquals(DoubleTag::class, componentType<DoubleTag>().componentClass)
   }
 }
 

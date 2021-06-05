@@ -11,7 +11,6 @@
 
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.util.AccessMode
 import org.lanternpowered.shards.util.unsafeCast
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
@@ -21,16 +20,12 @@ actual abstract class ComponentType<T : Component> {
   @JvmSynthetic
   internal actual val internalType: InternalComponentType<T>
 
-  @JvmSynthetic
-  internal actual val accessMode: AccessMode
-
   /**
    * Constructs a new [ComponentType] with the specified [Component]
    * instantiator.
    */
   actual constructor(componentClass: KClass<T>) {
     internalType = resolveInternalComponentType(componentClass)
-    accessMode = AccessMode.Undefined
   }
 
   /**
@@ -50,14 +45,10 @@ actual abstract class ComponentType<T : Component> {
       "The generic parameter type must be a non-parameterized Class<*>." }
     val componentClass = componentType.unsafeCast<Class<T>>().kotlin
     internalType = resolveInternalComponentType(componentClass)
-    accessMode = AccessMode.Undefined
   }
 
-  internal constructor(
-    internalType: InternalComponentType<T>, accessMode: AccessMode
-  ) {
+  internal constructor(internalType: InternalComponentType<T>) {
     this.internalType = internalType
-    this.accessMode = accessMode
   }
 
   actual final override fun equals(other: Any?): Boolean =

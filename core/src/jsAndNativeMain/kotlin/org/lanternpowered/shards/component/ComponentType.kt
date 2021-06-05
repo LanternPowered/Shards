@@ -9,33 +9,20 @@
  */
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.util.AccessMode
 import kotlin.jvm.JvmSynthetic
 import kotlin.reflect.KClass
 
-actual abstract class ComponentType<T : Component> {
-
+actual abstract class ComponentType<T : Component> internal constructor(
   @JvmSynthetic
   internal actual val internalType: InternalComponentType<T>
-
-  @JvmSynthetic
-  internal actual val accessMode: AccessMode
+) {
 
   /**
    * Constructs a new [ComponentType] with the specified [Component]
    * instantiator.
    */
-  actual constructor(componentClass: KClass<T>) {
-    internalType = resolveInternalComponentType(componentClass)
-    accessMode = AccessMode.Undefined
-  }
-
-  internal constructor(
-    internalType: InternalComponentType<T>, accessMode: AccessMode
-  ) {
-    this.internalType = internalType
-    this.accessMode = accessMode
-  }
+  actual constructor(componentClass: KClass<T>) :
+    this(resolveInternalComponentType(componentClass))
 
   actual final override fun equals(other: Any?): Boolean =
     other is ComponentType<*> && other.internalType == internalType

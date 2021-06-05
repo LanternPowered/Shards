@@ -9,7 +9,6 @@
  */
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.util.AccessMode
 import org.lanternpowered.shards.util.unsafeCast
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -36,5 +35,5 @@ private fun <T : Component> createInternalComponentType(
 }
 
 private class SimpleComponentType<T : Component>(
-  internalType: InternalComponentType<T>, accessMode: AccessMode
-) : ComponentType<T>(internalType, accessMode)
+  internalType: InternalComponentType<T>
+) : ComponentType<T>(internalType)
