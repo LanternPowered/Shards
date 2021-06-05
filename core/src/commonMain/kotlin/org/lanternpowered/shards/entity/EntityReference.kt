@@ -10,6 +10,8 @@
 package org.lanternpowered.shards.entity
 
 import org.lanternpowered.shards.internal.EngineManager
+import org.lanternpowered.shards.util.unsafeCast
+import kotlin.jvm.JvmInline
 
 /**
  * Constructs an [EntityReference] for the specified [Entity].
@@ -27,7 +29,8 @@ fun EntityReference(entity: Entity?): EntityReference =
  * Represents a reference to an entity.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-inline class EntityReference internal constructor(
+@JvmInline
+value class EntityReference internal constructor(
   internal val ref: InternalEntityRef
 ) {
 
@@ -63,8 +66,8 @@ inline class EntityReference internal constructor(
    * @param fallback The fallback entity to be used
    * @return The entity
    */
-  inline fun orElseGet(fallback: () -> Entity?): Entity? =
-    if (isPresent()) asEntity() else fallback()
+  inline fun <T : Entity?> orElseGet(fallback: () -> T): T =
+    if (isPresent()) asEntity().unsafeCast() else fallback()
 
   /**
    * Gets the entity if present, otherwise throws the exception provided by the

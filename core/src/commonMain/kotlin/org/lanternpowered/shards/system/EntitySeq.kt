@@ -38,7 +38,11 @@ typealias EntitySeqContext4<
 > = EntitySeqContext5<T1, T2, T3, T4, Nothing>
 
 abstract class EntitySeqContext5<
-  T1, T2, T3, T4, T5
+  T1 : Component,
+  T2 : Component,
+  T3 : Component,
+  T4 : Component,
+  T5 : Component,
 > {
 
   @PublishedApi
@@ -86,15 +90,15 @@ abstract class EntitySeqContext5<
   internal abstract fun Entity.get5(): T5
 
   @PublishedApi
-  internal abstract fun Entity.getOrNull1(): T1
+  internal abstract fun Entity.getOrNull1(): T1?
   @PublishedApi
-  internal abstract fun Entity.getOrNull2(): T2
+  internal abstract fun Entity.getOrNull2(): T2?
   @PublishedApi
-  internal abstract fun Entity.getOrNull3(): T3
+  internal abstract fun Entity.getOrNull3(): T3?
   @PublishedApi
-  internal abstract fun Entity.getOrNull4(): T4
+  internal abstract fun Entity.getOrNull4(): T4?
   @PublishedApi
-  internal abstract fun Entity.getOrNull5(): T5
+  internal abstract fun Entity.getOrNull5(): T5?
 
   @JvmName("_set1")
   inline fun Entity.set(value: T1) = set1(value)
@@ -309,7 +313,7 @@ abstract class EntitySeq0 : EntitySeq<EntitySeq0, EntitySeqContext0>() {
   > with(
     `1`: ` `<T1>? = null,
     `2`: ` `<T2>? = null,
-    `3`: ` `<T2>? = null,
+    `3`: ` `<T3>? = null,
   ): EntitySeq3<T1, T2, T3> =
     with(T1::class, T2::class, T3::class)
 }

@@ -9,25 +9,26 @@
  */
 package org.lanternpowered.shards.util
 
+import kotlin.jvm.JvmInline
 import kotlin.time.Duration
-import kotlin.time.nanoseconds
 
 /**
  * Represents a specific instant in monotonic time.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-inline class MonotonicInstant internal constructor(
+@JvmInline
+value class MonotonicInstant internal constructor(
   private val value: Long
 ) : Comparable<MonotonicInstant> {
 
   operator fun plus(duration: Duration): MonotonicInstant =
-    MonotonicInstant(value + duration.toLongNanoseconds())
+    MonotonicInstant(value + duration.inWholeNanoseconds)
 
   operator fun minus(duration: Duration): MonotonicInstant =
-    MonotonicInstant(value - duration.toLongNanoseconds())
+    MonotonicInstant(value - duration.inWholeNanoseconds)
 
   operator fun minus(instant: MonotonicInstant): Duration =
-    (value - instant.value).nanoseconds
+    Duration.nanoseconds(value - instant.value)
 
   override fun compareTo(other: MonotonicInstant): Int =
     value.compareTo(other.value)

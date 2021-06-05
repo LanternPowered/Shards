@@ -11,11 +11,14 @@
 
 package org.lanternpowered.shards.util
 
+import kotlin.jvm.JvmInline
+
 /**
  * Represents a typed either. The actual left or right value type depends on
  * the value type.
  */
-inline class TypedEither<A, B> @PublishedApi internal constructor(
+@JvmInline
+value class TypedEither<A, B> @PublishedApi internal constructor(
   @PublishedApi internal val value: Any?
 ) {
 

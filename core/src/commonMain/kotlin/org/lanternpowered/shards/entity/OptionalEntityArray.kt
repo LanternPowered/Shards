@@ -9,11 +9,14 @@
  */
 package org.lanternpowered.shards.entity
 
+import kotlin.jvm.JvmInline
+
 /**
  * Represents an array of entities.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-inline class OptionalEntityArray private constructor(
+@JvmInline
+value class OptionalEntityArray private constructor(
   private val array: LongArray
 ) {
 

@@ -13,6 +13,7 @@ import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.InvalidatableComponent
 import org.lanternpowered.shards.entity.EntityReference
+import kotlin.jvm.JvmInline
 
 private val TestSystem = System {
   val task1 = async {
@@ -55,7 +56,8 @@ private val TestSystem = System {
   println(result1 + result2)
 }
 
-inline class Tag(val tag: String) : Component
+@JvmInline
+value class Tag(val tag: String) : Component
 
 data class Health(
   var health: Double = 10.0,

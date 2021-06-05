@@ -14,6 +14,7 @@ import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.modify
 import org.lanternpowered.shards.internal.EngineManager
 import org.lanternpowered.shards.Engine
+import kotlin.jvm.JvmInline
 
 /**
  * Internal constructor to reduce duplication when creating [Entity]s from
@@ -27,7 +28,8 @@ internal fun Entity(referenceValue: Long): Entity =
  */
 @EntityDsl
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-inline class Entity internal constructor(
+@JvmInline
+value class Entity internal constructor(
   @PublishedApi internal val ref: InternalEntityRef
 ) {
 

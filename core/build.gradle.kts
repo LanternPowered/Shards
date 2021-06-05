@@ -10,6 +10,7 @@ kotlin {
     nodejs()
   }
   // TODO: Native is not compiling
+  //  https://youtrack.jetbrains.com/issue/KT-47144
   // mingwX64("native") // TODO: Temporarily for creating a "common" native sourceset
 
   // IDE error fix:
@@ -24,8 +25,8 @@ kotlin {
     val commonMain by getting {
       dependencies {
         implementation(kotlin("reflect"))
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-        implementation("org.jetbrains.kotlinx:atomicfu:0.16.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+        implementation("org.jetbrains.kotlinx:atomicfu:0.16.1")
       }
     }
     val commonTest by getting {}

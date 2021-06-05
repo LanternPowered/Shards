@@ -9,13 +9,16 @@
  */
 package org.lanternpowered.shards.entity
 
+import kotlin.jvm.JvmInline
+
 /**
  * An internal representation of a reference to an entity of a specific
  * engine. Each reference also contains a version, which can be used to
  * determine whether an entity id has been reused (higher version than before).
  */
 @PublishedApi
-internal inline class InternalEntityRef(val value: Long) {
+@JvmInline
+internal value class InternalEntityRef(val value: Long) {
 
   constructor(id: EntityId, engine: Int, version: Int) :
     this((version.toLong() shl 48) or
