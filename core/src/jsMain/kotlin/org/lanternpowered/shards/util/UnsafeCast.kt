@@ -14,5 +14,6 @@ import kotlin.js.unsafeCast as unsafeCast0
 /**
  * Performs an unsafe cast.
  */
+@PublishedApi
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <T> Any?.unsafeCast(): T = unsafeCast0<T>()

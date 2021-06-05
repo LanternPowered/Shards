@@ -1,6 +1,6 @@
 plugins {
   kotlin("multiplatform") version "1.4.32" apply false
-  id("net.minecrell.licenser") version "0.4.1"
+  // id("net.minecrell.licenser") version "0.4.1"
 }
 
 allprojects {
@@ -8,6 +8,7 @@ allprojects {
   version = "0.0.1"
 
   repositories {
+    jcenter()
     mavenCentral()
     maven("https://dl.bintray.com/kotlin/kotlinx")
     maven("https://oss.sonatype.org/content/groups/public")
@@ -16,7 +17,7 @@ allprojects {
 
 subprojects {
   afterEvaluate {
-    apply(plugin = "net.minecrell.licenser")
+    // apply(plugin = "net.minecrell.licenser")
 
     val multiplatform = extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()
 
@@ -135,6 +136,7 @@ subprojects {
       }
     }
 
+    /*
     license {
       header = rootProject.file("HEADER.txt")
       newLine = false
@@ -155,14 +157,15 @@ subprojects {
           sourceSetContainer.removeAll(temp)
         }
       }
-
-      include("**/*.kt")
-
+*/
+      //include("**/*.kt")
+/*
       ext {
         set("name", rootProject.name)
         set("url", "https://www.lanternpowered.org")
         set("organization", "LanternPowered")
       }
     }
+  */
   }
 }

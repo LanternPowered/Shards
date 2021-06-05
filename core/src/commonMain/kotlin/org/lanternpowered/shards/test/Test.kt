@@ -11,9 +11,6 @@ package org.lanternpowered.shards.test
 
 import kotlinx.coroutines.Deferred
 import org.lanternpowered.shards.Engine
-import org.lanternpowered.shards.aspect.Aspect
-import org.lanternpowered.shards.aspect.exclude
-import org.lanternpowered.shards.aspect.plus
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.InvalidatableComponent
@@ -94,7 +91,7 @@ data class Food(var food: Double = 10.0) : InvalidatableComponent() {
  * A test system targeting [Health] ignoring all entities holding
  * [Excluded].
  */
-class TestSystem : System(Health + exclude(Excluded)) {
+class TestSystem2 : System() {
 
   // TODO: Figure out how dependencies on certain component types can be
   //  determined, so we know which systems depend on eachother and which
@@ -125,6 +122,7 @@ class TestSystem : System(Health + exclude(Excluded)) {
    */
 
   fun process(deltaTime: Duration, entity: Entity) {
+  /*
     val test = entity.get(Health)
     test.health += 100.0
     entity.modify {
@@ -137,6 +135,7 @@ class TestSystem : System(Health + exclude(Excluded)) {
       }
     }
     // Process
+    */
   }
 
   fun bulkProcess(deltaTime: Duration, entities: EntityCollection) {
@@ -151,11 +150,12 @@ class TestSystem : System(Health + exclude(Excluded)) {
       }
     }
     // OR better
+    /*
     entities.modifyAll {
       modify(Health) {
         health -= 2.0
       }
-    }
+    }*/
   }
 
   fun process(deltaTime: Duration, component: Health) {
@@ -169,10 +169,14 @@ class TestSystem : System(Health + exclude(Excluded)) {
   fun process() {
     // Process ignoring delta time
   }
+
+  override suspend fun org.lanternpowered.shards.system.SystemContext.execute() {
+    TODO("Not yet implemented")
+  }
 }
 
 // Exploring an alternative system that's not dependent on annotations
-class AlternativeSystem : System(Aspect.Empty) {
+class AlternativeSystem : System() {
 
   private val withHealth = entityQuery()
     .with(Health)
@@ -249,6 +253,10 @@ class AlternativeSystem : System(Aspect.Empty) {
         }
       }
     }
+  }
+
+  override suspend fun org.lanternpowered.shards.system.SystemContext.execute() {
+    TODO("Not yet implemented")
   }
 }
 

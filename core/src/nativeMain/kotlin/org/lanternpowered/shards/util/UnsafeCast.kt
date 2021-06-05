@@ -12,5 +12,6 @@ package org.lanternpowered.shards.util
 /**
  * Performs an unsafe cast.
  */
+@PublishedApi
 @Suppress("UNCHECKED_CAST")
 internal actual inline fun <T> Any?.unsafeCast(): T = this as T

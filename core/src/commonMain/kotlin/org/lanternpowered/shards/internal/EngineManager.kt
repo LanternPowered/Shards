@@ -9,6 +9,8 @@
  */
 package org.lanternpowered.shards.internal
 
+import kotlinx.atomicfu.locks.reentrantLock
+import kotlinx.atomicfu.locks.withLock
 import org.lanternpowered.shards.Engine
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
@@ -23,21 +25,21 @@ internal object EngineManager {
    */
   private val engines = arrayOfNulls<Engine?>(4000)
 
-  private var lock = Any()
+  private val lock = reentrantLock()
   private val reusedIds = IntList()
   private var idCounter = 0
 
   operator fun get(id: Int): Engine = engines[id]!!
 
   fun create(): Engine {
-    //synchronized(lock) {
+    lock.withLock {
       val id =
         if (reusedIds.isEmpty) idCounter++
         else reusedIds.removeAt(0)
       val engine = Engine(id)
       engines[id] = engine
       return engine
-    //}
+    }
   }
 
   fun destroy(engine: Engine) {
