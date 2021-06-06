@@ -12,7 +12,7 @@ package org.lanternpowered.shards.entity
 /**
  * An iterator for [Entity]s.
  */
-interface OptionalEntityIterator : Iterator<EntityReference> {
+interface EntityReferenceIterator : Iterator<EntityReference> {
 
   override fun next(): EntityReference = this.next()
 

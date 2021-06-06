@@ -28,7 +28,6 @@ fun EntityReference(entity: Entity?): EntityReference =
 /**
  * Represents a reference to an entity.
  */
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @JvmInline
 value class EntityReference internal constructor(
   internal val ref: InternalEntityRef

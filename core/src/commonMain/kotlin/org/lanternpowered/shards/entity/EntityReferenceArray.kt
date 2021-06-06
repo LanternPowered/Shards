@@ -12,16 +12,15 @@ package org.lanternpowered.shards.entity
 import kotlin.jvm.JvmInline
 
 /**
- * Represents an array of entities.
+ * Represents an array of entity references.
  */
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @JvmInline
-value class OptionalEntityArray private constructor(
+value class EntityReferenceArray private constructor(
   private val array: LongArray
 ) {
 
   /**
-   * Constructs a new [OptionalEntityArray] with the given size.
+   * Constructs a new [EntityReferenceArray] with the given size.
    */
   constructor(size: Int) :
     this(LongArray(size) { InternalEntityRef.Empty.value })
@@ -67,9 +66,9 @@ value class OptionalEntityArray private constructor(
   /**
    * An iterator to iterate over entities.
    */
-  operator fun iterator(): OptionalEntityIterator {
+  operator fun iterator(): EntityReferenceIterator {
     val itr = array.iterator()
-    return object : OptionalEntityIterator {
+    return object : EntityReferenceIterator {
       override fun nextEntity(): EntityReference =
         EntityReference(InternalEntityRef(itr.nextLong()))
       override fun hasNext(): Boolean = itr.hasNext()

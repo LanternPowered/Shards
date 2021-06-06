@@ -14,7 +14,6 @@ import kotlin.jvm.JvmInline
 /**
  * Represents the id of an entity.
  */
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @JvmInline
 value class EntityId internal constructor(
   internal val value: Int

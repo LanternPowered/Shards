@@ -15,7 +15,6 @@ import kotlin.time.Duration
 /**
  * Represents a specific instant in monotonic time.
  */
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @JvmInline
 value class MonotonicInstant internal constructor(
   private val value: Long
