@@ -7,54 +7,58 @@
  * This work is licensed under the terms of the MIT License (MIT). For
  * a copy, see 'LICENSE.txt' or <https://opensource.org/licenses/MIT>.
  */
-@file:Suppress("UNUSED_PARAMETER", "NOTHING_TO_INLINE", "unused", "ClassName")
+@file:Suppress("NOTHING_TO_INLINE", "UNUSED_PARAMETER", "unused", "RedundantNullableReturnType")
 
 package org.lanternpowered.shards.system
 
 import org.lanternpowered.shards.component.Component
+import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityList
 import org.lanternpowered.shards.util.unsafeCast
-import kotlin.js.JsName
 import kotlin.jvm.JvmName
-import kotlin.reflect.KClass
 
-typealias EntitySeqContext0 = EntitySeqContext1<Nothing>
+typealias EntitySeqContext0 = EntitySeqContext1<Nothing, Nothing>
 
 typealias EntitySeqContext1<
-  T1
-> = EntitySeqContext2<T1, Nothing>
+  R1, W1
+> = EntitySeqContext2<R1, W1, Nothing, Nothing>
 
 typealias EntitySeqContext2<
-  T1, T2
-> = EntitySeqContext3<T1, T2, Nothing>
+  R1, W1, R2, W2
+> = EntitySeqContext3<R1, W1, R2, W2, Nothing, Nothing>
 
 typealias EntitySeqContext3<
-  T1, T2, T3
-> = EntitySeqContext4<T1, T2, T3, Nothing>
+  R1, W1, R2, W2, R3, W3
+> = EntitySeqContext4<R1, W1, R2, W2, R3, W3, Nothing, Nothing>
 
 typealias EntitySeqContext4<
-  T1, T2, T3, T4
-> = EntitySeqContext5<T1, T2, T3, T4, Nothing>
+  R1, W1, R2, W2, R3, W3, R4, W4
+> = EntitySeqContext5<R1, W1, R2, W2, R3, W3, R4, W4, Nothing, Nothing>
 
 abstract class EntitySeqContext5<
-  T1 : Component,
-  T2 : Component,
-  T3 : Component,
-  T4 : Component,
-  T5 : Component,
+  R1 : Component,
+  W1 : Component,
+  R2 : Component,
+  W2 : Component,
+  R3 : Component,
+  W3 : Component,
+  R4 : Component,
+  W4 : Component,
+  R5 : Component,
+  W5 : Component,
 > {
 
   @PublishedApi
-  internal abstract fun Entity.set1(value: T1)
+  internal abstract fun Entity.set1(value: W1)
   @PublishedApi
-  internal abstract fun Entity.set2(value: T2)
+  internal abstract fun Entity.set2(value: W2)
   @PublishedApi
-  internal abstract fun Entity.set3(value: T3)
+  internal abstract fun Entity.set3(value: W3)
   @PublishedApi
-  internal abstract fun Entity.set4(value: T4)
+  internal abstract fun Entity.set4(value: W4)
   @PublishedApi
-  internal abstract fun Entity.set5(value: T5)
+  internal abstract fun Entity.set5(value: W5)
 
   @PublishedApi
   internal abstract fun Entity.contains1(): Boolean
@@ -68,182 +72,201 @@ abstract class EntitySeqContext5<
   internal abstract fun Entity.contains5(): Boolean
 
   @PublishedApi
-  internal abstract fun Entity.remove1()
+  internal abstract fun Entity.remove1(): Boolean
   @PublishedApi
-  internal abstract fun Entity.remove2()
+  internal abstract fun Entity.remove2(): Boolean
   @PublishedApi
-  internal abstract fun Entity.remove3()
+  internal abstract fun Entity.remove3(): Boolean
   @PublishedApi
-  internal abstract fun Entity.remove4()
+  internal abstract fun Entity.remove4(): Boolean
   @PublishedApi
-  internal abstract fun Entity.remove5()
-
-  @PublishedApi
-  internal abstract fun Entity.get1(): T1
-  @PublishedApi
-  internal abstract fun Entity.get2(): T2
-  @PublishedApi
-  internal abstract fun Entity.get3(): T3
-  @PublishedApi
-  internal abstract fun Entity.get4(): T4
-  @PublishedApi
-  internal abstract fun Entity.get5(): T5
+  internal abstract fun Entity.remove5(): Boolean
 
   @PublishedApi
-  internal abstract fun Entity.getOrNull1(): T1?
+  internal abstract fun Entity.get1(): R1
   @PublishedApi
-  internal abstract fun Entity.getOrNull2(): T2?
+  internal abstract fun Entity.get2(): R2
   @PublishedApi
-  internal abstract fun Entity.getOrNull3(): T3?
+  internal abstract fun Entity.get3(): R3
   @PublishedApi
-  internal abstract fun Entity.getOrNull4(): T4?
+  internal abstract fun Entity.get4(): R4
   @PublishedApi
-  internal abstract fun Entity.getOrNull5(): T5?
+  internal abstract fun Entity.get5(): R5
 
-  @JvmName("_set1")
-  inline fun Entity.set(value: T1) = set1(value)
-  @JvmName("_set2")
-  inline fun Entity.set(value: T2) = set2(value)
-  @JvmName("_set3")
-  inline fun Entity.set(value: T3) = set3(value)
-  @JvmName("_set4")
-  inline fun Entity.set(value: T4) = set4(value)
-  @JvmName("_set5")
-  inline fun Entity.set(value: T5) = set5(value)
+  @PublishedApi
+  internal abstract fun Entity.getOrNull1(): R1?
+  @PublishedApi
+  internal abstract fun Entity.getOrNull2(): R2?
+  @PublishedApi
+  internal abstract fun Entity.getOrNull3(): R3?
+  @PublishedApi
+  internal abstract fun Entity.getOrNull4(): R4?
+  @PublishedApi
+  internal abstract fun Entity.getOrNull5(): R5?
 
-  @JvmName("_contains1")
-  inline fun <T : T1> Entity.contains(
-    ` `: ` `<T1>? = null
-  ): Boolean = contains1()
+  @JvmName("set_1")
+  inline fun Entity.set(value: W1) = set1(value)
+  @JvmName("set_2")
+  inline fun Entity.set(value: W2) = set2(value)
+  @JvmName("set_3")
+  inline fun Entity.set(value: W3) = set3(value)
+  @JvmName("set_4")
+  inline fun Entity.set(value: W4) = set4(value)
+  @JvmName("set_5")
+  inline fun Entity.set(value: W5) = set5(value)
 
-  @JvmName("_contains2")
-  inline fun <T : T2> Entity.contains(
-    ` `: ` `<T2>? = null
-  ): Boolean = contains2()
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun Entity.set(value: Component): Unit =
+    throw UnsupportedOperationException()
 
-  @JvmName("_contains3")
-  inline fun <T : T3> Entity.contains(
-    ` `: ` `<T3>? = null
-  ): Boolean = contains3()
+  @JvmName("contains_1")
+  inline fun Entity.contains(type: ComponentType<R1>): Boolean = contains1()
+  @JvmName("contains_2")
+  inline fun Entity.contains(type: ComponentType<R2>): Boolean = contains2()
+  @JvmName("contains_3")
+  inline fun Entity.contains(type: ComponentType<R3>): Boolean = contains3()
+  @JvmName("contains_4")
+  inline fun Entity.contains(type: ComponentType<R4>): Boolean = contains4()
+  @JvmName("contains_5")
+  inline fun Entity.contains(type: ComponentType<R5>): Boolean = contains5()
 
-  @JvmName("_contains4")
-  inline fun <T : T4> Entity.contains(
-    ` `: ` `<T4>? = null
-  ): Boolean = contains4()
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun Entity.contains(type: ComponentType<*>): Boolean =
+    throw UnsupportedOperationException()
 
-  @JvmName("_contains5")
-  inline fun <T : T5> Entity.contains(
-    ` `: ` `<T5>? = null
-  ): Boolean = contains5()
+  @JvmName("remove_1")
+  inline fun Entity.remove(type: ComponentType<W1>): Boolean = remove1()
+  @JvmName("remove_2")
+  inline fun Entity.remove(type: ComponentType<W2>): Boolean = remove2()
+  @JvmName("remove_3")
+  inline fun Entity.remove(type: ComponentType<W3>): Boolean = remove3()
+  @JvmName("remove_4")
+  inline fun Entity.remove(type: ComponentType<W4>): Boolean = remove4()
+  @JvmName("remove_5")
+  inline fun Entity.remove(type: ComponentType<W5>): Boolean = remove5()
 
-  @JvmName("_remove1")
-  inline fun <T : T1> Entity.remove(` `: ` `<T1>? = null) = remove1()
-  @JvmName("_remove2")
-  inline fun <T : T2> Entity.remove(` `: ` `<T2>? = null) = remove2()
-  @JvmName("_remove3")
-  inline fun <T : T3> Entity.remove(` `: ` `<T3>? = null) = remove3()
-  @JvmName("_remove4")
-  inline fun <T : T4> Entity.remove(` `: ` `<T4>? = null) = remove4()
-  @JvmName("_remove5")
-  inline fun <T : T5> Entity.remove(` `: ` `<T5>? = null) = remove5()
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun Entity.remove(type: ComponentType<*>): Boolean =
+    throw UnsupportedOperationException()
 
-  @JvmName("_get1")
-  inline fun <T : T1> Entity.get(` `: ` `<T1>? = null): T1 = get1()
-  @JvmName("_get2")
-  inline fun <T : T2> Entity.get(` `: ` `<T2>? = null): T2 = get2()
-  @JvmName("_get3")
-  inline fun <T : T3> Entity.get(` `: ` `<T3>? = null): T3 = get3()
-  @JvmName("_get4")
-  inline fun <T : T4> Entity.get(` `: ` `<T4>? = null): T4 = get4()
-  @JvmName("_get5")
-  inline fun <T : T5> Entity.get(` `: ` `<T5>? = null): T5 = get5()
+  @JvmName("get_1")
+  inline fun Entity.get(type: ComponentType<R1>): R1 = get1()
+  @JvmName("get_2")
+  inline fun Entity.get(type: ComponentType<R2>): R2 = get2()
+  @JvmName("get_3")
+  inline fun Entity.get(type: ComponentType<R3>): R3 = get3()
+  @JvmName("get_4")
+  inline fun Entity.get(type: ComponentType<R4>): R4 = get4()
+  @JvmName("get_5")
+  inline fun Entity.get(type: ComponentType<R5>): R5 = get5()
 
-  @JvmName("_getOrNull1")
-  inline fun <T : T1> Entity.getOrNull(
-    ` `: ` `<T1>? = null
-  ): T1? = getOrNull1()
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun <R : Component> Entity.get(type: ComponentType<R>): R =
+    throw UnsupportedOperationException()
 
-  @JvmName("_getOrNull2")
-  inline fun <T : T2> Entity.getOrNull(
-    ` `: ` `<T2>? = null
-  ): T2? = getOrNull2()
+  @JvmName("getOrNull_1")
+  inline fun Entity.getOrNull(type: ComponentType<R1>): R1? = getOrNull1()
+  @JvmName("getOrNull_2")
+  inline fun Entity.getOrNull(type: ComponentType<R2>): R2? = getOrNull2()
+  @JvmName("getOrNull_3")
+  inline fun Entity.getOrNull(type: ComponentType<R3>): R3? = getOrNull3()
+  @JvmName("getOrNull_4")
+  inline fun Entity.getOrNull(type: ComponentType<R4>): R4? = getOrNull4()
+  @JvmName("getOrNull_5")
+  inline fun Entity.getOrNull(type: ComponentType<R5>): R5? = getOrNull5()
 
-  @JvmName("_getOrNull3")
-  inline fun <T : T3> Entity.getOrNull(
-    ` `: ` `<T3>? = null
-  ): T3? = getOrNull3()
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun <R : Component> Entity.getOrNull(type: ComponentType<R>): R? =
+    throw UnsupportedOperationException()
 
-  @JvmName("_getOrNull4")
-  inline fun <T : T4> Entity.getOrNull(
-    ` `: ` `<T4>? = null
-  ): T4? = getOrNull4()
+  @JvmName("transform_1")
+  inline fun Entity.transform(
+    type: ComponentType<W1>,
+    operation: (W1) -> W1
+  ): W1 = operation(get1().unsafeCast()).also { set1(it) }
 
-  @JvmName("_getOrNull5")
-  inline fun <T : T5> Entity.getOrNull(
-    ` `: ` `<T5>? = null
-  ): T5? = getOrNull5()
+  @JvmName("transform_2")
+  inline fun Entity.transform(
+    type: ComponentType<W2>,
+    operation: (W2) -> W2
+  ): W2 = operation(get2().unsafeCast()).also { set2(it) }
 
-  @JvmName("_transform1")
-  inline fun <T : T1> Entity.transform(operation: (T1) -> T1): T1 =
-    operation(get1()).also { set1(it) }
+  @JvmName("transform_3")
+  inline fun Entity.transform(
+    type: ComponentType<W3>,
+    operation: (W3) -> W3
+  ): W3 = operation(get3().unsafeCast()).also { set3(it) }
 
-  @JvmName("_transform2")
-  inline fun <T : T2> Entity.transform(operation: (T2) -> T2): T2 =
-    operation(get2()).also { set2(it) }
+  @JvmName("transform_4")
+  inline fun Entity.transform(
+    type: ComponentType<W4>,
+    operation: (W4) -> W4
+  ): W4 = operation(get4().unsafeCast()).also { set4(it) }
 
-  @JvmName("_transform3")
-  inline fun <T : T3> Entity.transform(operation: (T3) -> T3): T3 =
-    operation(get3()).also { set3(it) }
+  @JvmName("transform_5")
+  inline fun Entity.transform(
+    type: ComponentType<W5>,
+    operation: (W5) -> W5
+  ): W5 = operation(get5().unsafeCast()).also { set5(it) }
 
-  @JvmName("_transform4")
-  inline fun <T : T4> Entity.transform(operation: (T4) -> T4): T4 =
-    operation(get4()).also { set4(it) }
-
-  @JvmName("_transform5")
-  inline fun <T : T5> Entity.transform(operation: (T5) -> T5): T5 =
-    operation(get5()).also { set5(it) }
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun <W : Component> Entity.transform(
+    type: ComponentType<W>,
+    operation: (W) -> W
+  ): W = throw UnsupportedOperationException()
 }
 
 abstract class EntitySeq<S, C>
   where S : EntitySeq<S, C>,
-        C : EntitySeqContext5<*, *, *, *, *> {
+        C : EntitySeqContext5<*, *, *, *, *, *, *, *, *, *> {
 
   abstract fun <R> map(operation: C.(Entity) -> R): Sequence<R>
 
   abstract fun filter(predicate: C.(Entity) -> Boolean): S
 
-  abstract fun without(type: KClass<out Component>): S
+  abstract fun without(type: ComponentType<*>): S
 
-  inline fun <reified T1 : Component> without(): S = without(T1::class)
-
-  abstract fun without(
-    type1: KClass<out Component>,
-    type2: KClass<out Component>,
-  ): S
-
-  inline fun <
-    reified T1 : Component,
-    reified T2 : Component,
-  > without(
-    `1`: ` `<T1>? = null,
-    `2`: ` `<T2>? = null,
-  ): S = without(T1::class, T2::class)
-
-  abstract fun without(
-    type1: KClass<out Component>,
-    type2: KClass<out Component>,
-    type3: KClass<out Component>,
-  ): S
-
-  inline fun <
-    reified T1 : Component,
-    reified T2 : Component,
-    reified T3 : Component,
-  > without(
-    `1`: ` `<T1>? = null,
-    `2`: ` `<T2>? = null,
-    `3`: ` `<T3>? = null,
-  ): S = without(T1::class, T2::class, T3::class)
+  fun without(
+    firstType: ComponentType<*>,
+    vararg moreTypes: ComponentType<*>,
+  ): S = without(firstType)
+    .let { moreTypes.fold(it) { seq, type -> seq.without(type) } }
 
   abstract fun forEach(operation: C.(Entity) -> Unit)
 
@@ -268,179 +291,346 @@ abstract class EntitySeq<S, C>
 
 abstract class EntitySeq0 : EntitySeq<EntitySeq0, EntitySeqContext0>() {
 
-  abstract fun <T1 : Component> with(
-    type1: KClass<T1>
-  ): EntitySeq1<T1>
+  abstract fun <R1 : Component> reads(
+    type1: ComponentType<R1>
+  ): EntitySeq1<R1, Nothing>
 
-  inline fun <reified T1 : Component> with(): EntitySeq1<T1> =
-    with(T1::class)
+  fun <
+    R1 : Component,
+    R2 : Component,
+  > reads(
+    type1: ComponentType<R1>,
+    type2: ComponentType<R2>,
+  ): EntitySeq2<R1, Nothing, R2, Nothing> =
+    reads(type1).reads(type2)
 
-  abstract fun <
-    T1 : Component,
-    T2 : Component,
-  > with(
-    type1: KClass<T1>,
-    type2: KClass<T2>,
-  ): EntitySeq2<T1, T2>
+  fun <
+    R1 : Component,
+    R2 : Component,
+    R3 : Component,
+  > reads(
+    type1: ComponentType<R1>,
+    type2: ComponentType<R2>,
+    type3: ComponentType<R3>,
+  ): EntitySeq3<R1, Nothing, R2, Nothing, R3, Nothing> =
+    reads(type1).reads(type2).reads(type3)
 
-  inline fun <
-    reified T1 : Component,
-    reified T2 : Component,
-  > with(
-    `1`: ` `<T1>? = null,
-    `2`: ` `<T2>? = null,
-  ): EntitySeq2<T1, T2> =
-    with(T1::class, T2::class)
+  abstract fun <W1 : Component> modifies(
+    type1: ComponentType<W1>
+  ): EntitySeq1<W1, W1>
 
-  abstract fun <
-    T1 : Component,
-    T2 : Component,
-    T3 : Component,
-  > with(
-    type1: KClass<T1>,
-    type2: KClass<T2>,
-    type3: KClass<T3>,
-  ): EntitySeq3<T1, T2, T3>
+  fun <
+    W1 : Component,
+    W2 : Component,
+  > modifies(
+    type1: ComponentType<W1>,
+    type2: ComponentType<W2>,
+  ): EntitySeq2<W1, W1, W2, W2> =
+    modifies(type1).modifies(type2)
 
-  inline fun <
-    reified T1 : Component,
-    reified T2 : Component,
-    reified T3 : Component,
-  > with(
-    `1`: ` `<T1>? = null,
-    `2`: ` `<T2>? = null,
-    `3`: ` `<T3>? = null,
-  ): EntitySeq3<T1, T2, T3> =
-    with(T1::class, T2::class, T3::class)
+  fun <
+    W1 : Component,
+    W2 : Component,
+    W3 : Component,
+  > modifies(
+    type1: ComponentType<W1>,
+    type2: ComponentType<W2>,
+    type3: ComponentType<W3>,
+  ): EntitySeq3<W1, W1, W2, W2, W3, W3> =
+    modifies(type1).modifies(type2).modifies(type3)
 }
 
-abstract class EntitySeq1<T1> :
+abstract class EntitySeq1<R1, W1> :
   EntitySeq<
-    EntitySeq1<T1>,
-    EntitySeqContext1<T1>>()
-  where T1 : Component
+    EntitySeq1<R1, W1>,
+    EntitySeqContext1<R1, W1>>()
+  where R1 : Component,
+        W1 : Component
 {
 
-  abstract fun <T2 : Component> with(
-    type2: KClass<T2>
-  ): EntitySeq2<T1, T2>
+  abstract fun <R2 : Component> reads(
+    type2: ComponentType<R2>
+  ): EntitySeq2<R1, W1, R2, Nothing>
 
-  inline fun <reified T2 : Component> with(): EntitySeq2<T1, T2> =
-    with(T2::class)
+  fun <
+    R2 : Component,
+    R3 : Component,
+  > reads(
+    type2: ComponentType<R2>,
+    type3: ComponentType<R3>
+  ): EntitySeq3<R1, W1, R2, Nothing, R3, Nothing> =
+    reads(type2).reads(type3)
 
-  abstract fun filter(
-    type1: KClass<T1>,
-    predicate: EntitySeq1<T1>.(T1) -> Boolean
-  ): EntitySeq1<T1>
+  abstract fun <W2 : Component> modifies(
+    type2: ComponentType<W2>
+  ): EntitySeq2<R1, W1, W2, W2>
 
-  abstract fun filter(
-    type1: KClass<T1>,
-    predicate: EntitySeq1<T1>.(Entity, T1) -> Boolean
-  ): EntitySeq1<T1>
+  fun <
+    W2 : Component,
+    W3 : Component,
+  > modifies(
+    type2: ComponentType<W2>,
+    type3: ComponentType<W3>
+  ): EntitySeq3<R1, W1, W2, W2, W3, W3> =
+    modifies(type2).modifies(type3)
 
-  inline fun <reified T : T1> filter(
-    noinline predicate: EntitySeq1<T1>.(T1) -> Boolean
-  ): EntitySeq1<T1> = filter(T::class.unsafeCast(), predicate)
+  abstract fun with(
+    type1: ComponentType<R1>
+  ): EntitySeq1<R1, W1>
 
-  inline fun <reified T : T1> filter(
-    noinline predicate: EntitySeq1<T1>.(Entity, T1) -> Boolean
-  ): EntitySeq1<T1> = filter(T::class.unsafeCast(), predicate)
+  abstract fun filterWith(
+    type1: ComponentType<W1>,
+    predicate: EntitySeq1<R1, W1>.(R1) -> Boolean
+  ): EntitySeq1<R1, W1>
 }
 
-abstract class EntitySeq2<T1, T2> :
+abstract class EntitySeq2<R1, W1, R2, W2> :
   EntitySeq<
-    EntitySeq2<T1, T2>,
-    EntitySeqContext2<T1, T2>>()
-  where T1 : Component,
-        T2 : Component
+    EntitySeq2<R1, W1, R2, W2>,
+    EntitySeqContext2<R1, W1, R2, W2>>()
+  where R1 : Component,
+        W1 : Component,
+        R2 : Component,
+        W2 : Component
 {
 
-  abstract fun <T3 : Component> with(
-    type3: KClass<T3>
-  ): EntitySeq3<T1, T2, T3>
+  abstract fun <R3 : Component> reads(
+    type1: ComponentType<R3>
+  ): EntitySeq3<R1, W1, R2, W2, R3, Nothing>
 
-  inline fun <reified T3 : Component> with(): EntitySeq3<T1, T2, T3> =
-    with(T3::class)
+  abstract fun <W3 : Component> modifies(
+    type1: ComponentType<W3>
+  ): EntitySeq3<R1, W1, R2, W2, W3, W3>
+
+  @PublishedApi
+  internal abstract fun with1(
+    type1: ComponentType<R1>
+  ): EntitySeq2<R1, W1, R2, W2>
+
+  @PublishedApi
+  internal abstract fun with2(
+    type2: ComponentType<R2>
+  ): EntitySeq2<R1, W1, R2, W2>
+
+  @JvmName("with_1")
+  fun with(
+    type1: ComponentType<R1>,
+  ): EntitySeq2<R1, W1, R2, W2> =
+    with1(type1)
+
+  @JvmName("with_2")
+  fun with(
+    type2: ComponentType<R2>,
+  ): EntitySeq2<R1, W1, R2, W2> =
+    with2(type2)
+
+  @JvmName("with_1_2")
+  fun with(
+    type1: ComponentType<R1>,
+    type2: ComponentType<R2>,
+  ): EntitySeq2<R1, W1, R2, W2> =
+    with1(type1).with2(type2)
+
+  @JvmName("with_2_1")
+  fun with(
+    type2: ComponentType<R2>,
+    type1: ComponentType<R1>,
+  ): EntitySeq2<R1, W1, R2, W2> =
+    with1(type1).with2(type2)
 
   @PublishedApi
   internal abstract fun filter1(
-    type1: KClass<T1>,
-    predicate: EntitySeq2<T1, T2>.(T1) -> Boolean
-  ): EntitySeq2<T1, T2>
+    type1: ComponentType<R1>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
+  ): EntitySeq2<R1, W1, R2, W2>
+
+  @PublishedApi
+  internal abstract fun filter2(
+    type2: ComponentType<R2>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
+  ): EntitySeq2<R1, W1, R2, W2>
+
+  @JvmName("filter_1")
+  fun filterWith(
+    type1: ComponentType<R1>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
+  ): EntitySeq2<R1, W1, R2, W2> = filter1(type1, predicate)
+
+  @JvmName("filter_2")
+  fun filterWith(
+    type2: ComponentType<R2>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
+  ): EntitySeq2<R1, W1, R2, W2> = filter2(type2, predicate)
+}
+
+abstract class EntitySeq3<R1, W1, R2, W2, R3, W3> :
+  EntitySeq<
+    EntitySeq3<R1, W1, R2, W2, R3, W3>,
+    EntitySeqContext3<R1, W1, R2, W2, R3, W3>>()
+  where R1 : Component,
+        W1 : Component,
+        R2 : Component,
+        W2 : Component,
+        R3 : Component,
+        W3 : Component
+{
+
+  @PublishedApi
+  internal abstract fun with1(
+    type1: ComponentType<R1>
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3>
+
+  @PublishedApi
+  internal abstract fun with2(
+    type2: ComponentType<R2>
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3>
+
+  @PublishedApi
+  internal abstract fun with3(
+    type3: ComponentType<R3>
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3>
+
+  @JvmName("with_1")
+  fun with(
+    type1: ComponentType<R1>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1)
+
+  @JvmName("with_2")
+  fun with(
+    type2: ComponentType<R2>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with2(type2)
+
+  @JvmName("with_3")
+  fun with(
+    type2: ComponentType<R3>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with3(type2)
+
+  @JvmName("with_1_2")
+  fun with(
+    type1: ComponentType<R1>,
+    type2: ComponentType<R2>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with2(type2)
+
+  @JvmName("with_2_1")
+  fun with(
+    type2: ComponentType<R2>,
+    type1: ComponentType<R1>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with2(type2)
+
+  @JvmName("with_1_3")
+  fun with(
+    type1: ComponentType<R1>,
+    type3: ComponentType<R3>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with3(type3)
+
+  @JvmName("with_3_1")
+  fun with(
+    type3: ComponentType<R3>,
+    type1: ComponentType<R1>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with3(type3)
+
+  @JvmName("with_2_3")
+  fun with(
+    type2: ComponentType<R2>,
+    type3: ComponentType<R3>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with2(type2).with3(type3)
+
+  @JvmName("with_3_2")
+  fun with(
+    type3: ComponentType<R3>,
+    type2: ComponentType<R2>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with2(type2).with3(type3)
+
+  @JvmName("with_1_2_3")
+  fun with(
+    type1: ComponentType<R1>,
+    type2: ComponentType<R2>,
+    type3: ComponentType<R3>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with2(type2).with3(type3)
+
+  @JvmName("with_1_3_2")
+  fun with(
+    type1: ComponentType<R1>,
+    type3: ComponentType<R3>,
+    type2: ComponentType<R2>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with2(type2).with3(type3)
+
+  @JvmName("with_3_2_1")
+  fun with(
+    type3: ComponentType<R3>,
+    type2: ComponentType<R2>,
+    type1: ComponentType<R1>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with2(type2).with3(type3)
+
+  @JvmName("with_3_1_2")
+  fun with(
+    type3: ComponentType<R3>,
+    type1: ComponentType<R1>,
+    type2: ComponentType<R2>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with2(type2).with3(type3)
+
+  @JvmName("with_2_3_1")
+  fun with(
+    type2: ComponentType<R2>,
+    type3: ComponentType<R3>,
+    type1: ComponentType<R1>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with2(type2).with3(type3)
+
+  @JvmName("with_2_1_3")
+  fun with(
+    type2: ComponentType<R2>,
+    type1: ComponentType<R1>,
+    type3: ComponentType<R3>,
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> =
+    with1(type1).with2(type2).with3(type3)
 
   @PublishedApi
   internal abstract fun filter1(
-    type1: KClass<T1>,
-    predicate: EntitySeq2<T1, T2>.(Entity, T1) -> Boolean
-  ): EntitySeq2<T1, T2>
+    type1: ComponentType<R1>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3>
 
   @PublishedApi
   internal abstract fun filter2(
-    type1: KClass<T2>,
-    predicate: EntitySeq2<T1, T2>.(T2) -> Boolean
-  ): EntitySeq2<T1, T2>
+    type2: ComponentType<R2>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3>
 
   @PublishedApi
-  internal abstract fun filter2(
-    type1: KClass<T2>,
-    predicate: EntitySeq2<T1, T2>.(Entity, T2) -> Boolean
-  ): EntitySeq2<T1, T2>
+  internal abstract fun filter3(
+    type2: ComponentType<R3>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R3) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3>
 
-  @JvmName("_filter1")
-  fun filter(
-    type1: KClass<T1>,
-    predicate: EntitySeq2<T1, T2>.(T1) -> Boolean
-  ): EntitySeq2<T1, T2> = filter1(type1, predicate)
+  @JvmName("filter_1")
+  fun filterWith(
+    type1: ComponentType<R1>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter1(type1, predicate)
 
-  @JvmName("_filter1")
-  fun filter(
-    type1: KClass<T1>,
-    predicate: EntitySeq2<T1, T2>.(Entity, T1) -> Boolean
-  ): EntitySeq2<T1, T2> = filter1(type1.unsafeCast(), predicate)
+  @JvmName("filter_2")
+  fun filterWith(
+    type2: ComponentType<R2>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter2(type2, predicate)
 
-  @JvmName("_filter1")
-  inline fun <reified T : T1> filter(
-    noinline predicate: EntitySeq2<T1, T2>.(T1) -> Boolean
-  ): EntitySeq2<T1, T2> = filter1(T::class.unsafeCast(), predicate)
-
-  @JvmName("_filter1")
-  inline fun <reified T : T1> filter(
-    noinline predicate: EntitySeq2<T1, T2>.(Entity, T1) -> Boolean
-  ): EntitySeq2<T1, T2> = filter1(T::class.unsafeCast(), predicate)
-
-  @JvmName("_filter2")
-  fun filter(
-    type2: KClass<T2>,
-    predicate: EntitySeq2<T1, T2>.(T2) -> Boolean
-  ): EntitySeq2<T1, T2> = filter2(type2, predicate)
-
-  @JvmName("_filter2")
-  fun filter(
-    type2: KClass<T2>,
-    predicate: EntitySeq2<T1, T2>.(Entity, T2) -> Boolean
-  ): EntitySeq2<T1, T2> = filter2(type2, predicate)
-
-  @JvmName("_filter2")
-  inline fun <reified T : T2> filter(
-    noinline predicate: EntitySeq2<T1, T2>.(T2) -> Boolean
-  ): EntitySeq2<T1, T2> = filter2(T::class.unsafeCast(), predicate)
-
-  @JvmName("_filter2")
-  inline fun <reified T : T2> filter(
-    noinline predicate: EntitySeq2<T1, T2>.(Entity, T2) -> Boolean
-  ): EntitySeq2<T1, T2> = filter2(T::class.unsafeCast(), predicate)
+  @JvmName("filter_3")
+  fun filterWith(
+    type3: ComponentType<R3>,
+    predicate: EntitySeq2<R1, W1, R2, W2>.(R3) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter3(type3, predicate)
 }
-
-abstract class EntitySeq3<T1, T2, T3> :
-  EntitySeq<
-    EntitySeq3<T1, T2, T3>,
-    EntitySeqContext3<T1, T2, T3>>()
-  where T1 : Component,
-        T2 : Component,
-        T3 : Component
-{
-
-}
-
-@JsName("Space")
-class ` `<T> private constructor()

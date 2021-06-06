@@ -16,27 +16,45 @@ import kotlin.jvm.JvmInline
 
 private val TestSystem = System {
   val task1 = async {
-    entities
-      .with<Health, Food>()
-      .without<Excluded>()
+
+    entityQuery()
+      // Explicitly define which components will be modified and read,
+      // get/set/remove/... functions will be restricted based on the access
+      .modifies(Health, Food)
+      .reads(Tag)
+      .with(Food, Health)
+      .without(Excluded)
+      .filterWith(Health) { (health) -> health > 0.0 }
       .forEach { entity ->
-        val (health) = entity.get<Health>()
-        val (food) = entity.get<Food>()
+        entity.get(Health)
+        entity.set(Health(10.0))
+        val tag = entity.getOrNull(Tag)
+        // entity.set(Tag("Test")) is not possible, because Tag is read-only
+      }
+
+    entityQuery()
+      .modifies(Health, Food)
+      .with(Health, Food)
+      .without(Excluded)
+      .forEach { entity ->
+        val (health) = entity.get(Health)
+        val (food) = entity.get(Food)
         entity.set(Food(food + 1.0))
         entity.set(Health(health * 1.2))
       }
 
-    entities
-      .with<Health>()
-      .with<Food>()
-      .filter<Health> { (health) -> health > 0 }
-      .filter<Food> { (food) -> food == 0.0 }
-      .filter { entity -> !entity.contains<Tag>() }
+    entityQuery()
+      .modifies(Health)
+      .modifies(Food)
+      .modifies(Tag)
+      .filterWith(Health) { (health) -> health > 0 }
+      .filterWith(Food) { (food) -> food == 0.0 }
+      .filter { entity -> !entity.contains(Tag) }
       .forEach { entity ->
-        val (health) = entity.get<Health>()
+        val (health) = entity.get(Health)
         entity.set(Health(health - 1.0))
         entity.set(Tag("Tag"))
-        entity.transform<Food> { (food) -> Food(food + 1.0) }
+        entity.transform(Food) { (food) -> Food(food + 1.0) }
       }
 
     1
@@ -56,7 +74,9 @@ private val TestSystem = System {
 }
 
 @JvmInline
-value class Tag(val tag: String) : Component
+value class Tag(val tag: String) : Component {
+  companion object Type : ComponentType<Tag>(Tag::class)
+}
 
 data class Health(
   var health: Double = 10.0,

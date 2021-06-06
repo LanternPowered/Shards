@@ -9,11 +9,9 @@
  */
 package org.lanternpowered.shards.component
 
-import kotlin.jvm.JvmSynthetic
 import kotlin.reflect.KClass
 
 actual abstract class ComponentType<T : Component> internal constructor(
-  @JvmSynthetic
   internal actual val internalType: InternalComponentType<T>
 ) {
 
