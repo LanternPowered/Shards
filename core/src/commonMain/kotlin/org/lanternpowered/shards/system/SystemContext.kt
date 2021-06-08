@@ -19,7 +19,7 @@ import org.lanternpowered.shards.entity.EntityContext
 abstract class SystemContext : EntityContext(), CoroutineScope {
 
   /**
-   * A sequence of all the entities in the current engine.
+   * A sequence of all the entities in the current universe.
    */
   abstract fun entityQuery(): EntitySeq0
 

@@ -9,7 +9,7 @@
  */
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.internal.EngineManager
+import org.lanternpowered.shards.internal.UniverseManager
 import org.lanternpowered.shards.util.unsafeCast
 import kotlin.jvm.JvmInline
 
@@ -89,7 +89,7 @@ value class EntityReference internal constructor(
    * Gets whether the entity is present.
    */
   fun isPresent(): Boolean =
-    !ref.isEmpty && EngineManager.isActive(ref)
+    !ref.isEmpty && UniverseManager.isActive(ref)
 
   /**
    * Executes the given function if the entity is present.

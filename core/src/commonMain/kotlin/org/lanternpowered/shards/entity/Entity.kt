@@ -9,11 +9,11 @@
  */
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.Engine
+import org.lanternpowered.shards.Universe
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.componentType
-import org.lanternpowered.shards.internal.EngineManager
+import org.lanternpowered.shards.internal.UniverseManager
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmInline
@@ -26,7 +26,7 @@ internal fun Entity(referenceValue: Long): Entity =
   Entity(InternalEntityRef(referenceValue))
 
 /**
- * Represents an entity of an [Engine].
+ * Represents an entity of an [Universe].
  */
 @EntityDsl
 @JvmInline
@@ -41,45 +41,45 @@ value class Entity internal constructor(
     get() = ref.entityId
 
   /**
-   * The engine this entity belongs to.
+   * The universe this entity belongs to.
    */
-  val engine: Engine
-    get() = EngineManager[ref.engine]
+  val universe: Universe
+    get() = UniverseManager[ref.universe]
 
   override fun toString(): String =
-    "Entity(id=$id, engineId=${ref.engine})"
+    "Entity(id=$id, universeId=${ref.universe})"
 }
 
 @PublishedApi
 internal fun <T : Component> Entity.set(
   type: ComponentType<T>, component: T
-) = EngineManager.setComponent(ref, type, component)
+) = UniverseManager.setComponent(ref, type, component)
 
 /**
- * Whether the [Entity] is still active and exists in its [Engine].
+ * Whether the [Entity] is still active and exists in its [Universe].
  */
 val Entity.isActive: Boolean
-  get() = EngineManager.isActive(ref)
+  get() = UniverseManager.isActive(ref)
 
 /**
  * Returns if the entity contains a component with the specified [type].
  */
 fun Entity.contains(type: ComponentType<*>): Boolean =
-  EngineManager.containsComponent(ref, type)
+  UniverseManager.containsComponent(ref, type)
 
 /**
  * Returns the component with the specified [type]. Throws an
  * [IllegalArgumentException] if the component wasn't found.
  */
 fun <T : Component> Entity.get(type: ComponentType<T>): T =
-  EngineManager.getComponent(ref, type)
+  UniverseManager.getComponent(ref, type)
 
 /**
  * Gets the component instance of the given [type]. Returns `null` if the
  * component wasn't found.
  */
 fun <T : Component> Entity.getOrNull(type: ComponentType<T>): T? =
-  EngineManager.getComponentOrNull(ref, type)
+  UniverseManager.getComponentOrNull(ref, type)
 
 /**
  * Returns the component of the specified [type] and applies the given
@@ -97,7 +97,7 @@ inline fun <T : Component> Entity.transform(
  * Sets the [component] on the entity.
  */
 fun Entity.set(component: Component) =
-  EngineManager.setComponent(ref, component)
+  UniverseManager.setComponent(ref, component)
 
 /**
  * Attempts to set the component if the entity doesn't contain a component
@@ -133,6 +133,6 @@ inline fun Entity.modify(
   operation: @EntityDsl EntityMutator.() -> Unit
 ): Entity {
   contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
-  EngineManager.modify(ref, operation)
+  UniverseManager.modify(ref, operation)
   return this
 }

@@ -9,7 +9,7 @@
  */
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.Engine
+import org.lanternpowered.shards.Universe
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.component.componentType
@@ -27,7 +27,7 @@ abstract class EntityContext {
   )
 
   /**
-   * Whether the [Entity] is still active and exists in its [Engine].
+   * Whether the [Entity] is still active and exists in its [Universe].
    */
   abstract val Entity.isActive: Boolean
 

@@ -9,8 +9,8 @@
  */
 package org.lanternpowered.shards.entity
 
-import org.lanternpowered.shards.Engine
-import org.lanternpowered.shards.internal.EngineManager
+import org.lanternpowered.shards.Universe
+import org.lanternpowered.shards.internal.UniverseManager
 
 /**
  * Represents an iterable of [Entity]s.
@@ -26,21 +26,21 @@ interface EntityIterable {
 
 /**
  * Performs a bulk operation on the [EntityIterable], use this to reduce
- * engine lookups when handling multiple entities.
+ * universe lookups when handling multiple entities.
  */
 internal inline fun EntityIterable.performInBulk(
-  operation: (Engine, Entity) -> Unit
+  operation: (Universe, Entity) -> Unit
 ) {
-  var lastEngineId = -1
-  var engine: Engine? = null
+  var lastUniverseId = -1
+  var universe: Universe? = null
   for (entity in this) {
-    val engineId = entity.ref.engine
-    // Cache the last accessed engine to reduce lookups
-    if (engineId != lastEngineId) {
-      engine = EngineManager[engineId]
-      lastEngineId = engineId
+    val universeId = entity.ref.universe
+    // Cache the last accessed universe to reduce lookups
+    if (universeId != lastUniverseId) {
+      universe = UniverseManager[universeId]
+      lastUniverseId = universeId
     }
-    operation(engine!!, entity)
+    operation(universe!!, entity)
   }
 }
 
@@ -49,7 +49,7 @@ internal inline fun EntityIterable.performInBulk(
  * [operation].
  */
 fun EntityIterable.modifyAll(operation: @EntityDsl EntityMutator.() -> Unit) =
-  performInBulk { engine, entity -> engine.modify(entity.id, operation) }
+  performInBulk { universe, entity -> universe.modify(entity.id, operation) }
 
 /**
  * Returns `true` if all entities match the given [predicate].

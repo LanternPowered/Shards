@@ -13,19 +13,19 @@ import kotlin.jvm.JvmInline
 
 /**
  * An internal representation of a reference to an entity of a specific
- * engine. Each reference also contains a version, which can be used to
+ * universe. Each reference also contains a version, which can be used to
  * determine whether an entity id has been reused (higher version than before).
  */
 @PublishedApi
 @JvmInline
 internal value class InternalEntityRef(val value: Long) {
 
-  constructor(id: EntityId, engine: Int, version: Int) :
+  constructor(id: EntityId, universe: Int, version: Int) :
     this((version.toLong() shl 48) or
-      (engine.toLong() shl 32) or id.value.toLong())
+      (universe.toLong() shl 32) or id.value.toLong())
 
   /**
-   * The id of the entity this reference points to, specific to the engine
+   * The id of the entity this reference points to, specific to the universe
    * the entity exists/existed in.
    */
   val entityId: EntityId
@@ -43,9 +43,9 @@ internal value class InternalEntityRef(val value: Long) {
     get() = (value ushr 48).toInt()
 
   /**
-   * The id of the engine this reference points to.
+   * The id of the universe this reference points to.
    */
-  val engine: Int
+  val universe: Int
     get() = (value ushr 32).toInt() and 0xffff
 
   /**

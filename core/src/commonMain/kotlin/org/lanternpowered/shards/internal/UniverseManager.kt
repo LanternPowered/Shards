@@ -11,7 +11,7 @@ package org.lanternpowered.shards.internal
 
 import kotlinx.atomicfu.locks.reentrantLock
 import kotlinx.atomicfu.locks.withLock
-import org.lanternpowered.shards.Engine
+import org.lanternpowered.shards.Universe
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.entity.EntityMutator
@@ -19,60 +19,60 @@ import org.lanternpowered.shards.entity.InternalEntityRef
 import org.lanternpowered.shards.internal.util.IntList
 
 @PublishedApi
-internal object EngineManager {
+internal object UniverseManager {
 
   /**
-   * An array with all the constructed engines.
+   * An array with all the constructed universes.
    */
-  private val engines = arrayOfNulls<Engine?>(4000)
+  private val universes = arrayOfNulls<Universe?>(4000)
 
   private val lock = reentrantLock()
   private val reusedIds = IntList()
   private var idCounter = 0
 
-  operator fun get(id: Int): Engine = engines[id]!!
+  operator fun get(id: Int): Universe = universes[id]!!
 
-  fun create(): Engine {
+  fun create(): Universe {
     lock.withLock {
       val id =
         if (reusedIds.isEmpty) idCounter++
         else reusedIds.removeAt(0)
-      val engine = Engine(id)
-      engines[id] = engine
-      return engine
+      val universe = Universe(id)
+      universes[id] = universe
+      return universe
     }
   }
 
-  fun destroy(engine: Engine) {
+  fun destroy(universe: Universe) {
     lock.withLock {
-      reusedIds.add(engine.id)
-      engines[engine.id] = null
+      reusedIds.add(universe.id)
+      universes[universe.id] = null
     }
   }
 
   inline fun modify(ref: InternalEntityRef, fn: EntityMutator.() -> Unit) =
-    this[ref.engine].modify(ref.entityId, fn)
+    this[ref.universe].modify(ref.entityId, fn)
 
   fun isActive(ref: InternalEntityRef): Boolean =
-    this[ref.engine].isActive(ref.entityId, ref.version)
+    this[ref.universe].isActive(ref.entityId, ref.version)
 
   fun containsComponent(
     ref: InternalEntityRef, type: ComponentType<*>
-  ): Boolean = this[ref.engine].containsComponent(ref.entityId, type)
+  ): Boolean = this[ref.universe].containsComponent(ref.entityId, type)
 
   fun <T : Component> getComponentOrNull(
     ref: InternalEntityRef, type: ComponentType<T>
-  ): T? = this[ref.engine].getComponentOrNull(ref.entityId, type)
+  ): T? = this[ref.universe].getComponentOrNull(ref.entityId, type)
 
   fun <T : Component> getComponent(
     ref: InternalEntityRef, type: ComponentType<T>
-  ): T = this[ref.engine].getComponent(ref.entityId, type)
+  ): T = this[ref.universe].getComponent(ref.entityId, type)
 
   fun <T : Component> setComponent(
     ref: InternalEntityRef, type: ComponentType<T>, component: T
-  ) = this[ref.engine].setComponent(ref.entityId, type, component)
+  ) = this[ref.universe].setComponent(ref.entityId, type, component)
 
   fun setComponent(
     ref: InternalEntityRef, component: Component
-  ) = this[ref.engine].setComponent(ref.entityId, component)
+  ) = this[ref.universe].setComponent(ref.entityId, component)
 }

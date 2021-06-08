@@ -18,25 +18,25 @@ import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityContext
 import org.lanternpowered.shards.entity.EntityId
 import org.lanternpowered.shards.entity.EntityMutator
-import org.lanternpowered.shards.internal.EngineManager
+import org.lanternpowered.shards.internal.UniverseManager
 import kotlin.js.JsName
 import kotlin.jvm.JvmSynthetic
 
 /**
- * Constructs a new [Engine].
+ * Constructs a new [Universe].
  */
-@JsName("createEngine")
-fun Engine(): Engine = EngineManager.create()
+@JsName("createUniverse")
+fun Universe(): Universe = UniverseManager.create()
 
 /**
- * Represents the engine that will manage all the components and entities.
+ * Represents a universe that will manage all the components and entities.
  */
-class Engine internal constructor(
+class Universe internal constructor(
   @JvmSynthetic
   internal val id: Int
 ) : EntityContext() {
 
-  inline fun <R> use(block: Engine.() -> R): R = block()
+  inline fun <R> use(block: Universe.() -> R): R = block()
 
   private inner class EntityMutatorImpl : EntityMutator() {
 
@@ -47,19 +47,19 @@ class Engine internal constructor(
 
     override fun <T : Component> set(
       type: ComponentType<T>, component: T
-    ) = this@Engine.setComponent(entityId, type, component)
+    ) = this@Universe.setComponent(entityId, type, component)
 
     override fun set(component: Component) =
-      this@Engine.setComponent(entityId, component)
+      this@Universe.setComponent(entityId, component)
 
     override fun contains(type: ComponentType<*>): Boolean =
-      this@Engine.containsComponent(entityId, type)
+      this@Universe.containsComponent(entityId, type)
 
     override fun <T : Component> get(type: ComponentType<T>): T =
-      this@Engine.getComponent(entityId, type)
+      this@Universe.getComponent(entityId, type)
 
     override fun <T : Component> getOrNull(type: ComponentType<T>): T? =
-      this@Engine.getComponentOrNull(entityId, type)
+      this@Universe.getComponentOrNull(entityId, type)
   }
 
   /**
@@ -144,21 +144,12 @@ class Engine internal constructor(
   override inline fun Entity.set(component: Component) =
     setComponent(id, component)
 
-  /*
-
-  override fun Entity.modify(
-    operation: EntityMutator.() -> Unit
-  ): Entity {
-    modify(id, operation)
-    return this
-  }*/
-
   /**
-   * Destroys the engine. This must be called when
-   * you no longer needs this engine.
+   * Destroys the universe. This must be called when you no longer needs this
+   * universe.
    */
   fun destroy() {
-    EngineManager.destroy(this)
+    UniverseManager.destroy(this)
   }
 
 }
