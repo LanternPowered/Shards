@@ -74,6 +74,6 @@ actual abstract class ComponentType<T : Component> {
      */
     @JvmStatic
     fun <T : Component> of(componentClass: Class<T>): ComponentType<T> =
-      resolveInternalComponentType(componentClass).componentType
+      resolveInternalComponentTypeByClass(componentClass).componentType
   }
 }

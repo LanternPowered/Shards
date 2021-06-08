@@ -24,12 +24,28 @@ private val TestSystem = System {
       .reads(Tag)
       .with(Food, Health)
       .without(Excluded)
-      .filterWith(Health) { (health) -> health > 0.0 }
+      .withFiltered(Health) { (health) -> health > 0.0 }
       .forEach { entity ->
         entity.get(Health)
         entity.set(Health(10.0))
         val tag = entity.getOrNull(Tag)
         // entity.set(Tag("Test")) is not possible, because Tag is read-only
+
+        val (health, lastAttacker) = entity.getOrSet { Health(100.0) }
+        lastAttacker.ifPresent {
+          entity.set(Health(
+            health = health - 10.0,
+            lastAttacker = EntityReference.Empty
+          ))
+        }
+      }
+
+    entityQuery()
+      .modifies(Health, Food)
+      .forEachWith(Health) { entity, (health, _) ->
+        if (health > 0.0) {
+          entity.transform(Food) { Food(it.food + 1.0) }
+        }
       }
 
     entityQuery()
@@ -47,8 +63,8 @@ private val TestSystem = System {
       .modifies(Health)
       .modifies(Food)
       .modifies(Tag)
-      .filterWith(Health) { (health) -> health > 0 }
-      .filterWith(Food) { (food) -> food == 0.0 }
+      .withFiltered(Health) { (health) -> health > 0 }
+      .withFiltered(Food) { (food) -> food == 0.0 }
       .filter { entity -> !entity.contains(Tag) }
       .forEach { entity ->
         val (health) = entity.get(Health)
@@ -79,8 +95,8 @@ value class Tag(val tag: String) : Component {
 }
 
 data class Health(
-  var health: Double = 10.0,
-  var lastAttacker: EntityReference = EntityReference.Empty
+  val health: Double = 10.0,
+  val lastAttacker: EntityReference = EntityReference.Empty
 ) : Component {
   companion object Type : ComponentType<Health>(Health::class)
 }

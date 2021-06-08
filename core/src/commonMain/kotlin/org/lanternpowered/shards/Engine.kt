@@ -13,7 +13,7 @@ package org.lanternpowered.shards
 
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
-import org.lanternpowered.shards.component.modify
+import org.lanternpowered.shards.component.componentType
 import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.EntityContext
 import org.lanternpowered.shards.entity.EntityId
@@ -34,7 +34,7 @@ fun Engine(): Engine = EngineManager.create()
 class Engine internal constructor(
   @JvmSynthetic
   internal val id: Int
-) : EntityContext {
+) : EntityContext() {
 
   inline fun <R> use(block: Engine.() -> R): R = block()
 
@@ -45,6 +45,13 @@ class Engine internal constructor(
      */
     var entityId = EntityId(0)
 
+    override fun <T : Component> set(
+      type: ComponentType<T>, component: T
+    ) = this@Engine.setComponent(entityId, type, component)
+
+    override fun set(component: Component) =
+      this@Engine.setComponent(entityId, component)
+
     override fun contains(type: ComponentType<*>): Boolean =
       this@Engine.containsComponent(entityId, type)
 
@@ -53,12 +60,6 @@ class Engine internal constructor(
 
     override fun <T : Component> getOrNull(type: ComponentType<T>): T? =
       this@Engine.getComponentOrNull(entityId, type)
-
-    override fun <T : Component> add(type: ComponentType<T>): T =
-      this@Engine.addComponent(entityId, type)
-
-    override fun <T : Component> getOrAdd(type: ComponentType<T>): T =
-      this@Engine.getOrAddComponent(entityId, type)
   }
 
   /**
@@ -71,9 +72,14 @@ class Engine internal constructor(
   // TODO: Revisit this when multithreading
   private var mutator = EntityMutatorImpl()
 
-  fun modify(entityId: EntityId, fn: EntityMutator.() -> Unit) {
-    this.mutator.entityId = entityId
-    this.mutator.fn()
+  inline fun modify(entityId: EntityId, fn: EntityMutator.() -> Unit) {
+    mutatorWithId(entityId).apply(fn)
+  }
+
+  @PublishedApi
+  internal fun mutatorWithId(entityId: EntityId): EntityMutator {
+    mutator.entityId = entityId
+    return mutator
   }
 
   fun isActive(entityId: EntityId, version: Int): Boolean {
@@ -106,27 +112,18 @@ class Engine internal constructor(
     TODO()
   }
 
-  fun <T : Component> addComponent(
-    entityId: EntityId, type: ComponentType<T>
-  ): T {
+  fun <T : Component> setComponent(
+    entityId: EntityId, type: ComponentType<T>, component: T
+  ) {
     TODO()
   }
 
-  fun <T : Component> getOrAddComponent(
-    entityId: EntityId, type: ComponentType<T>
-  ): T {
-    TODO()
-  }
+  fun setComponent(
+    entityId: EntityId, component: Component
+  ) = setComponent(entityId, component.componentType, component)
 
   override inline val Entity.isActive: Boolean
     get() = isActive(ref.entityId, ref.version)
-
-  override fun Entity.modify(
-    operation: EntityMutator.() -> Unit
-  ): Entity {
-    modify(id, operation)
-    return this
-  }
 
   override inline fun Entity.contains(
     type: ComponentType<*>
@@ -140,17 +137,21 @@ class Engine internal constructor(
     type: ComponentType<T>
   ): T? = getComponentOrNull(id, type)
 
-  override inline fun <T : Component> Entity.add(
-    type: ComponentType<T>
-  ): T = addComponent(id, type)
+  override inline fun <T : Component> Entity.set(
+    type: ComponentType<T>, component: T
+  ) = setComponent(id, type, component)
 
-  override inline fun <T : Component> Entity.add(
-    type: ComponentType<T>, operation: T.() -> Unit
-  ): T = addComponent(id, type).apply { modify(operation) }
+  override inline fun Entity.set(component: Component) =
+    setComponent(id, component)
 
-  override inline fun <T : Component> Entity.getOrAdd(
-    type: ComponentType<T>
-  ): T = getOrAddComponent(id, type)
+  /*
+
+  override fun Entity.modify(
+    operation: EntityMutator.() -> Unit
+  ): Entity {
+    modify(id, operation)
+    return this
+  }*/
 
   /**
    * Destroys the engine. This must be called when
@@ -159,4 +160,5 @@ class Engine internal constructor(
   fun destroy() {
     EngineManager.destroy(this)
   }
+
 }

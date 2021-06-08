@@ -7,15 +7,19 @@
  * This work is licensed under the terms of the MIT License (MIT). For
  * a copy, see 'LICENSE.txt' or <https://opensource.org/licenses/MIT>.
  */
-@file:Suppress("NOTHING_TO_INLINE", "UNUSED_PARAMETER", "unused", "RedundantNullableReturnType")
+@file:Suppress("NOTHING_TO_INLINE", "UNUSED_PARAMETER", "unused",
+  "RedundantNullableReturnType")
 
 package org.lanternpowered.shards.system
 
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.entity.Entity
+import org.lanternpowered.shards.entity.EntityDsl
 import org.lanternpowered.shards.entity.EntityList
 import org.lanternpowered.shards.util.unsafeCast
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.jvm.JvmName
 
 typealias EntitySeqContext0 = EntitySeqContext1<Nothing, Nothing>
@@ -213,31 +217,46 @@ abstract class EntitySeqContext5<
   inline fun Entity.transform(
     type: ComponentType<W1>,
     operation: (W1) -> W1
-  ): W1 = operation(get1().unsafeCast()).also { set1(it) }
+  ): W1 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return operation(get1().unsafeCast()).also { set1(it) }
+  }
 
   @JvmName("transform_2")
   inline fun Entity.transform(
     type: ComponentType<W2>,
     operation: (W2) -> W2
-  ): W2 = operation(get2().unsafeCast()).also { set2(it) }
+  ): W2 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return operation(get2().unsafeCast()).also { set2(it) }
+  }
 
   @JvmName("transform_3")
   inline fun Entity.transform(
     type: ComponentType<W3>,
     operation: (W3) -> W3
-  ): W3 = operation(get3().unsafeCast()).also { set3(it) }
+  ): W3 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return operation(get3().unsafeCast()).also { set3(it) }
+  }
 
   @JvmName("transform_4")
   inline fun Entity.transform(
     type: ComponentType<W4>,
     operation: (W4) -> W4
-  ): W4 = operation(get4().unsafeCast()).also { set4(it) }
+  ): W4 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return operation(get4().unsafeCast()).also { set4(it) }
+  }
 
   @JvmName("transform_5")
   inline fun Entity.transform(
     type: ComponentType<W5>,
     operation: (W5) -> W5
-  ): W5 = operation(get5().unsafeCast()).also { set5(it) }
+  ): W5 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return operation(get5().unsafeCast()).also { set5(it) }
+  }
 
   @Deprecated(
     message = "Component types that are accessed must be available in the " +
@@ -250,6 +269,126 @@ abstract class EntitySeqContext5<
     type: ComponentType<W>,
     operation: (W) -> W
   ): W = throw UnsupportedOperationException()
+
+  @JvmName("getOrSet_1")
+  inline fun Entity.getOrSet(supplier: () -> W1): W1 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier, { getOrNull1() }, { set1(it) })
+  }
+
+  @JvmName("getOrSet_2")
+  inline fun Entity.getOrSet(supplier: () -> W2): W2 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier, { getOrNull2() }, { set2(it) })
+  }
+
+  @JvmName("getOrSet_3")
+  inline fun Entity.getOrSet(supplier: () -> W3): W3 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier, { getOrNull3() }, { set3(it) })
+  }
+
+  @JvmName("getOrSet_4")
+  inline fun Entity.getOrSet(supplier: () -> W4): W4 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier, { getOrNull4() }, { set4(it) })
+  }
+
+  @JvmName("getOrSet_5")
+  inline fun Entity.getOrSet(supplier: () -> W5): W5 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier, { getOrNull5() }, { set5(it) })
+  }
+
+  @JvmName("getOrSet_1")
+  inline fun Entity.getOrSet(
+    type: ComponentType<W1>, supplier: () -> W1
+  ): W1 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier)
+  }
+
+  @JvmName("getOrSet_2")
+  inline fun Entity.getOrSet(
+    type: ComponentType<W2>, supplier: () -> W2
+  ): W2 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier)
+  }
+
+  @JvmName("getOrSet_3")
+  inline fun Entity.getOrSet(
+    type: ComponentType<W3>, supplier: () -> W3
+  ): W3 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier)
+  }
+
+  @JvmName("getOrSet_4")
+  inline fun Entity.getOrSet(
+    type: ComponentType<W4>, supplier: () -> W4
+  ): W4 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier)
+  }
+
+  @JvmName("getOrSet_5")
+  inline fun Entity.getOrSet(
+    type: ComponentType<W5>, supplier: () -> W5
+  ): W5 {
+    contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+    return getOrSet(supplier)
+  }
+
+  @PublishedApi
+  internal inline fun <R : Component> Entity.getOrSet(
+    supplier: () -> R, get: Entity.() -> Component?, set: Entity.(R) -> Unit
+  ): R {
+    val previous = get()
+    if (previous != null)
+      return previous.unsafeCast()
+    val component = supplier()
+    set(component)
+    return component
+  }
+
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  @OverloadResolutionByLambdaReturnType
+  inline fun <reified T : Component> Entity.getOrSet(supplier: () -> T): T =
+    throw UnsupportedOperationException()
+
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun <reified T : Component> Entity.getOrSet(
+    type: ComponentType<T>, supplier: () -> T
+  ): T = throw UnsupportedOperationException()
+
+  @Deprecated(
+    message = "All processed entities are active.",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("true")
+  )
+  inline val Entity.isActive: Boolean
+    get() = true
+
+  /**
+   * Modifies the entity with the given [operation].
+   */
+  inline fun Entity.modify(operation: @EntityDsl Entity.() -> Unit): Entity {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return apply(operation)
+  }
 }
 
 abstract class EntitySeq<S, C>
@@ -378,10 +517,18 @@ abstract class EntitySeq1<R1, W1> :
     type1: ComponentType<R1>
   ): EntitySeq1<R1, W1>
 
-  abstract fun filterWith(
+  abstract fun withFiltered(
     type1: ComponentType<W1>,
     predicate: EntitySeq1<R1, W1>.(R1) -> Boolean
   ): EntitySeq1<R1, W1>
+
+  inline fun forEachWith(
+    type1: ComponentType<R1>,
+    crossinline operation: EntitySeq1<R1, W1>.(Entity, R1) -> Unit
+  ) = with(type1)
+    .forEach { entity ->
+      operation(entity, entity.get1())
+    }
 }
 
 abstract class EntitySeq2<R1, W1, R2, W2> :
@@ -451,16 +598,60 @@ abstract class EntitySeq2<R1, W1, R2, W2> :
   ): EntitySeq2<R1, W1, R2, W2>
 
   @JvmName("filter_1")
-  fun filterWith(
+  fun withFiltered(
     type1: ComponentType<R1>,
     predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
   ): EntitySeq2<R1, W1, R2, W2> = filter1(type1, predicate)
 
   @JvmName("filter_2")
-  fun filterWith(
+  fun withFiltered(
     type2: ComponentType<R2>,
     predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
   ): EntitySeq2<R1, W1, R2, W2> = filter2(type2, predicate)
+
+  @JvmName("forEach_1")
+  inline fun forEachWith(
+    type1: ComponentType<R1>,
+    crossinline operation: EntitySeq2<R1, W1, R2, W2>.(Entity, R1) -> Unit
+  ) = with1(type1)
+    .forEach { entity ->
+      operation(entity, entity.get1())
+    }
+
+  @JvmName("forEach_2")
+  inline fun forEachWith(
+    type2: ComponentType<R2>,
+    crossinline operation: EntitySeq2<R1, W1, R2, W2>.(Entity, R2) -> Unit
+  ) = with2(type2)
+    .forEach { entity ->
+      operation(entity, entity.get2())
+    }
+
+  @JvmName("forEach_1_2")
+  inline fun forEachWith(
+    type1: ComponentType<R1>,
+    type2: ComponentType<R2>,
+    crossinline operation: EntitySeq2<R1, W1, R2, W2>.(Entity, R1, R2) -> Unit
+  ) = with1(type1)
+    .with2(type2)
+    .forEach { entity ->
+      operation(entity,
+        entity.get1(),
+        entity.get2())
+    }
+
+  @JvmName("forEach_2_1")
+  inline fun forEachWith(
+    type2: ComponentType<R2>,
+    type1: ComponentType<R1>,
+    crossinline operation: EntitySeq2<R1, W1, R2, W2>.(Entity, R2, R1) -> Unit
+  ) = with1(type1)
+    .with2(type2)
+    .forEach { entity ->
+      operation(entity,
+        entity.get2(),
+        entity.get1())
+    }
 }
 
 abstract class EntitySeq3<R1, W1, R2, W2, R3, W3> :
@@ -617,19 +808,19 @@ abstract class EntitySeq3<R1, W1, R2, W2, R3, W3> :
   ): EntitySeq3<R1, W1, R2, W2, R3, W3>
 
   @JvmName("filter_1")
-  fun filterWith(
+  fun withFiltered(
     type1: ComponentType<R1>,
     predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
   ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter1(type1, predicate)
 
   @JvmName("filter_2")
-  fun filterWith(
+  fun withFiltered(
     type2: ComponentType<R2>,
     predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
   ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter2(type2, predicate)
 
   @JvmName("filter_3")
-  fun filterWith(
+  fun withFiltered(
     type3: ComponentType<R3>,
     predicate: EntitySeq2<R1, W1, R2, W2>.(R3) -> Boolean
   ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter3(type3, predicate)

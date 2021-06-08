@@ -9,11 +9,13 @@
  */
 package org.lanternpowered.shards.entity
 
+import org.lanternpowered.shards.Engine
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
-import org.lanternpowered.shards.component.modify
+import org.lanternpowered.shards.component.componentType
 import org.lanternpowered.shards.internal.EngineManager
-import org.lanternpowered.shards.Engine
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.jvm.JvmInline
 
 /**
@@ -46,16 +48,12 @@ value class Entity internal constructor(
 
   override fun toString(): String =
     "Entity(id=$id, engineId=${ref.engine})"
-
-  /**
-   * Applies the given function to this entity.
-   */
-  @Deprecated(message = "Prefer to use Entity.modify")
-  fun apply(fn: Entity.() -> Unit): Entity {
-    fn(this)
-    return this
-  }
 }
+
+@PublishedApi
+internal fun <T : Component> Entity.set(
+  type: ComponentType<T>, component: T
+) = EngineManager.setComponent(ref, type, component)
 
 /**
  * Whether the [Entity] is still active and exists in its [Engine].
@@ -64,72 +62,77 @@ val Entity.isActive: Boolean
   get() = EngineManager.isActive(ref)
 
 /**
- * Modifies the entity with the given [operation].
+ * Returns if the entity contains a component with the specified [type].
  */
-fun Entity.modify(operation: @EntityDsl EntityMutator.() -> Unit): Entity {
-  EngineManager.modify(ref, operation)
-  return this
-}
-
-/**
- * Returns if the entity contains a component of the specified [type].
- */
-operator fun Entity.contains(type: ComponentType<*>): Boolean =
+fun Entity.contains(type: ComponentType<*>): Boolean =
   EngineManager.containsComponent(ref, type)
 
 /**
- * Gets the component instance of the given [type] and fails if the component
- * wasn't found.
+ * Returns the component with the specified [type]. Throws an
+ * [IllegalArgumentException] if the component wasn't found.
  */
 fun <T : Component> Entity.get(type: ComponentType<T>): T =
   EngineManager.getComponent(ref, type)
 
 /**
- * Gets the component instance of the given [type] and returns `null` if the
+ * Gets the component instance of the given [type]. Returns `null` if the
  * component wasn't found.
  */
 fun <T : Component> Entity.getOrNull(type: ComponentType<T>): T? =
   EngineManager.getComponentOrNull(ref, type)
 
 /**
- * Adds the component of the specified [type] to the entity and gets the
- * instance. An [IllegalArgumentException] will be thrown if the entity
- * already owns a component of the specified [type].
+ * Returns the component of the specified [type] and applies the given
+ * transform [operation] to it. Throws an [IllegalArgumentException] if the
+ * component wasn't found.
  */
-fun <T : Component> Entity.add(type: ComponentType<T>): T =
-  EngineManager.addComponent(ref, type)
+inline fun <T : Component> Entity.transform(
+  type: ComponentType<T>, operation: (T) -> T
+): T {
+  contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+  return operation(get(type)).also { set(type, it) }
+}
 
 /**
- * Gets the component of the specified [type] if it exists, otherwise a new
- * component will be created.
+ * Sets the [component] on the entity.
  */
-fun <T : Component> Entity.getOrAdd(type: ComponentType<T>): T =
-  EngineManager.getOrAddComponent(ref, type)
+fun Entity.set(component: Component) =
+  EngineManager.setComponent(ref, component)
 
 /**
- * Adds the component of the specified [type] to the entity and gets the
- * instance. An [IllegalArgumentException] will be thrown if the entity
- * already owns a component of the specified [type]. The [operation] will be
- * applied to the constructed component.
+ * Attempts to set the component if the entity doesn't contain a component
+ * with the same type. Returns the previous component, otherwise the
+ * component which is set and was provided by the [supplier].
  */
-inline fun <T : Component> Entity.add(
-  type: ComponentType<T>, operation: T.() -> Unit
-): T = add(type).apply { modify(operation) }
+inline fun <T : Component> Entity.getOrSet(
+  type: ComponentType<T>, supplier: () -> T
+): T {
+  contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+  val previous = getOrNull(type)
+  if (previous != null)
+    return previous
+  val component = supplier()
+  set(type, component)
+  return component
+}
 
 /**
- * Gets the component of the specified [type] and applies the given
- * [operation] to it. An [IllegalArgumentException] will be thrown if the
- * entity doesn't own a component with the specified [type].
+ * Attempts to set the component if the entity doesn't contain a component
+ * with the same type. Returns the previous component, otherwise the
+ * component which is set and was provided by the [supplier].
  */
-inline fun <T : Component> Entity.modify(
-  type: ComponentType<T>, operation: T.() -> Unit
-): T = get(type).apply { modify(operation) }
+inline fun <reified T : Component> Entity.getOrSet(supplier: () -> T): T {
+  contract { callsInPlace(supplier, InvocationKind.AT_MOST_ONCE) }
+  return getOrSet(componentType(), supplier)
+}
 
 /**
- * Gets the component of the specified [type] if it exists, otherwise a new
- * component will be created. The [operation] will be applied to the
- * retrieved or constructed component.
+ * Modifies the entity with the given [operation].
  */
-inline fun <T : Component> Entity.modifyOrAdd(
-  type: ComponentType<T>, operation: T.() -> Unit
-): T = getOrAdd(type).apply { modify(operation) }
+inline fun Entity.modify(
+  operation: @EntityDsl EntityMutator.() -> Unit
+): Entity {
+  contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+  EngineManager.modify(ref, operation)
+  return this
+}

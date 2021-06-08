@@ -19,9 +19,10 @@ private val lookup = ConcurrentHashMap<Class<*>, InternalComponentType<*>>()
 
 internal actual fun <T : Component> resolveInternalComponentType(
   componentClass: KClass<T>
-): InternalComponentType<T> = resolveInternalComponentType(componentClass.java)
+): InternalComponentType<T> =
+  resolveInternalComponentTypeByClass(componentClass.java)
 
-internal fun <T : Component> resolveInternalComponentType(
+internal fun <T : Component> resolveInternalComponentTypeByClass(
   componentClass: Class<T>
 ): InternalComponentType<T> = lookup.computeIfAbsent(componentClass) {
   createInternalComponentType(componentClass.kotlin)

@@ -17,11 +17,3 @@ package org.lanternpowered.shards.component
  * a component a data or value class.
  */
 interface Component
-
-/**
- * Modifies the component using the specified [operation] and updates the last
- * modified field if the component is an [InvalidatableComponent].
- */
-inline fun <T : Component> T.modify(operation: T.() -> Unit) {
-  operation()
-}

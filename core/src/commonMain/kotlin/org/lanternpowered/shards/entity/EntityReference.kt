@@ -94,22 +94,22 @@ value class EntityReference internal constructor(
   /**
    * Executes the given function if the entity is present.
    */
-  inline fun ifPresent(fn: (Entity) -> Unit) {
+  inline fun ifPresent(operation: (Entity) -> Unit) {
     if (isPresent())
-      fn(asEntity())
+      operation(asEntity())
   }
 
   /**
    * Maps the entity to a value of type [T], if present.
    */
-  inline fun <T> map(fn: (Entity) -> T): T? =
-    if (isPresent()) fn(asEntity()) else null
+  inline fun <T> map(operation: (Entity) -> T): T? =
+    if (isPresent()) operation(asEntity()) else null
 
   /**
    * Filters this optional entity with the given function.
    */
-  inline fun filter(fn: (Entity) -> Boolean): EntityReference =
-    if (isPresent() && fn(asEntity())) this else Empty
+  inline fun filter(predicate: (Entity) -> Boolean): EntityReference =
+    if (isPresent() && predicate(asEntity())) this else Empty
 
   /**
    * Gets the reference as an entity, without any checks.

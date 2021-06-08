@@ -9,7 +9,6 @@
  */
 package org.lanternpowered.shards.component
 
-import org.lanternpowered.shards.util.AccessMode
 import kotlin.reflect.KClass
 
 private var idCounter = 0
@@ -29,5 +28,5 @@ internal actual fun <T : Component> resolveInternalComponentType(
 }
 
 private class SimpleComponentType<T : Component>(
-  internalType: InternalComponentType<T>, accessMode: AccessMode
-) : ComponentType<T>(internalType, accessMode)
+  internalType: InternalComponentType<T>
+) : ComponentType<T>(internalType)

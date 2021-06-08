@@ -18,6 +18,7 @@ import org.lanternpowered.shards.entity.EntityMutator
 import org.lanternpowered.shards.entity.InternalEntityRef
 import org.lanternpowered.shards.internal.util.IntList
 
+@PublishedApi
 internal object EngineManager {
 
   /**
@@ -49,7 +50,7 @@ internal object EngineManager {
     }
   }
 
-  fun modify(ref: InternalEntityRef, fn: EntityMutator.() -> Unit) =
+  inline fun modify(ref: InternalEntityRef, fn: EntityMutator.() -> Unit) =
     this[ref.engine].modify(ref.entityId, fn)
 
   fun isActive(ref: InternalEntityRef): Boolean =
@@ -67,11 +68,11 @@ internal object EngineManager {
     ref: InternalEntityRef, type: ComponentType<T>
   ): T = this[ref.engine].getComponent(ref.entityId, type)
 
-  fun <T : Component> addComponent(
-    ref: InternalEntityRef, type: ComponentType<T>
-  ): T = this[ref.engine].addComponent(ref.entityId, type)
+  fun <T : Component> setComponent(
+    ref: InternalEntityRef, type: ComponentType<T>, component: T
+  ) = this[ref.engine].setComponent(ref.entityId, type, component)
 
-  fun <T : Component> getOrAddComponent(
-    ref: InternalEntityRef, type: ComponentType<T>
-  ): T = this[ref.engine].getOrAddComponent(ref.entityId, type)
+  fun setComponent(
+    ref: InternalEntityRef, component: Component
+  ) = this[ref.engine].setComponent(ref.entityId, component)
 }

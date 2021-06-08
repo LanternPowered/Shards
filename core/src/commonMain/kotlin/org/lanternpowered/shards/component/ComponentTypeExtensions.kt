@@ -11,8 +11,15 @@
 
 package org.lanternpowered.shards.component
 
+import org.lanternpowered.shards.util.unsafeCast
 import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
+
+/**
+ * Returns the component type of this [Component].
+ */
+val <T : Component> T.componentType: ComponentType<T>
+  get() = componentType(this::class).unsafeCast()
 
 /**
  * The [Component] class that is represented by this [ComponentType].
