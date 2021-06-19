@@ -32,12 +32,13 @@ abstract class EntityContext {
   abstract val Entity.isActive: Boolean
 
   /**
-   * Returns if the entity contains a component with the specified [type].
+   * Returns if the [Entity] contains a component with the specified
+   * [ComponentType].
    */
   abstract fun Entity.contains(type: ComponentType<*>): Boolean
 
   /**
-   * Returns the component with the specified [type]. Throws an
+   * Returns the component with the specified [ComponentType]. Throws an
    * [IllegalArgumentException] if the component wasn't found.
    */
   abstract fun <T : Component> Entity.get(type: ComponentType<T>): T

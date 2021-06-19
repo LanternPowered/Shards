@@ -16,9 +16,9 @@ import org.lanternpowered.shards.entity.EntityId
 import org.lanternpowered.shards.entity.collections.EntityList
 import org.lanternpowered.shards.entity.sequences.InternalQuery
 import org.lanternpowered.shards.entity.sequences.QueryableEntityContext
-import org.lanternpowered.shards.entity.sequences.EntitySeq0
-import org.lanternpowered.shards.entity.sequences.EntitySeq0Impl
-import org.lanternpowered.shards.system.EntitySeqContext
+import org.lanternpowered.shards.entity.sequences.EntitySequence
+import org.lanternpowered.shards.entity.sequences.EntitySequenceImpl
+import org.lanternpowered.shards.entity.sequences.InternalQueryContext
 
 internal class UniverseImpl(id: Int) : Universe(id) {
 
@@ -26,21 +26,21 @@ internal class UniverseImpl(id: Int) : Universe(id) {
 
     override fun <R> map(
       query: InternalQuery,
-      operation: EntitySeqContext.(Entity) -> R
+      operation: InternalQueryContext.(Entity) -> R
     ): Sequence<R> {
       TODO("Not yet implemented")
     }
 
     override fun forEach(
       query: InternalQuery,
-      operation: EntitySeqContext.(Entity) -> Unit
+      operation: InternalQueryContext.(Entity) -> Unit
     ) {
       TODO("Not yet implemented")
     }
 
     override fun forAll(
       query: InternalQuery,
-      operation: EntitySeqContext.(EntityList) -> Unit
+      operation: InternalQueryContext.(EntityList) -> Unit
     ) {
       TODO("Not yet implemented")
     }
@@ -62,7 +62,7 @@ internal class UniverseImpl(id: Int) : Universe(id) {
     }
   }
 
-  override fun entityQuery(): EntitySeq0 = EntitySeq0Impl(queryContext)
+  override fun entityQuery(): EntitySequence = EntitySequenceImpl(queryContext)
 
   override fun isActive(entityId: EntityId, version: Int): Boolean {
     TODO("Not yet implemented")

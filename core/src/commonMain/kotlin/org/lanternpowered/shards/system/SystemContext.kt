@@ -12,7 +12,7 @@ package org.lanternpowered.shards.system
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import org.lanternpowered.shards.entity.EntityContext
-import org.lanternpowered.shards.entity.sequences.EntitySeq0
+import org.lanternpowered.shards.entity.sequences.EntitySequence
 
 /**
  * Represents a context in which a [System] will be executed.
@@ -22,7 +22,7 @@ abstract class SystemContext : EntityContext(), CoroutineScope {
   /**
    * A sequence of all the entities in the current universe.
    */
-  abstract fun entityQuery(): EntitySeq0
+  abstract fun entityQuery(): EntitySequence
 
   /**
    * Executes an async task within the scope of the current [System] execution.

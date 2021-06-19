@@ -14,7 +14,7 @@ import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.internal.util.Bag
 import org.lanternpowered.shards.util.unsafeCast
 
-internal class BagEntitySeqContextImpl<
+internal class BagEntitySequenceContextImpl<
   R1 : Component,
   W1 : Component,
   R2 : Component,
@@ -25,13 +25,13 @@ internal class BagEntitySeqContextImpl<
   W4 : Component,
   R5 : Component,
   W5 : Component,
-  >(
+>(
   private val bag1: Bag<R1>,
   private val bag2: Bag<R2>,
   private val bag3: Bag<R3>,
   private val bag4: Bag<R4>,
   private val bag5: Bag<R5>,
-) : EntitySeqContext5<R1, W1, R2, W2, R3, W3, R4, W4, R5, W5>() {
+) : EntitySequenceContext5<R1, W1, R2, W2, R3, W3, R4, W4, R5, W5>() {
 
   override fun Entity.set1(value: W1) {
     bag1[id.value] = value.unsafeCast()

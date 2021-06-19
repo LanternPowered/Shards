@@ -21,25 +21,25 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmName
 
-typealias EntitySeqContext0 = EntitySeqContext1<Nothing, Nothing>
+typealias EntitySequenceContext0 = EntitySequenceContext1<Nothing, Nothing>
 
-typealias EntitySeqContext1<
+typealias EntitySequenceContext1<
   R1, W1
-> = EntitySeqContext2<R1, W1, Nothing, Nothing>
+> = EntitySequenceContext2<R1, W1, Nothing, Nothing>
 
-typealias EntitySeqContext2<
+typealias EntitySequenceContext2<
   R1, W1, R2, W2
-> = EntitySeqContext3<R1, W1, R2, W2, Nothing, Nothing>
+> = EntitySequenceContext3<R1, W1, R2, W2, Nothing, Nothing>
 
-typealias EntitySeqContext3<
+typealias EntitySequenceContext3<
   R1, W1, R2, W2, R3, W3
-> = EntitySeqContext4<R1, W1, R2, W2, R3, W3, Nothing, Nothing>
+> = EntitySequenceContext4<R1, W1, R2, W2, R3, W3, Nothing, Nothing>
 
-typealias EntitySeqContext4<
+typealias EntitySequenceContext4<
   R1, W1, R2, W2, R3, W3, R4, W4
-> = EntitySeqContext5<R1, W1, R2, W2, R3, W3, R4, W4, Nothing, Nothing>
+> = EntitySequenceContext5<R1, W1, R2, W2, R3, W3, R4, W4, Nothing, Nothing>
 
-abstract class EntitySeqContext5<
+abstract class EntitySequenceContext5<
   R1 : Component,
   W1 : Component,
   R2 : Component,

@@ -19,7 +19,7 @@ import org.lanternpowered.shards.entity.EntityContext
 import org.lanternpowered.shards.entity.EntityId
 import org.lanternpowered.shards.entity.EntityMutator
 import org.lanternpowered.shards.internal.UniverseManager
-import org.lanternpowered.shards.entity.sequences.EntitySeq0
+import org.lanternpowered.shards.entity.sequences.EntitySequence
 import kotlin.js.JsName
 import kotlin.jvm.JvmSynthetic
 
@@ -83,7 +83,7 @@ abstract class Universe internal constructor(
     return mutator
   }
 
-  abstract fun entityQuery(): EntitySeq0
+  abstract fun entityQuery(): EntitySequence
 
   abstract fun isActive(entityId: EntityId, version: Int): Boolean
 

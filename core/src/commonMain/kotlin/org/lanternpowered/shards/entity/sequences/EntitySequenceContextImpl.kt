@@ -19,7 +19,7 @@ import org.lanternpowered.shards.entity.remove as defaultRemove
 import org.lanternpowered.shards.entity.get as defaultGet
 import org.lanternpowered.shards.entity.getOrNull as defaultGetOrNull
 
-internal class DefaultEntitySeqContext<
+internal class DefaultEntitySequenceContext<
   R1 : Component,
   W1 : Component,
   R2 : Component,
@@ -36,7 +36,7 @@ internal class DefaultEntitySeqContext<
   private val type3: ComponentType<R3>,
   private val type4: ComponentType<R4>,
   private val type5: ComponentType<R5>,
-) : EntitySeqContext5<R1, W1, R2, W2, R3, W3, R4, W4, R5, W5>() {
+) : EntitySequenceContext5<R1, W1, R2, W2, R3, W3, R4, W4, R5, W5>() {
 
   companion object {
 
@@ -45,8 +45,8 @@ internal class DefaultEntitySeqContext<
 
     fun create(
       types: List<ComponentType<*>>
-    ): DefaultEntitySeqContext<*, *, *, *, *, *, *, *, *, *> {
-      return DefaultEntitySeqContext<
+    ): DefaultEntitySequenceContext<*, *, *, *, *, *, *, *, *, *> {
+      return DefaultEntitySequenceContext<
         Component, Component, Component, Component, Component, Component,
         Component, Component, Component, Component
       >(

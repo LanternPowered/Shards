@@ -24,7 +24,8 @@ internal class QueryableEntityIterableContext(
 
   private fun filter(
     query: InternalQuery,
-    context: InternalQueryContext = DefaultEntitySeqContext.create(query.reads)
+    context: InternalQueryContext =
+      DefaultEntitySequenceContext.create(query.reads)
   ): Sequence<Entity> {
     var sequence = Sequence { iterator().generic() }
     for (filter in query.filters) {
@@ -38,7 +39,7 @@ internal class QueryableEntityIterableContext(
     query: InternalQuery,
     operation: InternalQueryContext.(Entity) -> R
   ): Sequence<R> {
-    val context = DefaultEntitySeqContext.create(query.reads)
+    val context = DefaultEntitySequenceContext.create(query.reads)
     return filter(query, context)
       .map { entity -> context.operation(entity) }
   }
@@ -47,7 +48,7 @@ internal class QueryableEntityIterableContext(
     query: InternalQuery,
     operation: InternalQueryContext.(Entity) -> Unit
   ) {
-    val context = DefaultEntitySeqContext.create(query.reads)
+    val context = DefaultEntitySequenceContext.create(query.reads)
     filter(query, context).forEach { entity -> context.operation(entity) }
   }
 
@@ -55,7 +56,7 @@ internal class QueryableEntityIterableContext(
     query: InternalQuery,
     operation: InternalQueryContext.(EntityList) -> Unit
   ) {
-    val context = DefaultEntitySeqContext.create(query.reads)
+    val context = DefaultEntitySequenceContext.create(query.reads)
     val entityList = filter(query, context).toEntityList()
     context.operation(entityList)
   }

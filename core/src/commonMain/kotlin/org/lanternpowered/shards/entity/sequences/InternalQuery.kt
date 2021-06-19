@@ -40,7 +40,7 @@ internal interface QueryableEntityContext {
 }
 
 internal typealias InternalQueryContext =
-  EntitySeqContext5<*, *, *, *, *, *, *, *, *, *>
+  EntitySequenceContext5<*, *, *, *, *, *, *, *, *, *>
 
 internal interface InternalQuery {
   val reads: List<ComponentType<*>>
