@@ -12,17 +12,63 @@ package org.lanternpowered.shards.entity
 /**
  * An iterator for [Entity]s.
  */
-interface EntityReferenceIterator : Iterator<EntityReference> {
-
-  override fun next(): EntityReference = this.next()
+interface EntityReferenceIterator {
 
   /**
-   * Gets the next optional entity without boxing.
+   * Returns whether there's a next entity reference in this iterator.
    */
-  fun nextEntity(): EntityReference
+  operator fun hasNext(): Boolean
 
   /**
-   * Gets the next nullable entity.
+   * Returns the next entity reference.
    */
-  fun nextNullableEntity(): Entity? = this.nextEntity().orNull()
+  operator fun next(): EntityReference
+}
+
+/**
+ * Returns this [EntityReferenceIterator] as an [EntityIterator] that skips
+ * inactive entities.
+ */
+fun EntityReferenceIterator.filterToEntity(): EntityIterator =
+  ReferenceAsEntityIterator(this)
+
+internal class ReferenceAsEntityIterator(
+  private val iterator: EntityReferenceIterator
+) : EntityIterator {
+
+  companion object {
+
+    const val Found = 1
+    const val Unknown = 0
+    const val End = -1
+  }
+
+  private var next = Entity(InternalEntityRef.Empty)
+  private var state = 0
+
+  private fun findNext() {
+    if (state == Found)
+      return
+    while (iterator.hasNext()) {
+      val ref = iterator.next()
+      if (ref.isPresent()) {
+        next = ref.asEntity()
+        state = Found
+        return
+      }
+    }
+  }
+
+  override fun next(): Entity {
+    findNext()
+    if (state == End)
+      throw NoSuchElementException()
+    state = Unknown
+    return next
+  }
+
+  override fun hasNext(): Boolean {
+    findNext()
+    return state == Found
+  }
 }

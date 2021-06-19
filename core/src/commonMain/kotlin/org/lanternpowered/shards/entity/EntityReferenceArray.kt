@@ -69,7 +69,7 @@ value class EntityReferenceArray private constructor(
   operator fun iterator(): EntityReferenceIterator {
     val itr = array.iterator()
     return object : EntityReferenceIterator {
-      override fun nextEntity(): EntityReference =
+      override fun next(): EntityReference =
         EntityReference(InternalEntityRef(itr.nextLong()))
       override fun hasNext(): Boolean = itr.hasNext()
     }

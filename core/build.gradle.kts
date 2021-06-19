@@ -13,12 +13,16 @@ kotlin {
   //  https://youtrack.jetbrains.com/issue/KT-47144
   // mingwX64("native") // TODO: Temporarily for creating a "common" native sourceset
 
+  if (System.getProperty("idea.sync.active") == "true") {
+    mingwX64("native")
+  }
+
   // IDE error fix:
   //  Class '...' has several compatible actual declarations in modules
   // mingwX64 is currently only needed at compile time anyway,
   // not when setting up the project
   if (System.getProperty("idea.sync.active") != "true") {
-    // mingwX64()
+    mingwX64()
   }
 
   sourceSets {
