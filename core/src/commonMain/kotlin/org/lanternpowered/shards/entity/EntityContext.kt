@@ -17,7 +17,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * Represents a context in which [Entity] can be accessed.
+ * Represents a context in which [Entity]s can be accessed.
  */
 abstract class EntityContext {
 

@@ -740,19 +740,34 @@ abstract class EntitySeq1<R1, W1> :
   ): EntitySeq3<R1, W1, W2, W2, W3, W3> =
     modifies(type2).modifies(type3)
 
-  abstract fun with(
+  @PublishedApi
+  internal abstract fun with1(
     type1: ComponentType<R1>
   ): EntitySeq1<R1, W1>
 
-  abstract fun withFiltered(
+  @JvmName("with_1")
+  fun with(
+    type1: ComponentType<R1>
+  ): EntitySeq1<R1, W1> =
+    with1(type1)
+
+  @PublishedApi
+  internal abstract fun withFiltered1(
     type1: ComponentType<W1>,
-    predicate: EntitySeq1<R1, W1>.(R1) -> Boolean
+    predicate: EntitySeqContext1<R1, W1>.(R1) -> Boolean
   ): EntitySeq1<R1, W1>
+
+  @JvmName("withFiltered_1")
+  fun withFiltered(
+    type1: ComponentType<W1>,
+    predicate: EntitySeqContext1<R1, W1>.(R1) -> Boolean
+  ): EntitySeq1<R1, W1> =
+    withFiltered1(type1, predicate)
 
   inline fun forEachWith(
     type1: ComponentType<R1>,
-    crossinline operation: EntitySeq1<R1, W1>.(Entity, R1) -> Unit
-  ) = with(type1)
+    crossinline operation: EntitySeqContext1<R1, W1>.(Entity, R1) -> Unit
+  ) = with1(type1)
     .forEach { entity ->
       operation(entity, entity.get1())
     }
@@ -769,11 +784,11 @@ abstract class EntitySeq2<R1, W1, R2, W2> :
 {
 
   abstract fun <R3 : Component> reads(
-    type1: ComponentType<R3>
+    type3: ComponentType<R3>
   ): EntitySeq3<R1, W1, R2, W2, R3, Nothing>
 
   abstract fun <W3 : Component> modifies(
-    type1: ComponentType<W3>
+    type3: ComponentType<W3>
   ): EntitySeq3<R1, W1, R2, W2, W3, W3>
 
   @PublishedApi
@@ -813,33 +828,33 @@ abstract class EntitySeq2<R1, W1, R2, W2> :
     with1(type1).with2(type2)
 
   @PublishedApi
-  internal abstract fun filter1(
+  internal abstract fun withFiltered1(
     type1: ComponentType<R1>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
+    predicate: EntitySeqContext2<R1, W1, R2, W2>.(R1) -> Boolean
   ): EntitySeq2<R1, W1, R2, W2>
 
   @PublishedApi
-  internal abstract fun filter2(
+  internal abstract fun withFiltered2(
     type2: ComponentType<R2>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
+    predicate: EntitySeqContext2<R1, W1, R2, W2>.(R2) -> Boolean
   ): EntitySeq2<R1, W1, R2, W2>
 
-  @JvmName("filter_1")
+  @JvmName("withFiltered_1")
   fun withFiltered(
     type1: ComponentType<R1>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
-  ): EntitySeq2<R1, W1, R2, W2> = filter1(type1, predicate)
+    predicate: EntitySeqContext2<R1, W1, R2, W2>.(R1) -> Boolean
+  ): EntitySeq2<R1, W1, R2, W2> = withFiltered1(type1, predicate)
 
-  @JvmName("filter_2")
+  @JvmName("withFiltered_2")
   fun withFiltered(
     type2: ComponentType<R2>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
-  ): EntitySeq2<R1, W1, R2, W2> = filter2(type2, predicate)
+    predicate: EntitySeqContext2<R1, W1, R2, W2>.(R2) -> Boolean
+  ): EntitySeq2<R1, W1, R2, W2> = withFiltered2(type2, predicate)
 
   @JvmName("forEach_1")
   inline fun forEachWith(
     type1: ComponentType<R1>,
-    crossinline operation: EntitySeq2<R1, W1, R2, W2>.(Entity, R1) -> Unit
+    crossinline operation: EntitySeqContext2<R1, W1, R2, W2>.(Entity, R1) -> Unit
   ) = with1(type1)
     .forEach { entity ->
       operation(entity, entity.get1())
@@ -848,7 +863,7 @@ abstract class EntitySeq2<R1, W1, R2, W2> :
   @JvmName("forEach_2")
   inline fun forEachWith(
     type2: ComponentType<R2>,
-    crossinline operation: EntitySeq2<R1, W1, R2, W2>.(Entity, R2) -> Unit
+    crossinline operation: EntitySeqContext2<R1, W1, R2, W2>.(Entity, R2) -> Unit
   ) = with2(type2)
     .forEach { entity ->
       operation(entity, entity.get2())
@@ -858,7 +873,7 @@ abstract class EntitySeq2<R1, W1, R2, W2> :
   inline fun forEachWith(
     type1: ComponentType<R1>,
     type2: ComponentType<R2>,
-    crossinline operation: EntitySeq2<R1, W1, R2, W2>.(Entity, R1, R2) -> Unit
+    crossinline operation: EntitySeqContext2<R1, W1, R2, W2>.(Entity, R1, R2) -> Unit
   ) = with1(type1)
     .with2(type2)
     .forEach { entity ->
@@ -871,7 +886,7 @@ abstract class EntitySeq2<R1, W1, R2, W2> :
   inline fun forEachWith(
     type2: ComponentType<R2>,
     type1: ComponentType<R1>,
-    crossinline operation: EntitySeq2<R1, W1, R2, W2>.(Entity, R2, R1) -> Unit
+    crossinline operation: EntitySeqContext2<R1, W1, R2, W2>.(Entity, R2, R1) -> Unit
   ) = with1(type1)
     .with2(type2)
     .forEach { entity ->
@@ -1017,38 +1032,38 @@ abstract class EntitySeq3<R1, W1, R2, W2, R3, W3> :
     with1(type1).with2(type2).with3(type3)
 
   @PublishedApi
-  internal abstract fun filter1(
+  internal abstract fun withFiltered1(
     type1: ComponentType<R1>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
+    predicate: EntitySeqContext3<R1, W1, R2, W2, R3, W3>.(R1) -> Boolean
   ): EntitySeq3<R1, W1, R2, W2, R3, W3>
 
   @PublishedApi
-  internal abstract fun filter2(
+  internal abstract fun withFiltered2(
     type2: ComponentType<R2>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
+    predicate: EntitySeqContext3<R1, W1, R2, W2, R3, W3>.(R2) -> Boolean
   ): EntitySeq3<R1, W1, R2, W2, R3, W3>
 
   @PublishedApi
-  internal abstract fun filter3(
-    type2: ComponentType<R3>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R3) -> Boolean
+  internal abstract fun withFiltered3(
+    type3: ComponentType<R3>,
+    predicate: EntitySeqContext3<R1, W1, R2, W2, R3, W3>.(R3) -> Boolean
   ): EntitySeq3<R1, W1, R2, W2, R3, W3>
 
-  @JvmName("filter_1")
+  @JvmName("withFiltered_1")
   fun withFiltered(
     type1: ComponentType<R1>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R1) -> Boolean
-  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter1(type1, predicate)
+    predicate: EntitySeqContext3<R1, W1, R2, W2, R3, W3>.(R1) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = withFiltered1(type1, predicate)
 
-  @JvmName("filter_2")
+  @JvmName("withFiltered_2")
   fun withFiltered(
     type2: ComponentType<R2>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R2) -> Boolean
-  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter2(type2, predicate)
+    predicate: EntitySeqContext3<R1, W1, R2, W2, R3, W3>.(R2) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = withFiltered2(type2, predicate)
 
-  @JvmName("filter_3")
+  @JvmName("withFiltered_3")
   fun withFiltered(
     type3: ComponentType<R3>,
-    predicate: EntitySeq2<R1, W1, R2, W2>.(R3) -> Boolean
-  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = filter3(type3, predicate)
+    predicate: EntitySeqContext3<R1, W1, R2, W2, R3, W3>.(R3) -> Boolean
+  ): EntitySeq3<R1, W1, R2, W2, R3, W3> = withFiltered3(type3, predicate)
 }

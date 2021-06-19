@@ -45,6 +45,13 @@ class Bag<T> internal constructor(
     if (index >= _size)
       throw NoSuchElementException()
     @Suppress("UNCHECKED_CAST")
+    return data[index]!!
+  }
+
+  fun getOrNull(index: Int): T? {
+    if (index >= _size)
+      return null
+    @Suppress("UNCHECKED_CAST")
     return data[index]
   }
 
@@ -71,7 +78,7 @@ class Bag<T> internal constructor(
     data[index] = value
   }
 
-  fun indexOf(value: Int): Int {
+  fun indexOf(value: T): Int {
     for (i in 0 until _size) {
       if (data[i] == value)
         return i
@@ -79,14 +86,22 @@ class Bag<T> internal constructor(
     return -1
   }
 
-  fun contains(value: Int): Boolean = indexOf(value) != -1
+  fun contains(value: T): Boolean = indexOf(value) != -1
 
-  fun remove(value: Int): Boolean {
+  fun remove(value: T): Boolean {
     val index = indexOf(value)
     if (index == -1)
       return false
     data[index] = data[--_size]
     return true
+  }
+
+  fun removeAtOrNull(index: Int): T? {
+    if (index >= _size)
+      return null
+    val value = data[index]
+    data[index] = data[--_size]
+    return value
   }
 
   fun removeAt(index: Int): T {

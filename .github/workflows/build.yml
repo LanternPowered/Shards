@@ -15,7 +15,7 @@ jobs:
         uses: "actions/setup-java@v1"
         with:
           java-version: "16"
-      - name: "build"
+      - name: "Build"
         run: "./gradlew build"
       - name: "Archive test results"
         if: "${{ always() }}"
