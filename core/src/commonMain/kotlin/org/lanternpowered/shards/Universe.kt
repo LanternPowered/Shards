@@ -19,6 +19,7 @@ import org.lanternpowered.shards.entity.EntityContext
 import org.lanternpowered.shards.entity.EntityId
 import org.lanternpowered.shards.entity.EntityMutator
 import org.lanternpowered.shards.internal.UniverseManager
+import org.lanternpowered.shards.entity.sequences.EntitySeq0
 import kotlin.js.JsName
 import kotlin.jvm.JvmSynthetic
 
@@ -31,7 +32,7 @@ fun Universe(): Universe = UniverseManager.create()
 /**
  * Represents a universe that will manage all the components and entities.
  */
-class Universe internal constructor(
+abstract class Universe internal constructor(
   @JvmSynthetic
   internal val id: Int
 ) : EntityContext() {
@@ -82,66 +83,54 @@ class Universe internal constructor(
     return mutator
   }
 
-  fun isActive(entityId: EntityId, version: Int): Boolean {
-    TODO()
-  }
+  abstract fun entityQuery(): EntitySeq0
 
-  fun isActive(entityId: EntityId): Boolean {
-    TODO()
-  }
+  abstract fun isActive(entityId: EntityId, version: Int): Boolean
 
-  fun getEntity(entityId: EntityId): Entity {
-    TODO()
-  }
+  abstract fun isActive(entityId: EntityId): Boolean
 
-  fun containsComponent(
+  abstract fun getEntity(entityId: EntityId): Entity
+
+  abstract fun containsComponent(
     entityId: EntityId, type: ComponentType<*>
-  ): Boolean {
-    TODO()
-  }
+  ): Boolean
 
-  fun <T : Component> getComponentOrNull(
+  abstract fun <T : Component> getComponentOrNull(
     entityId: EntityId, type: ComponentType<T>
-  ): T? {
-    TODO()
-  }
+  ): T?
 
-  fun <T : Component> getComponent(
+  abstract fun <T : Component> getComponent(
     entityId: EntityId, type: ComponentType<T>
-  ): T {
-    TODO()
-  }
+  ): T
 
-  fun <T : Component> setComponent(
+  abstract fun <T : Component> setComponent(
     entityId: EntityId, type: ComponentType<T>, component: T
-  ) {
-    TODO()
-  }
+  )
 
   fun setComponent(
     entityId: EntityId, component: Component
   ) = setComponent(entityId, component.componentType, component)
 
-  override inline val Entity.isActive: Boolean
+  override val Entity.isActive: Boolean
     get() = isActive(ref.entityId, ref.version)
 
-  override inline fun Entity.contains(
+  override fun Entity.contains(
     type: ComponentType<*>
   ): Boolean = containsComponent(id, type)
 
-  override inline fun <T : Component> Entity.get(
+  override fun <T : Component> Entity.get(
     type: ComponentType<T>
   ): T = getComponent(id, type)
 
-  override inline fun <T : Component> Entity.getOrNull(
+  override fun <T : Component> Entity.getOrNull(
     type: ComponentType<T>
   ): T? = getComponentOrNull(id, type)
 
-  override inline fun <T : Component> Entity.set(
+  override fun <T : Component> Entity.set(
     type: ComponentType<T>, component: T
   ) = setComponent(id, type, component)
 
-  override inline fun Entity.set(component: Component) =
+  override fun Entity.set(component: Component) =
     setComponent(id, component)
 
   /**

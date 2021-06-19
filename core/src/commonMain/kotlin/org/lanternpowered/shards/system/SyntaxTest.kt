@@ -76,6 +76,8 @@ private val TestSystem = System {
         if (tag.isNotEmpty()) {
           println("Tag: $tag")
         }
+
+        entity.getOrSet(::Tag)
       }
 
     1

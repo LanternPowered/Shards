@@ -12,6 +12,7 @@ package org.lanternpowered.shards.internal
 import kotlinx.atomicfu.locks.reentrantLock
 import kotlinx.atomicfu.locks.withLock
 import org.lanternpowered.shards.Universe
+import org.lanternpowered.shards.UniverseImpl
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.entity.EntityMutator
@@ -37,7 +38,7 @@ internal object UniverseManager {
       val id =
         if (reusedIds.isEmpty) idCounter++
         else reusedIds.removeAt(0)
-      val universe = Universe(id)
+      val universe = UniverseImpl(id)
       universes[id] = universe
       return universe
     }

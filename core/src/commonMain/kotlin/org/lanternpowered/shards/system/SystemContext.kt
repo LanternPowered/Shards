@@ -12,6 +12,7 @@ package org.lanternpowered.shards.system
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import org.lanternpowered.shards.entity.EntityContext
+import org.lanternpowered.shards.entity.sequences.EntitySeq0
 
 /**
  * Represents a context in which a [System] will be executed.

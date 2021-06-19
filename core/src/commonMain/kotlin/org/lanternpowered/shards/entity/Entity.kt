@@ -171,6 +171,11 @@ inline fun <reified T : Component> Entity.getOrSet(supplier: () -> T): T {
 }
 
 /**
+ * Removes the component and returns if it was successful.
+ */
+fun <T : Component> Entity.remove(type: ComponentType<T>): Boolean = TODO()
+
+/**
  * Modifies the entity with the given [operation].
  */
 inline fun Entity.modify(

@@ -7,7 +7,9 @@
  * This work is licensed under the terms of the MIT License (MIT). For
  * a copy, see 'LICENSE.txt' or <https://opensource.org/licenses/MIT>.
  */
-package org.lanternpowered.shards.entity
+package org.lanternpowered.shards.entity.collections
+
+import org.lanternpowered.shards.entity.Entity
 
 /**
  * Represents a collection of [Entity]s.

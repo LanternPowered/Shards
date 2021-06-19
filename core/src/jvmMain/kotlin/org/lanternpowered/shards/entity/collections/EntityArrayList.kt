@@ -7,17 +7,21 @@
  * This work is licensed under the terms of the MIT License (MIT). For
  * a copy, see 'LICENSE.txt' or <https://opensource.org/licenses/MIT>.
  */
-package org.lanternpowered.shards.entity
+package org.lanternpowered.shards.entity.collections
+
+import it.unimi.dsi.fastutil.longs.LongArrayList
+import it.unimi.dsi.fastutil.longs.LongList
+import org.lanternpowered.shards.entity.Entity
 
 actual class EntityArrayList internal constructor(
-  internal val backing: MutableList<Long>
+  internal val backing: LongList
 ) : MutableEntityList {
 
   actual constructor() :
-    this(ArrayList())
+    this(LongArrayList())
 
   actual constructor(capacity: Int) :
-    this(ArrayList(capacity))
+    this(LongArrayList(capacity))
 
   actual constructor(collection: EntityCollection) :
     this(collection.toReferenceList())
@@ -26,7 +30,7 @@ actual class EntityArrayList internal constructor(
     get() = backing.size
 
   override fun get(index: Int): Entity =
-    Entity(backing[index])
+    Entity(backing.getLong(index))
 
   override fun set(index: Int, entity: Entity): Entity =
     Entity(backing.set(index, entity.ref.value))
@@ -39,10 +43,10 @@ actual class EntityArrayList internal constructor(
     backing.add(entity.ref.value)
 
   override fun removeAt(index: Int): Entity =
-    Entity(backing.removeAt(index))
+    Entity(backing.removeLong(index))
 
   override fun remove(entity: Entity): Boolean =
-    backing.remove(entity.ref.value)
+    backing.rem(entity.ref.value)
 
   override fun clear() {
     backing.clear()
@@ -69,16 +73,16 @@ actual class EntityArrayList internal constructor(
   override fun iterator(): EntityIterator {
     val itr = backing.iterator()
     return object : EntityIterator {
-      override fun next(): Entity = Entity(itr.next())
+      override fun next(): Entity = Entity(itr.nextLong())
       override fun hasNext(): Boolean = itr.hasNext()
     }
   }
 }
 
-private fun EntityCollection.toReferenceList(): MutableList<Long> {
+private fun EntityCollection.toReferenceList(): LongList {
   if (this is EntityArrayList)
-    return ArrayList(this.backing)
-  val list = ArrayList<Long>(size)
+    return LongArrayList(this.backing)
+  val list = LongArrayList(size)
   for (entity in this)
     list.add(entity.ref.value)
   return list

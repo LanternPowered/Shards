@@ -9,8 +9,10 @@
  */
 @file:Suppress("FunctionName")
 
-package org.lanternpowered.shards.entity
+package org.lanternpowered.shards.entity.collections
 
+import org.lanternpowered.shards.entity.Entity
+import org.lanternpowered.shards.entity.InternalEntityRef
 import kotlin.jvm.JvmInline
 
 /**
