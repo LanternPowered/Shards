@@ -43,6 +43,26 @@ abstract class EntityContext {
   abstract fun <T : Component> Entity.get(type: ComponentType<T>): T
 
   /**
+   * Returns the component with the specified [type]. Returns a fallback
+   * component provided by the [or] if the component couldn't be found.
+   */
+  inline fun <T : Component> Entity.getOr(
+    type: ComponentType<T>, or: () -> T
+  ): T {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull(type) ?: or()
+  }
+
+  /**
+   * Returns the component with the specified type [T]. Returns a fallback
+   * component provided by the [or] if the component couldn't be found.
+   */
+  inline fun <reified T : Component> Entity.getOr(or: () -> T): T {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOr(componentType(), or)
+  }
+
+  /**
    * Gets the component instance of the given [type]. Returns `null`
    * if the component wasn't found.
    */
@@ -58,6 +78,30 @@ abstract class EntityContext {
   ): T {
     contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
     return operation(get(type)).also { set(type, it) }
+  }
+
+  /**
+   * Returns the component of the specified [type] and applies the given
+   * transform [operation] to it. Uses a [Component] provided by the [default]
+   * if the component wasn't found.
+   */
+  inline fun <T : Component> Entity.transform(
+    type: ComponentType<T>, default: () -> T, operation: (T) -> T
+  ): T {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return operation(getOrNull(type) ?: default()).also { set(type, it) }
+  }
+
+  /**
+   * Returns the component of the specified type [T] and applies the given
+   * transform [operation] to it. Uses a [Component] provided by the [default]
+   * if the component wasn't found.
+   */
+  inline fun <reified T : Component> Entity.transform(
+    default: () -> T, operation: (T) -> T
+  ): T {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return transform(componentType(), default, operation)
   }
 
   /**

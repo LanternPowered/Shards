@@ -37,6 +37,26 @@ abstract class EntityMutator {
   abstract fun <T : Component> get(type: ComponentType<T>): T
 
   /**
+   * Returns the component with the specified [type]. Returns a fallback
+   * component provided by the [or] if the component couldn't be found.
+   */
+  inline fun <T : Component> Entity.getOr(
+    type: ComponentType<T>, or: () -> T
+  ): T {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull(type) ?: or()
+  }
+
+  /**
+   * Returns the component with the specified type [T]. Returns a fallback
+   * component provided by the [or] if the component couldn't be found.
+   */
+  inline fun <reified T : Component> Entity.getOr(or: () -> T): T {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOr(componentType(), or)
+  }
+
+  /**
    * Returns the component instance with the specified [type]. Returns `null` if
    * the component wasn't found.
    */
@@ -52,6 +72,30 @@ abstract class EntityMutator {
   ): T {
     contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
     return operation(get(type)).also { set(type, it) }
+  }
+
+  /**
+   * Returns the component of the specified [type] and applies the given
+   * transform [operation] to it. Uses a [Component] provided by the [default]
+   * if the component wasn't found.
+   */
+  inline fun <T : Component> transform(
+    type: ComponentType<T>, default: () -> T, operation: (T) -> T
+  ): T {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return operation(getOrNull(type) ?: default()).also { set(type, it) }
+  }
+
+  /**
+   * Returns the component of the specified type [T] and applies the given
+   * transform [operation] to it. Uses a [Component] provided by the [default]
+   * if the component wasn't found.
+   */
+  inline fun <reified T : Component> transform(
+    default: () -> T, operation: (T) -> T
+  ): T {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    return transform(componentType(), default, operation)
   }
 
   /**

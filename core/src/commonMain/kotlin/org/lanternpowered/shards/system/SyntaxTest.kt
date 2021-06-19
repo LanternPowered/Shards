@@ -71,6 +71,11 @@ private val TestSystem = System {
         entity.set(Health(health - 1.0))
         entity.set(Tag("Tag"))
         entity.transform(Food) { (food) -> Food(food + 1.0) }
+
+        val (tag) = entity.getOr(::Tag)
+        if (tag.isNotEmpty()) {
+          println("Tag: $tag")
+        }
       }
 
     1
@@ -90,7 +95,8 @@ private val TestSystem = System {
 }
 
 @JvmInline
-value class Tag(val tag: String) : Component {
+value class Tag(val tag: String = "default") : Component {
+  operator fun component1() = tag
   companion object Type : ComponentType<Tag>(Tag::class)
 }
 

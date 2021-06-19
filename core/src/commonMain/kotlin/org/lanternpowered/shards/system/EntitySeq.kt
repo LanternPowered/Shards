@@ -192,6 +192,94 @@ abstract class EntitySeqContext5<
   inline fun <R : Component> Entity.get(type: ComponentType<R>): R =
     throw UnsupportedOperationException()
 
+  @JvmName("getOr_1")
+  inline fun Entity.getOr(type: ComponentType<R1>, or: () -> R1): R1 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull1() ?: or()
+  }
+
+  @JvmName("getOr_2")
+  inline fun Entity.getOr(type: ComponentType<R2>, or: () -> R2): R2 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull2() ?: or()
+  }
+
+  @JvmName("getOr_3")
+  inline fun Entity.getOr(type: ComponentType<R3>, or: () -> R3): R3 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull3() ?: or()
+  }
+
+  @JvmName("getOr_4")
+  inline fun Entity.getOr(type: ComponentType<R4>, or: () -> R4): R4 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull4() ?: or()
+  }
+
+  @JvmName("getOr_5")
+  inline fun Entity.getOr(type: ComponentType<R5>, or: () -> R5): R5 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull5() ?: or()
+  }
+
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun <R : Component> Entity.getOr(
+    type: ComponentType<R>, or: () -> R
+  ): R {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    throw UnsupportedOperationException()
+  }
+
+  @JvmName("getOr_1")
+  inline fun Entity.getOr(or: () -> R1): R1 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull1() ?: or()
+  }
+
+  @JvmName("getOr_2")
+  inline fun Entity.getOr(or: () -> R2): R2 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull2() ?: or()
+  }
+
+  @JvmName("getOr_3")
+  inline fun Entity.getOr(or: () -> R3): R3 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull3() ?: or()
+  }
+
+  @JvmName("getOr_4")
+  inline fun Entity.getOr(or: () -> R4): R4 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull4() ?: or()
+  }
+
+  @JvmName("getOr_5")
+  inline fun Entity.getOr(or: () -> R5): R5 {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    return getOrNull5() ?: or()
+  }
+
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun <R : Component> Entity.getOr(
+    or: () -> R
+  ): R {
+    contract { callsInPlace(or, InvocationKind.AT_MOST_ONCE) }
+    throw UnsupportedOperationException()
+  }
+
   @JvmName("getOrNull_1")
   inline fun Entity.getOrNull(type: ComponentType<R1>): R1? = getOrNull1()
   @JvmName("getOrNull_2")
@@ -268,7 +356,146 @@ abstract class EntitySeqContext5<
   inline fun <W : Component> Entity.transform(
     type: ComponentType<W>,
     operation: (W) -> W
-  ): W = throw UnsupportedOperationException()
+  ): W {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    throw UnsupportedOperationException()
+  }
+
+  @JvmName("transform_1")
+  inline fun Entity.transform(
+    type: ComponentType<W1>,
+    default: () -> W1,
+    operation: (W1) -> W1
+  ): W1 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull1() ?: default()
+    return operation(value.unsafeCast()).also { set1(it) }
+  }
+
+  @JvmName("transform_2")
+  inline fun Entity.transform(
+    type: ComponentType<W2>,
+    default: () -> W2,
+    operation: (W2) -> W2
+  ): W2 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull2() ?: default()
+    return operation(value.unsafeCast()).also { set2(it) }
+  }
+
+  @JvmName("transform_3")
+  inline fun Entity.transform(
+    type: ComponentType<W3>,
+    default: () -> W3,
+    operation: (W3) -> W3
+  ): W3 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull3() ?: default()
+    return operation(value.unsafeCast()).also { set3(it) }
+  }
+
+  @JvmName("transform_4")
+  inline fun Entity.transform(
+    type: ComponentType<W4>,
+    default: () -> W4,
+    operation: (W4) -> W4
+  ): W4 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull4() ?: default()
+    return operation(value.unsafeCast()).also { set4(it) }
+  }
+
+  @JvmName("transform_5")
+  inline fun Entity.transform(
+    type: ComponentType<W5>,
+    default: () -> W5,
+    operation: (W5) -> W5
+  ): W5 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull5() ?: default()
+    return operation(value.unsafeCast()).also { set5(it) }
+  }
+
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun <T : Component> Entity.transform(
+    type: ComponentType<T>,
+    default: () -> T,
+    operation: (T) -> T
+  ): T {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    throw UnsupportedOperationException()
+  }
+
+  @JvmName("transform_1")
+  inline fun Entity.transform(
+    default: () -> W1,
+    operation: (W1) -> W1
+  ): W1 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull1() ?: default()
+    return operation(value.unsafeCast()).also { set1(it) }
+  }
+
+  @JvmName("transform_2")
+  inline fun Entity.transform(
+    default: () -> W2,
+    operation: (W2) -> W2
+  ): W2 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull2() ?: default()
+    return operation(value.unsafeCast()).also { set2(it) }
+  }
+
+  @JvmName("transform_3")
+  inline fun Entity.transform(
+    default: () -> W3,
+    operation: (W3) -> W3
+  ): W3 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull3() ?: default()
+    return operation(value.unsafeCast()).also { set3(it) }
+  }
+
+  @JvmName("transform_4")
+  inline fun Entity.transform(
+    default: () -> W4,
+    operation: (W4) -> W4
+  ): W4 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull4() ?: default()
+    return operation(value.unsafeCast()).also { set4(it) }
+  }
+
+  @JvmName("transform_5")
+  inline fun Entity.transform(
+    default: () -> W5,
+    operation: (W5) -> W5
+  ): W5 {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    val value = getOrNull5() ?: default()
+    return operation(value.unsafeCast()).also { set5(it) }
+  }
+
+  @Deprecated(
+    message = "Component types that are accessed must be available in the " +
+      "context with the proper access mode. The can be done using reads() " +
+      "and modifies().",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("")
+  )
+  inline fun <T : Component> Entity.transform(
+    default: () -> T,
+    operation: (T) -> T
+  ): T {
+    contract { callsInPlace(operation, InvocationKind.EXACTLY_ONCE) }
+    throw UnsupportedOperationException()
+  }
 
   @JvmName("getOrSet_1")
   inline fun Entity.getOrSet(supplier: () -> W1): W1 {
