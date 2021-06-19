@@ -117,8 +117,6 @@ subprojects {
 
         all {
           languageSettings.apply {
-            // languageVersion = "1.5"
-
             enableLanguageFeature("InlineClasses")
             enableLanguageFeature("NewInference")
             enableLanguageFeature("NonParenthesizedAnnotationsOnFunctionalTypes")
