@@ -22,7 +22,7 @@ kotlin {
   // mingwX64 is currently only needed at compile time anyway,
   // not when setting up the project
   if (System.getProperty("idea.sync.active") != "true") {
-    mingwX64()
+    // mingwX64()
   }
 
   sourceSets {
