@@ -20,6 +20,6 @@ class JvmComponentTypeTest {
   }
 }
 
-data class Saturation(var value: Double = 5.0) : Component {
+data class Saturation(val value: Double = 5.0) : Component {
   companion object Type : ComponentType<Saturation>()
 }

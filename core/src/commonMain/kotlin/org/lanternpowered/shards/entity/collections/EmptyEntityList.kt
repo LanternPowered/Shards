@@ -12,9 +12,12 @@ package org.lanternpowered.shards.entity.collections
 import org.lanternpowered.shards.entity.Entity
 
 /**
- * Represents an empty [EntityCollection].
+ * Represents an empty [EntityList].
  */
-object EmptyEntityCollection : EntityCollection {
+object EmptyEntityList : EntityList {
+  override fun get(index: Int): Entity = throw NoSuchElementException()
+  override fun indexOf(entity: Entity): Int = -1
+  override fun lastIndexOf(entity: Entity): Int = -1
   override val size: Int get() = 0
   override fun isEmpty(): Boolean = true
   override fun contains(entity: Entity): Boolean = false

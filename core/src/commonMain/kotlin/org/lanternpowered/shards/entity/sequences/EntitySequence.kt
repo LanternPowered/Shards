@@ -14,7 +14,6 @@ import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.entity.Entity
 import org.lanternpowered.shards.entity.collections.EntityIterable
 import org.lanternpowered.shards.entity.collections.EntityIterator
-import org.lanternpowered.shards.entity.collections.EntityList
 import kotlin.jvm.JvmName
 
 /**
@@ -60,15 +59,12 @@ abstract class EntitySequenceBase<S, C> internal constructor()
   fun without(
     firstType: ComponentType<*>,
     vararg moreTypes: ComponentType<*>,
-  ): S = without(firstType)
-    .let { moreTypes.fold(it) { seq, type -> seq.without(type) } }
+  ): S = moreTypes.fold(without(firstType)) { seq, type -> seq.without(type) }
 
   /**
    * Performs the given [operation] on each [Entity]s.
    */
   abstract fun forEach(operation: C.(Entity) -> Unit)
-
-  abstract fun forAll(operation: C.(entities: EntityList) -> Unit)
 
   /**
    * Returns the first [Entity].

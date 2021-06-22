@@ -46,7 +46,7 @@ value class EntityReference internal constructor(
    * @param other The other entity to return
    * @return The entity
    */
-  fun orElse(other: Entity): Entity =
+  fun or(other: Entity): Entity =
     if (isPresent()) asEntity() else other
 
   /**
@@ -55,7 +55,7 @@ value class EntityReference internal constructor(
    * @param other The other entity to return
    * @return The entity
    */
-  fun orElse(other: Entity?): Entity? =
+  fun or(other: Entity?): Entity? =
     if (isPresent()) asEntity() else other
 
   /**
@@ -65,7 +65,7 @@ value class EntityReference internal constructor(
    * @param fallback The fallback entity to be used
    * @return The entity
    */
-  inline fun <T : Entity?> orElseGet(fallback: () -> T): T =
+  inline fun <T : Entity?> or(fallback: () -> T): T =
     if (isPresent()) asEntity().unsafeCast() else fallback()
 
   /**
@@ -75,7 +75,7 @@ value class EntityReference internal constructor(
    * @param ex The exception to thrown if the entity isn't present
    * @return The entity
    */
-  inline fun orElseThrow(ex: () -> Exception): Entity =
+  inline fun orThrow(ex: () -> Exception): Entity =
     if (isPresent()) asEntity() else throw ex()
 
   /**
@@ -83,7 +83,7 @@ value class EntityReference internal constructor(
    *
    * @return The entity
    */
-  fun orNull(): Entity? = orElse(null)
+  fun orNull(): Entity? = or(null)
 
   /**
    * Gets whether the entity is present.

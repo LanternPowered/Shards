@@ -42,22 +42,14 @@ fun Iterable<Entity>.toEntityArray(): EntityArray {
 /**
  * Converts the list of [Entity]s to an [EntityArray].
  */
-fun List<Entity>.toEntityArray(): EntityArray {
-  val value = LongArray(size)
-  for (index in indices)
-    value[index] = this[index].ref.value
-  return EntityArray(value)
-}
+fun List<Entity>.toEntityArray(): EntityArray =
+  EntityArray(LongArray(size) { index -> this[index].ref.value })
 
 /**
  * Constructs a new [EntityArray] with the given size and init block.
  */
-inline fun EntityArray(size: Int, init: (index: Int) -> Entity): EntityArray {
-  val value = LongArray(size)
-  for (index in 0 until size)
-    value[index] = init(index).ref.value
-  return EntityArray(value)
-}
+inline fun EntityArray(size: Int, init: (index: Int) -> Entity): EntityArray =
+  EntityArray(LongArray(size) { index -> init(index).ref.value })
 
 /**
  * Returns the last valid index for the array.
@@ -86,13 +78,13 @@ value class EntityArray @PublishedApi internal constructor(
     get() = value.size
 
   /**
-   * Gets the [EntityReference] at the given [index].
+   * Gets the [Entity] at the given [index].
    */
   override fun get(index: Int): Entity =
     Entity(InternalEntityRef(value[index]))
 
   /**
-   * Sets the [EntityReference] at the given [index].
+   * Sets the [Entity] at the given [index].
    */
   operator fun set(index: Int, entity: Entity) {
     value[index] = entity.ref.value

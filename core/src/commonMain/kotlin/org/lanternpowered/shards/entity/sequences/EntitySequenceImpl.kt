@@ -12,7 +12,6 @@ package org.lanternpowered.shards.entity.sequences
 import org.lanternpowered.shards.component.Component
 import org.lanternpowered.shards.component.ComponentType
 import org.lanternpowered.shards.entity.Entity
-import org.lanternpowered.shards.entity.collections.EntityList
 import org.lanternpowered.shards.util.unsafeCast
 
 internal fun EntitySequenceImpl(
@@ -41,12 +40,6 @@ internal class EntitySequenceImpl(
     operation: EntitySequenceContext0.(Entity) -> Unit
   ) {
     internalQuery.forEach(operation.unsafeCast())
-  }
-
-  override fun forAll(
-    operation: EntitySequenceContext0.(EntityList) -> Unit
-  ) {
-    internalQuery.forAll(operation.unsafeCast())
   }
 
   override fun first(): Entity =
@@ -96,12 +89,6 @@ internal class EntitySequence1Impl<
     operation: EntitySequenceContext1<R1, W1>.(Entity) -> Unit
   ) {
     internalQuery.forEach(operation.unsafeCast())
-  }
-
-  override fun forAll(
-    operation: EntitySequenceContext1<R1, W1>.(EntityList) -> Unit
-  ) {
-    internalQuery.forAll(operation.unsafeCast())
   }
 
   override fun first(): Entity =
@@ -162,12 +149,6 @@ internal class EntitySequence2Impl<
     operation: EntitySequenceContext2<R1, W1, R2, W2>.(Entity) -> Unit
   ) {
     internalQuery.forEach(operation.unsafeCast())
-  }
-
-  override fun forAll(
-    operation: EntitySequenceContext2<R1, W1, R2, W2>.(EntityList) -> Unit
-  ) {
-    internalQuery.forAll(operation.unsafeCast())
   }
 
   override fun first(): Entity =
@@ -241,12 +222,6 @@ internal class EntitySequence3Impl<
     operation: EntitySequenceContext3<R1, W1, R2, W2, R3, W3>.(Entity) -> Unit
   ) {
     internalQuery.forEach(operation.unsafeCast())
-  }
-
-  override fun forAll(
-    operation: EntitySequenceContext3<R1, W1, R2, W2, R3, W3>.(EntityList) -> Unit
-  ) {
-    internalQuery.forAll(operation.unsafeCast())
   }
 
   override fun first(): Entity =
